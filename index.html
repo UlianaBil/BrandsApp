@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
 <style>
 /* ============================================================
    BrandsApp waitlist page · friendly / approachable direction
@@ -24,13 +25,14 @@
   --terracotta-lift:#D9552A;
   --soft:#E8734A;
   --cream:#FAF8F5;
-  --ink:#0D0D0D;
-  --dark-warm:#1B0F09;
-  --dark-warm-2:#2B1409;
+  --ink:#252525;            /* primary text */
+  --body:#565656;           /* body text (neutral) */
+  --muted:#8C8C8C;          /* muted text (neutral) */
+  --dark-warm:#16141A;      /* charcoal ink (dark surfaces) */
+  --dark-warm-2:#1E1B22;    /* lifted charcoal, gradient start */
+  --dark-deep:#0E0C10;      /* deepest charcoal stop */
   --paper:#FFFFFF;
-  --body:#4A4441;
-  --muted:#8A827D;
-  --hairline:rgba(13,13,13,.09);
+  --hairline:rgba(37,37,37,.1);
   --hairline-dark:rgba(255,255,255,.12);
   --tint:#F9E9E2;          /* soft terracotta tint for chips/fills */
   --r-card:20px;
@@ -152,8 +154,19 @@ button{font-family:var(--sans);cursor:pointer}
 .wl-form .btn{flex-shrink:0}
 .form-err{display:none;font-size:.8125rem;color:var(--terracotta);margin-top:.5rem}
 .form-err.show{display:block}
-/* trust line under the CTA */
-.trust-line{margin-top:1.25rem;font-size:.875rem;color:var(--muted)}
+/* social proof + trust line under the CTA */
+.hero-social{display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:1.6rem;flex-wrap:wrap}
+.avatars{display:flex;align-items:center}
+.avatars img{width:34px;height:34px;border-radius:999px;border:2.5px solid #fff;margin-left:-9px;object-fit:cover;background:#eee}
+.avatars img:first-child{margin-left:0}
+.avatars .more{
+  width:34px;height:34px;border-radius:999px;border:2.5px solid #fff;margin-left:-9px;
+  background:var(--tint);color:var(--terracotta);font-size:.66rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-social p{font-size:.9rem;color:var(--body)}
+.hero-social b{color:var(--ink);font-weight:600}
+.trust-line{margin-top:1rem;font-size:.8125rem;color:var(--muted)}
 
 /* success card: screenshot-ready */
 .success{
@@ -183,25 +196,66 @@ section{padding:6rem 0}
   margin-bottom:1rem;
 }
 .sec-head p{font-size:1.0625rem;line-height:1.65;color:var(--body);max-width:36rem;margin:0 auto}
-.sec-eyebrow{
+.sec-head .sec-eyebrow{
   font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
   color:var(--terracotta);margin-bottom:.85rem;
 }
 
-/* ---------- how it works ---------- */
-.steps{display:grid;gap:1rem}
-@media(min-width:820px){ .steps{grid-template-columns:1fr 1fr 1fr;gap:1.25rem} }
+/* ---------- how it works: full-width warm-dark band ---------- */
+.how-sec{
+  background:linear-gradient(160deg,var(--dark-warm-2) 0%,var(--dark-warm) 60%,var(--dark-deep) 100%);
+  color:#fff;
+}
+.how-grid{display:grid;gap:3rem;align-items:center}
+@media(min-width:960px){ .how-grid{grid-template-columns:.9fr 1.1fr;gap:5rem} }
+.how-photo{position:relative;max-width:440px;margin:0 auto;width:100%}
+.how-photo img{
+  width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:24px;
+  filter:saturate(.92);
+}
+.how-photo::after{ /* warm brand tint over the photo */
+  content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;
+  background:linear-gradient(160deg,rgba(196,69,28,.16),rgba(14,12,16,.32) 85%);
+}
+.how-chip{
+  position:absolute;z-index:1;display:flex;align-items:center;gap:.7rem;
+  background:#fff;border-radius:14px;
+  padding:.7rem .85rem;
+  box-shadow:0 16px 34px rgba(0,0,0,.32),0 3px 8px rgba(0,0,0,.16);
+}
+.how-chip .ic{
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.how-chip .ic-live{background:rgba(29,170,97,.12);color:#1DAA61}
+.how-chip .ic-order{background:var(--tint);color:var(--terracotta)}
+.how-chip .t b{display:block;color:var(--ink);font-weight:700;font-size:.82rem;line-height:1.25}
+.how-chip .t span{display:block;font-size:.72rem;color:var(--muted);line-height:1.3;margin-top:1px}
+.how-chip-1{top:1rem;right:-2.5rem;animation:float-a 7s ease-in-out infinite alternate}
+.how-chip-2{bottom:1.25rem;left:-2.5rem;animation:float-b 8s ease-in-out infinite alternate}
+@media(max-width:520px){ .how-chip-1{right:.35rem} .how-chip-2{left:.35rem} }
+@keyframes float-a{to{transform:translateY(-9px)}}
+@keyframes float-b{to{transform:translateY(9px)}}
+@media (prefers-reduced-motion: reduce){ .how-chip{animation:none} }
+.how-copy h2{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(1.9rem,4.2vw,2.75rem);line-height:1.15;letter-spacing:-.01em;
+  margin-bottom:.85rem;
+}
+.how-copy > p{font-size:1.0625rem;line-height:1.65;color:rgba(255,255,255,.68);max-width:30rem;margin-bottom:2.25rem}
 .step{
-  background:var(--cream);border:1px solid var(--hairline);border-radius:var(--r-card);
-  padding:2rem 1.75rem;
+  display:flex;gap:1.15rem;align-items:flex-start;
+  padding:1.35rem 0;border-top:1px solid var(--hairline-dark);
 }
+.step:last-child{padding-bottom:0}
 .step .num{
-  width:44px;height:44px;border-radius:999px;background:var(--tint);
-  color:var(--terracotta);font-weight:700;font-size:1.05rem;
-  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
+  width:40px;height:40px;border-radius:999px;flex-shrink:0;
+  background:rgba(232,115,74,.16);color:var(--soft);
+  font-weight:700;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
 }
-.step h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem}
-.step p{font-size:.9375rem;line-height:1.6;color:var(--body)}
+.step h3{font-size:1.1rem;font-weight:600;margin-bottom:.35rem}
+.step p{font-size:.9375rem;line-height:1.6;color:rgba(255,255,255,.62)}
 
 /* ---------- explorer: pick your business ---------- */
 .explorer-sec{background:var(--cream)}
@@ -274,48 +328,57 @@ section{padding:6rem 0}
 .x-note{margin-top:1.5rem;font-size:.8125rem;color:var(--muted)}
 
 /* ---------- founding perks ---------- */
-.perks-panel{
-  /* soft warm gradient: brand-tinted but light and easy on the eyes */
-  background:linear-gradient(140deg,#FDEFE7 0%,#FAF3EE 45%,#F7DECD 100%);
+/* ---------- own it: light comparison panel ---------- */
+.own-panel{
+  background:linear-gradient(150deg,#FDEFE7 0%,#FBF4EF 50%,#F7DECD 100%);
   border:1px solid var(--hairline);
   color:var(--ink);border-radius:24px;
   padding:3rem 1.5rem;position:relative;overflow:hidden;
 }
-@media(min-width:820px){ .perks-panel{padding:4.5rem 4rem} }
-.perks-panel::before{ /* gentle terracotta warmth, slow drift */
+@media(min-width:820px){ .own-panel{padding:4.5rem 4rem} }
+.own-panel::before{ /* gentle terracotta warmth, slow drift */
   content:"";position:absolute;right:-20%;top:-45%;width:60vw;height:60vw;max-width:700px;max-height:700px;
-  background:radial-gradient(circle,rgba(232,115,74,.18),transparent 62%);pointer-events:none;
+  background:radial-gradient(circle,rgba(232,115,74,.16),transparent 62%);pointer-events:none;
   filter:blur(50px);will-change:transform;
   animation:drift-b 26s ease-in-out infinite alternate;
 }
-@media (prefers-reduced-motion: reduce){ .perks-panel::before{animation:none} }
-.perks-inner{position:relative;display:grid;gap:2.5rem}
-@media(min-width:960px){ .perks-inner{grid-template-columns:1fr 1fr;gap:4rem;align-items:center} }
-.perks-tag{
-  display:inline-flex;align-items:center;gap:.4rem;
-  background:#fff;border:1px solid rgba(196,69,28,.25);color:var(--terracotta);
-  border-radius:999px;padding:.4rem .9rem;font-size:.78rem;font-weight:600;margin-bottom:1.15rem;
+@media (prefers-reduced-motion: reduce){ .own-panel::before{animation:none} }
+.own-head{position:relative;text-align:center;max-width:34rem;margin:0 auto 2.75rem}
+.own-tag{
+  display:block;
+  font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--terracotta);margin-bottom:.85rem;
 }
-.perks-panel h2{
+.own-head h2{
   font-family:var(--serif);font-weight:600;
-  font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.15;margin-bottom:1rem;
+  font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.15;letter-spacing:-.01em;
 }
-.perks-panel .lead{color:var(--body);font-size:1.0625rem;line-height:1.65;margin-bottom:1.75rem;max-width:26rem}
-.perk{
-  display:flex;gap:1rem;align-items:flex-start;
-  background:#fff;border:1px solid var(--hairline);border-radius:var(--r-card);
-  padding:1.25rem 1.35rem;margin-bottom:.85rem;
-  box-shadow:0 10px 28px rgba(120,35,8,.08);
+.own-grid{position:relative;display:grid;gap:1.15rem}
+@media(min-width:820px){ .own-grid{grid-template-columns:1fr 1fr;gap:1.5rem} }
+.own-card{border-radius:var(--r-card);padding:1.75rem 1.65rem}
+.own-cage{background:rgba(255,255,255,.55);border:1px solid var(--hairline)}
+.own-brand{background:#fff;border:1px solid rgba(196,69,28,.3);box-shadow:0 12px 32px rgba(196,69,28,.1)}
+.own-label{
+  font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:1.35rem;
 }
-.perk:last-child{margin-bottom:0}
-.perk i{
-  width:40px;height:40px;border-radius:12px;background:var(--tint);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.35rem;color:var(--terracotta);flex-shrink:0;
+.own-cage .own-label{color:var(--muted)}
+.own-brand .own-label{
+  color:var(--terracotta);display:inline-flex;align-items:center;gap:.45rem;
 }
-.perk h3{font-size:1.05rem;font-weight:600;margin-bottom:.3rem;color:var(--ink)}
-.perk p{font-size:.9rem;line-height:1.6;color:var(--body)}
+.own-brand .own-label img{width:16px;height:16px;border-radius:5px}
+.own-card ul{list-style:none;display:flex;flex-direction:column;gap:1rem}
+.own-card li{display:flex;align-items:flex-start;gap:.75rem;font-size:.95rem;line-height:1.5}
+.own-card li i{flex-shrink:0;font-size:1.05rem;margin-top:.12rem}
+.own-cage li{color:var(--body)}
+.own-cage li i{color:var(--muted)}
+.own-brand li{color:var(--ink)}
+.own-brand li i{color:#1DAA61}
+.own-cta{position:relative;text-align:center;margin-top:2.5rem}
+.own-cta-note{margin-top:1rem;font-size:.875rem;color:var(--muted)}
+.own-cta-note b{color:var(--ink);font-weight:600}
 
+/* ---------- FAQ ---------- */
 /* ---------- FAQ ---------- */
 .faq{max-width:44rem;margin:0 auto}
 .faq details{
@@ -331,18 +394,27 @@ section{padding:6rem 0}
 .faq details[open] summary i{transform:rotate(45deg)}
 .faq .a{padding:0 0 1.35rem;font-size:.95rem;line-height:1.7;color:var(--body);max-width:38rem}
 
-/* ---------- final CTA ---------- */
-.final{background:var(--cream);text-align:center;padding:7rem 0}
+/* ---------- final CTA: dark, closing the page with the footer ---------- */
+.final{
+  background:linear-gradient(160deg,var(--dark-warm-2) 0%,var(--dark-warm) 60%,var(--dark-deep) 100%);
+  text-align:center;padding:7rem 0;position:relative;overflow:hidden;
+}
 @media(max-width:767px){ .final{padding:5rem 0} }
+.final::before{ /* soft-accent glow behind the closer */
+  content:"";position:absolute;left:50%;top:-30%;width:70vw;height:70vw;max-width:760px;max-height:760px;
+  transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(232,115,74,.16),transparent 62%);pointer-events:none;filter:blur(50px);
+}
 .final .pidgin{
+  position:relative;
   font-family:var(--serif);font-weight:600;
   font-size:clamp(2.4rem,6vw,4rem);line-height:1.12;letter-spacing:-.01em;
-  color:var(--terracotta);margin-bottom:1rem;
+  color:var(--soft);margin-bottom:1rem;
 }
-.final .sub{font-size:1.0625rem;color:var(--body);max-width:28rem;margin:0 auto 2.25rem;line-height:1.65}
-.final .cta-zone{display:flex;flex-direction:column;align-items:center}
+.final .sub{position:relative;font-size:1.0625rem;color:rgba(255,255,255,.68);max-width:28rem;margin:0 auto 2.25rem;line-height:1.65}
+.final .cta-zone{position:relative;display:flex;flex-direction:column;align-items:center}
 .final .wl-form{text-align:left}
-@media(min-width:540px){ .final .wl-form{background:#fff;border:1px solid var(--hairline)} }
+@media(min-width:540px){ .final .wl-form{background:#fff;border:1px solid transparent;box-shadow:0 16px 44px rgba(0,0,0,.35)} }
 .final .success{text-align:left}
 
 /* ---------- waitlist modal (step 2: original site's form fields) ---------- */
@@ -411,7 +483,7 @@ section{padding:6rem 0}
 .m-success p{font-size:.9375rem;color:var(--body);line-height:1.6;max-width:24rem;margin:0 auto 1.5rem}
 
 /* ---------- footer ---------- */
-footer{background:linear-gradient(150deg,#20120B,var(--dark-warm));color:rgba(255,255,255,.6);padding:2.5rem 0}
+footer{background:linear-gradient(150deg,var(--dark-warm-2),var(--dark-deep));color:rgba(255,255,255,.6);padding:2.5rem 0}
 footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 footer .brand img{width:28px;height:28px}
 footer .wordmark{font-size:1.05rem;color:#fff}
@@ -430,8 +502,8 @@ footer p b{color:#fff;font-weight:500}
       <span class="wordmark">Brands<span>App</span></span>
     </a>
     <div class="nav-links">
-      <a href="#explorer">Find your business</a>
       <a href="#how">How it works</a>
+      <a href="#explorer">Find your business</a>
     </div>
     <a href="#join" class="btn btn-sm" data-open-form>Join the waitlist</a>
   </div>
@@ -452,32 +524,59 @@ footer p b{color:#fff;font-weight:500}
     </form>
     <p class="form-err" data-err>Please enter a valid email address.</p>
 
+    <div class="hero-social">
+      <div class="avatars">
+        <img src="https://i.pravatar.cc/68?img=49" alt="" loading="lazy">
+        <img src="https://i.pravatar.cc/68?img=51" alt="" loading="lazy">
+        <img src="https://i.pravatar.cc/68?img=46" alt="" loading="lazy">
+        <img src="https://i.pravatar.cc/68?img=64" alt="" loading="lazy">
+        <span class="more">+16</span>
+      </div>
+      <p><b>20 founding brands</b> already in early access</p>
+    </div>
     <p class="trust-line">Free to join · No card required · Built for Nigerian founders</p>
   </div>
 </header>
 
-<!-- ======================= HOW IT WORKS ======================= -->
-<section id="how">
+<!-- ======================= HOW IT WORKS: dark band ======================= -->
+<section id="how" class="how-sec">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>No developer. No hosting. No stress.</h2>
-      <p>BrandsApp builds and runs everything behind your brand, so the only thing you manage is your business.</p>
-    </div>
-    <div class="steps">
-      <div class="step rv">
-        <span class="num">1</span>
-        <h3>Answer three questions</h3>
-        <p>Your brand name, what you do, and your category. That's all we ask. No tech talk, ever.</p>
+    <div class="how-grid">
+      <div class="how-photo rv">
+        <img src="founder.png" alt="A Nigerian founder running her brand" loading="lazy">
+        <div class="how-chip how-chip-1">
+          <span class="ic ic-live"><i class="ph-fill ph-broadcast"></i></span>
+          <span class="t"><b>Your brand is live</b><span>amaka.brandsapp.io</span></span>
+        </div>
+        <div class="how-chip how-chip-2">
+          <span class="ic ic-order"><i class="ph-fill ph-shopping-bag"></i></span>
+          <span class="t"><b>New order · ₦18,500</b><span>2 minutes ago</span></span>
+        </div>
       </div>
-      <div class="step rv" style="transition-delay:.08s">
-        <span class="num">2</span>
-        <h3>AI sets everything up</h3>
-        <p>Your website, storefront, database and your own address at yourname.brandsapp.io. All handled for you.</p>
-      </div>
-      <div class="step rv" style="transition-delay:.16s">
-        <span class="num">3</span>
-        <h3>Share it on WhatsApp</h3>
-        <p>Your link works everywhere your customers already are. Take orders the same day you sign up.</p>
+      <div class="how-copy rv">
+        <h2>No developer. No hosting. No stress.</h2>
+        <p>BrandsApp builds and runs everything behind your brand, so the only thing you manage is your business.</p>
+        <div class="step">
+          <span class="num">1</span>
+          <div>
+            <h3>Answer three questions</h3>
+            <p>Your brand name, what you do, and your category. That's all we ask. No tech talk, ever.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <div>
+            <h3>AI sets everything up</h3>
+            <p>Your website, storefront, database and your own address at yourname.brandsapp.io. All handled for you.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <div>
+            <h3>Share it on WhatsApp</h3>
+            <p>Your link works everywhere your customers already are. Take orders the same day you sign up.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -523,47 +622,44 @@ footer p b{color:#fff;font-weight:500}
   </div>
 </section>
 
-<!-- ======================= FOUNDING PERKS ======================= -->
-<section>
+<!-- ======================= OWN IT: comparison ======================= -->
+<section id="ownership">
   <div class="wrap">
-    <div class="perks-panel rv">
-      <div class="perks-inner">
-        <div>
-          <span class="perks-tag"><i class="ph-fill ph-star"></i> First 500 brands only</span>
-          <h2>Founding members get the best of it.</h2>
-          <p class="lead">Founding pricing is reserved for the first 500 brands on the list. After that, standard pricing applies.</p>
-          <a href="#final-join" class="btn" data-open-form>Join the waitlist</a>
+    <div class="own-panel rv">
+      <div class="own-head">
+        <span class="own-tag">The actual difference</span>
+        <h2>Stop renting your business. Own it.</h2>
+      </div>
+      <div class="own-grid">
+        <div class="own-card own-cage">
+          <p class="own-label">The shared SaaS cage</p>
+          <ul>
+            <li><i class="ph-bold ph-x"></i> Your data lives on someone else's shared servers</li>
+            <li><i class="ph-bold ph-x"></i> Dollar pricing that eats your margin as you grow</li>
+            <li><i class="ph-bold ph-x"></i> One-size-fits-all apps you half-use and fully pay for</li>
+            <li><i class="ph-bold ph-x"></i> Leave the platform, lose your store, your list, your history</li>
+          </ul>
         </div>
-        <div>
-          <div class="perk">
-            <i class="ph-fill ph-seal-percent"></i>
-            <div>
-              <h3>₦2,000/month, locked for life</h3>
-              <p>Your founding price never increases, no matter what we add later.</p>
-            </div>
-          </div>
-          <div class="perk">
-            <i class="ph-fill ph-rocket-launch"></i>
-            <div>
-              <h3>First in line at launch</h3>
-              <p>Waitlist members get their invites before public signup opens.</p>
-            </div>
-          </div>
-          <div class="perk">
-            <i class="ph-fill ph-medal"></i>
-            <div>
-              <h3>Founding badge on your brand</h3>
-              <p>A permanent mark on your brand page showing you were here first.</p>
-            </div>
-          </div>
+        <div class="own-card own-brand">
+          <p class="own-label"><img src="brandsapp-logo.svg" alt=""> BrandsApp</p>
+          <ul>
+            <li><i class="ph-bold ph-check"></i> Your own server, storage and domain, genuinely yours</li>
+            <li><i class="ph-bold ph-check"></i> Naira billing, pay-as-you-go, no forced dollar minimums</li>
+            <li><i class="ph-bold ph-check"></i> 27+ apps, switch on only what your business needs</li>
+            <li><i class="ph-bold ph-check"></i> Export everything anytime. It was always your data</li>
+          </ul>
         </div>
+      </div>
+      <div class="own-cta">
+        <a href="#final-join" class="btn" data-open-form>Join the waitlist</a>
+        <p class="own-cta-note">Join <b>20 founding brands</b> already building on BrandsApp.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ======================= FAQ ======================= -->
-<section style="padding-top:0">
+<section>
   <div class="wrap">
     <div class="sec-head rv">
       <h2>Questions, answered plainly.</h2>
@@ -668,7 +764,7 @@ footer p b{color:#fff;font-weight:500}
     <div class="m-success" data-m-success>
       <div class="s-check"><i class="ph-fill ph-check"></i></div>
       <h3>You're on the list.</h3>
-      <p>You are number <b data-pos>2,141</b> in line. We'll email your invite the moment your spot opens.</p>
+      <p>You're founding brand <b data-pos>#21</b>. We'll email your invite the moment your spot opens.</p>
       <a class="btn btn-wa" data-wa target="_blank" rel="noopener"><i class="ph-fill ph-whatsapp-logo"></i> Share on WhatsApp</a>
     </div>
   </div>
@@ -762,7 +858,7 @@ footer p b{color:#fff;font-weight:500}
      Step 1: email capture in hero / final CTA -> opens modal (step 2)
      CTAs (nav, perks): open the full modal including email
      ============================================================ */
-  var count = 2140;  /* mock baseline */
+  var count = 20;  /* founding brands so far */
   var shareText = encodeURIComponent("I just joined the BrandsApp waitlist. Your brand, live in one minute, for the price of a data bundle. Join me: https://brandsapp.io");
   var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -847,7 +943,7 @@ footer p b{color:#fff;font-weight:500}
       socialMediaLink: mForm.social.value.trim() || undefined
     };
     try{ localStorage.setItem('brandsapp-waitlist', JSON.stringify(data)); }catch(e){}
-    mSuccess.querySelector('[data-pos]').textContent = (count + 1).toLocaleString('en-NG');
+    mSuccess.querySelector('[data-pos]').textContent = '#' + (count + 1);
     mSuccess.querySelector('[data-wa]').href = 'https://wa.me/?text=' + shareText;
     mForm.style.display = 'none';
     mSuccess.classList.add('show');
