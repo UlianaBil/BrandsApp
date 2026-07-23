@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BrandsApp · Join the waitlist</title>
+<meta name="description" content="A real website and business apps for the price of a data bundle. Live in a minute. Join the BrandsApp waitlist." />
+<link rel="icon" href="brandsapp-logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+/* ============================================================
+   BrandsApp waitlist page · friendly / approachable direction
+   Palette (brand-locked): terracotta #C4451C · soft #E8734A ·
+   cream #FAF8F5 · warm darks for contrast blocks
+   Radius system: buttons + inputs + pills = full pill ·
+   cards + panels = 20px. No italics anywhere.
+   ============================================================ */
+:root{
+  --terracotta:#C4451C;
+  --terracotta-lift:#D9552A;
+  --soft:#E8734A;
+  --cream:#FAF8F5;
+  --ink:#0D0D0D;
+  --dark-warm:#1B0F09;
+  --dark-warm-2:#2B1409;
+  --paper:#FFFFFF;
+  --body:#4A4441;
+  --muted:#8A827D;
+  --hairline:rgba(13,13,13,.09);
+  --hairline-dark:rgba(255,255,255,.12);
+  --tint:#F9E9E2;          /* soft terracotta tint for chips/fills */
+  --r-card:20px;
+  --serif:"Playfair Display", Georgia, serif;
+  --sans:"Inter", -apple-system, system-ui, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  font-family:var(--sans);color:var(--ink);background:var(--paper);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+em,i:not([class]),blockquote{font-style:normal} /* no italics anywhere */
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+@media(min-width:768px){ .wrap{padding:0 40px} }
+
+/* ---------- reveal on scroll ---------- */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){ .rv{opacity:1;transform:none;transition:none} }
+
+/* ---------- nav (structure from the original site) ---------- */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:40;height:68px;
+  display:flex;align-items:center;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--hairline);
+}
+.nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.brand{display:flex;align-items:center;gap:.6rem}
+.brand img{width:34px;height:34px}
+.wordmark{font-family:var(--serif);font-weight:700;font-size:1.2rem;color:var(--ink);letter-spacing:-.01em}
+.wordmark span{color:var(--terracotta)}
+.nav-links{display:none;align-items:center;gap:2rem;font-size:.9rem;font-weight:500;color:var(--body)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+@media(min-width:900px){ .nav-links{display:flex} }
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;justify-content:center;
+  border:none;border-radius:999px;
+  font-weight:600;font-size:.9375rem;line-height:1;
+  padding:.85rem 1.5rem;white-space:nowrap;
+  background:var(--terracotta);color:#fff;
+  transition:transform .15s,background .2s,box-shadow .2s;
+}
+.btn:hover{background:var(--terracotta-lift);box-shadow:0 8px 24px rgba(196,69,28,.28)}
+.btn:active{transform:scale(.98)}
+.btn-sm{padding:.65rem 1.15rem;font-size:.875rem}
+
+/* ---------- hero: centered, light, warm glow ---------- */
+.hero{
+  background:#fff;
+  color:var(--ink);
+  min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  padding:110px 0 80px;
+  position:relative;overflow:hidden;text-align:center;
+}
+/* Interactive Ripple Background
+   (ported from 21st.dev/@erikvalencia1/interactive-ripple-background),
+   recolored to brand. Original: indigo/purple/pink pastel gradient +
+   click ripples (3 staggered rings) + ambient auto-ripples every 3s.
+   Rings animate transform/opacity instead of width/height for perf. */
+.ripple-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.ripple{position:absolute;transform:translate(-50%,-50%);pointer-events:none}
+.ripple span{
+  position:absolute;left:-200px;top:-200px;width:400px;height:400px;
+  border-radius:999px;border:2px solid;
+  transform:scale(0);opacity:1;will-change:transform,opacity;
+  animation:ripple-ring 2s ease-out forwards;
+}
+.ripple span:nth-child(1){border-color:rgba(196,69,28,.35)}                       /* terracotta */
+.ripple span:nth-child(2){border-color:rgba(232,115,74,.25);animation-delay:.2s}  /* soft accent */
+.ripple span:nth-child(3){border-color:rgba(243,178,60,.15);animation-delay:.4s}  /* warm amber */
+@keyframes ripple-ring{
+  0%{transform:scale(0);opacity:1}
+  100%{transform:scale(1);opacity:0}
+}
+/* keyframe still used by the perks panel glow */
+@keyframes drift-b{to{transform:translate(4vw,-4vh) scale(1.1)}}
+
+.hero-inner{position:relative;z-index:1;max-width:46rem;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+.eyebrow{
+  font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--terracotta);margin-bottom:1.25rem;
+}
+.hero h1{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(2.5rem,6.2vw,4.25rem);
+  line-height:1.08;letter-spacing:-.015em;
+  margin-bottom:1.25rem;
+}
+.hero h1 em{color:var(--terracotta)}
+.hero .sub{
+  font-size:1.0625rem;line-height:1.65;color:var(--body);
+  max-width:32rem;margin:0 auto 2.25rem;
+}
+/* form: pill input + pill button */
+.wl-form{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:29rem}
+@media(min-width:540px){
+  .wl-form{
+    flex-direction:row;background:#fff;border-radius:999px;padding:.375rem;gap:0;
+    border:1px solid var(--hairline);box-shadow:0 12px 40px rgba(196,69,28,.12);
+  }
+  .wl-form input{border:none !important;background:transparent !important;flex:1;box-shadow:none !important}
+}
+.wl-form input{
+  font-family:var(--sans);font-size:1rem;color:var(--ink);
+  padding:.9rem 1.35rem;border-radius:999px;
+  border:1px solid var(--hairline);background:#fff;outline:none;min-width:0;
+}
+.wl-form input::placeholder{color:var(--muted)}
+.wl-form input:focus-visible{box-shadow:0 0 0 3px rgba(232,115,74,.45)}
+.wl-form .btn{flex-shrink:0}
+.form-err{display:none;font-size:.8125rem;color:var(--terracotta);margin-top:.5rem}
+.form-err.show{display:block}
+/* trust line under the CTA */
+.trust-line{margin-top:1.25rem;font-size:.875rem;color:var(--muted)}
+
+/* success card: screenshot-ready */
+.success{
+  display:none;width:100%;max-width:29rem;text-align:left;
+  background:#fff;color:var(--ink);border-radius:var(--r-card);
+  border:1px solid var(--hairline);
+  padding:1.75rem;box-shadow:0 24px 64px rgba(27,15,9,.14);
+}
+.success.show{display:block}
+.success .s-check{
+  width:44px;height:44px;border-radius:999px;background:var(--terracotta);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.35rem;
+  margin-bottom:1rem;
+}
+.success h3{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin-bottom:.35rem}
+.success p{font-size:.9375rem;color:var(--body);line-height:1.55;margin-bottom:1.25rem}
+.btn-wa{background:#1DAA61}
+.btn-wa:hover{background:#189b57;box-shadow:0 8px 24px rgba(29,170,97,.3)}
+
+/* ---------- sections ---------- */
+section{padding:6rem 0}
+@media(max-width:767px){ section{padding:4rem 0} }
+.sec-head{max-width:44rem;margin:0 auto 3.25rem;text-align:center}
+.sec-head h2{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(1.9rem,4.2vw,2.75rem);line-height:1.15;letter-spacing:-.01em;
+  margin-bottom:1rem;
+}
+.sec-head p{font-size:1.0625rem;line-height:1.65;color:var(--body);max-width:36rem;margin:0 auto}
+.sec-eyebrow{
+  font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--terracotta);margin-bottom:.85rem;
+}
+
+/* ---------- how it works ---------- */
+.steps{display:grid;gap:1rem}
+@media(min-width:820px){ .steps{grid-template-columns:1fr 1fr 1fr;gap:1.25rem} }
+.step{
+  background:var(--cream);border:1px solid var(--hairline);border-radius:var(--r-card);
+  padding:2rem 1.75rem;
+}
+.step .num{
+  width:44px;height:44px;border-radius:999px;background:var(--tint);
+  color:var(--terracotta);font-weight:700;font-size:1.05rem;
+  display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;
+}
+.step h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem}
+.step p{font-size:.9375rem;line-height:1.6;color:var(--body)}
+
+/* ---------- explorer: pick your business ---------- */
+.explorer-sec{background:var(--cream)}
+.explorer{display:grid;gap:1.25rem;align-items:start}
+@media(min-width:960px){ .explorer{grid-template-columns:360px 1fr} }
+.x-panel{background:#fff;border:1px solid var(--hairline);border-radius:var(--r-card);padding:1.15rem}
+.x-search{position:relative;margin-bottom:.85rem}
+.x-search i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;pointer-events:none}
+.x-search input{
+  width:100%;font-family:var(--sans);font-size:.9rem;color:var(--ink);
+  padding:.75rem 1rem .75rem 2.55rem;border-radius:999px;
+  border:1px solid var(--hairline);background:var(--cream);outline:none;
+}
+.x-search input::placeholder{color:var(--muted)}
+.x-search input:focus-visible{border-color:rgba(196,69,28,.4);box-shadow:0 0 0 3px rgba(232,115,74,.18);background:#fff}
+.x-cats{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:none}
+.x-cats::-webkit-scrollbar{display:none}
+.x-cat{
+  flex-shrink:0;border:1px solid var(--hairline);border-radius:999px;background:#fff;
+  padding:.4rem .8rem;font-size:.75rem;font-weight:500;color:var(--body);
+  transition:all .2s;
+}
+.x-cat:hover{border-color:rgba(196,69,28,.35)}
+.x-cat.on{background:var(--terracotta);border-color:var(--terracotta);color:#fff}
+.x-count{font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:.75rem .35rem .35rem}
+.x-list{list-style:none;max-height:352px;overflow-y:auto;display:flex;flex-direction:column;gap:.25rem;padding-right:.25rem}
+.x-item{
+  width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  border:1px solid transparent;border-radius:12px;background:transparent;
+  padding:.65rem .85rem;font-size:.9rem;font-weight:500;color:var(--ink);
+  transition:background .15s,border-color .15s;
+}
+.x-item:hover{background:var(--cream)}
+.x-item.on{background:var(--tint);border-color:rgba(196,69,28,.25)}
+.x-item .cat{font-size:.6875rem;font-weight:500;color:var(--muted)}
+.x-item.on .cat{color:var(--terracotta)}
+.x-empty{padding:1.25rem .85rem;font-size:.875rem;color:var(--body)}
+/* right: detail panel */
+.x-detail{background:#fff;border:1px solid var(--hairline);border-radius:var(--r-card);padding:1.75rem;position:relative;overflow:hidden}
+@media(min-width:768px){ .x-detail{padding:2.25rem} }
+.x-detail .who{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.x-detail .who .badge{
+  width:46px;height:46px;border-radius:14px;background:var(--tint);
+  display:flex;align-items:center;justify-content:center;font-size:1.35rem;color:var(--terracotta);
+}
+.x-detail .who h3{font-family:var(--serif);font-size:1.45rem;font-weight:600}
+.x-detail .who span{font-size:.8125rem;color:var(--muted)}
+.x-problem{
+  background:var(--cream);border-radius:14px;padding:1.15rem 1.25rem;margin-bottom:1.75rem;
+}
+.x-problem h4{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--terracotta);margin-bottom:.45rem}
+.x-problem p{font-size:.9375rem;line-height:1.6;color:var(--body)}
+.x-stack h4{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.85rem}
+.x-apps{display:grid;gap:.6rem;grid-template-columns:1fr}
+@media(min-width:620px){ .x-apps{grid-template-columns:1fr 1fr} }
+.x-app{
+  display:flex;align-items:center;gap:.8rem;
+  border:1px solid var(--hairline);border-radius:14px;padding:.8rem .95rem;
+  opacity:0;transform:translateY(14px) scale(.97);
+  transition:opacity .45s cubic-bezier(.16,1,.3,1),transform .45s cubic-bezier(.16,1,.3,1);
+}
+.x-app.pop{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){ .x-app{opacity:1;transform:none;transition:none} }
+.x-app i{
+  width:38px;height:38px;border-radius:11px;background:var(--tint);color:var(--terracotta);
+  display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;
+}
+.x-app b{display:block;font-size:.9rem;font-weight:600}
+.x-app span{font-size:.78rem;color:var(--muted)}
+.x-note{margin-top:1.5rem;font-size:.8125rem;color:var(--muted)}
+
+/* ---------- founding perks ---------- */
+.perks-panel{
+  /* soft warm gradient: brand-tinted but light and easy on the eyes */
+  background:linear-gradient(140deg,#FDEFE7 0%,#FAF3EE 45%,#F7DECD 100%);
+  border:1px solid var(--hairline);
+  color:var(--ink);border-radius:24px;
+  padding:3rem 1.5rem;position:relative;overflow:hidden;
+}
+@media(min-width:820px){ .perks-panel{padding:4.5rem 4rem} }
+.perks-panel::before{ /* gentle terracotta warmth, slow drift */
+  content:"";position:absolute;right:-20%;top:-45%;width:60vw;height:60vw;max-width:700px;max-height:700px;
+  background:radial-gradient(circle,rgba(232,115,74,.18),transparent 62%);pointer-events:none;
+  filter:blur(50px);will-change:transform;
+  animation:drift-b 26s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce){ .perks-panel::before{animation:none} }
+.perks-inner{position:relative;display:grid;gap:2.5rem}
+@media(min-width:960px){ .perks-inner{grid-template-columns:1fr 1fr;gap:4rem;align-items:center} }
+.perks-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:#fff;border:1px solid rgba(196,69,28,.25);color:var(--terracotta);
+  border-radius:999px;padding:.4rem .9rem;font-size:.78rem;font-weight:600;margin-bottom:1.15rem;
+}
+.perks-panel h2{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.15;margin-bottom:1rem;
+}
+.perks-panel .lead{color:var(--body);font-size:1.0625rem;line-height:1.65;margin-bottom:1.75rem;max-width:26rem}
+.perk{
+  display:flex;gap:1rem;align-items:flex-start;
+  background:#fff;border:1px solid var(--hairline);border-radius:var(--r-card);
+  padding:1.25rem 1.35rem;margin-bottom:.85rem;
+  box-shadow:0 10px 28px rgba(120,35,8,.08);
+}
+.perk:last-child{margin-bottom:0}
+.perk i{
+  width:40px;height:40px;border-radius:12px;background:var(--tint);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.35rem;color:var(--terracotta);flex-shrink:0;
+}
+.perk h3{font-size:1.05rem;font-weight:600;margin-bottom:.3rem;color:var(--ink)}
+.perk p{font-size:.9rem;line-height:1.6;color:var(--body)}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:44rem;margin:0 auto}
+.faq details{
+  background:var(--cream);border:1px solid var(--hairline);border-radius:var(--r-card);
+  margin-bottom:.75rem;padding:0 1.5rem;
+}
+.faq summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.25rem 0;font-weight:600;font-size:1.0325rem;cursor:pointer;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{color:var(--terracotta);transition:transform .3s;flex-shrink:0}
+.faq details[open] summary i{transform:rotate(45deg)}
+.faq .a{padding:0 0 1.35rem;font-size:.95rem;line-height:1.7;color:var(--body);max-width:38rem}
+
+/* ---------- final CTA ---------- */
+.final{background:var(--cream);text-align:center;padding:7rem 0}
+@media(max-width:767px){ .final{padding:5rem 0} }
+.final .pidgin{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(2.4rem,6vw,4rem);line-height:1.12;letter-spacing:-.01em;
+  color:var(--terracotta);margin-bottom:1rem;
+}
+.final .sub{font-size:1.0625rem;color:var(--body);max-width:28rem;margin:0 auto 2.25rem;line-height:1.65}
+.final .cta-zone{display:flex;flex-direction:column;align-items:center}
+.final .wl-form{text-align:left}
+@media(min-width:540px){ .final .wl-form{background:#fff;border:1px solid var(--hairline)} }
+.final .success{text-align:left}
+
+/* ---------- waitlist modal (step 2: original site's form fields) ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:60;display:none;
+  align-items:center;justify-content:center;padding:1rem;
+  background:rgba(13,13,13,.45);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:var(--r-card);width:100%;max-width:560px;
+  max-height:calc(100dvh - 2rem);overflow-y:auto;
+  padding:2.25rem 2rem;position:relative;
+  box-shadow:0 32px 80px rgba(27,15,9,.3);
+}
+@media(max-width:600px){ /* full-screen sheet on mobile */
+  .overlay{padding:0;align-items:stretch}
+  .modal{max-width:none;border-radius:0;max-height:none;min-height:100dvh;padding:1.75rem 1.25rem 2.5rem}
+}
+.m-close{
+  position:absolute;top:1.1rem;right:1.1rem;width:40px;height:40px;
+  border-radius:999px;border:1px solid var(--hairline);background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;color:var(--body);transition:background .2s;
+}
+.m-close:hover{background:var(--cream)}
+.m-step{
+  display:none;width:fit-content;align-items:center;gap:.4rem;
+  background:var(--tint);color:var(--terracotta);
+  border-radius:999px;padding:.35rem .8rem;
+  font-size:.75rem;font-weight:600;margin-bottom:1rem;
+}
+.m-step.show{display:inline-flex}
+.m-title{font-family:var(--serif);font-weight:600;font-size:1.65rem;line-height:1.2;margin-bottom:.4rem}
+.m-sub{font-size:.9375rem;color:var(--body);line-height:1.55;margin-bottom:1.75rem}
+.field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.1rem}
+.field > span{font-size:.8125rem;font-weight:600;color:var(--ink)}
+.field .opt{color:var(--muted);font-weight:400}
+.field input,.field textarea{
+  font-family:var(--sans);font-size:.9375rem;color:var(--ink);
+  padding:.75rem .95rem;border:1px solid var(--hairline);border-radius:12px;
+  background:var(--cream);outline:none;width:100%;resize:vertical;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field input:focus-visible,.field textarea:focus-visible{
+  background:#fff;border-color:rgba(196,69,28,.4);box-shadow:0 0 0 3px rgba(232,115,74,.18);
+}
+.field.err input,.field.err textarea{border-color:#D64545;background:#FDF3F2}
+.f-2col{display:grid;gap:1.1rem;grid-template-columns:1fr}
+@media(min-width:560px){ .f-2col{grid-template-columns:1fr 1fr} .f-2col .field{margin-bottom:0} .f-2col{margin-bottom:1.1rem} }
+.m-err{display:none;font-size:.8125rem;color:#C0392B;margin:-.25rem 0 .85rem}
+.m-err.show{display:block}
+.modal .btn-full{width:100%;padding:1rem 1.5rem;font-size:1rem;margin-top:.35rem}
+.m-note{font-size:.78rem;color:var(--muted);text-align:center;margin-top:.85rem}
+/* success view inside the modal */
+.m-success{display:none;text-align:center;padding:1rem 0}
+.m-success.show{display:block}
+.m-success .s-check{
+  width:56px;height:56px;border-radius:999px;background:var(--terracotta);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.6rem;
+  margin:0 auto 1.15rem;
+}
+.m-success h3{font-family:var(--serif);font-size:1.75rem;font-weight:600;margin-bottom:.4rem}
+.m-success p{font-size:.9375rem;color:var(--body);line-height:1.6;max-width:24rem;margin:0 auto 1.5rem}
+
+/* ---------- footer ---------- */
+footer{background:linear-gradient(150deg,#20120B,var(--dark-warm));color:rgba(255,255,255,.6);padding:2.5rem 0}
+footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+footer .brand img{width:28px;height:28px}
+footer .wordmark{font-size:1.05rem;color:#fff}
+footer .wordmark span{color:var(--soft)}
+footer p{font-size:.8125rem}
+footer p b{color:#fff;font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ======================= NAV (from the original site) ======================= -->
+<nav class="nav">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="BrandsApp home">
+      <img src="brandsapp-logo.svg" alt="BrandsApp">
+      <span class="wordmark">Brands<span>App</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#explorer">Find your business</a>
+      <a href="#how">How it works</a>
+    </div>
+    <a href="#join" class="btn btn-sm" data-open-form>Join the waitlist</a>
+  </div>
+</nav>
+
+<!-- ======================= HERO ======================= -->
+<header class="hero" id="top">
+  <div class="ripple-layer" data-ripple-layer aria-hidden="true"></div>
+
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Early Access Open</p>
+    <h1>Your brand, <em>live</em> in one minute.</h1>
+    <p class="sub">Get a professional website and the business apps you need, without hiring a designer or developer.</p>
+
+    <form class="wl-form" id="join" data-wl>
+      <input type="email" name="email" placeholder="Enter your email" autocomplete="email" required aria-label="Email address">
+      <button type="submit" class="btn">Join the waitlist</button>
+    </form>
+    <p class="form-err" data-err>Please enter a valid email address.</p>
+
+    <p class="trust-line">Free to join · No card required · Built for Nigerian founders</p>
+  </div>
+</header>
+
+<!-- ======================= HOW IT WORKS ======================= -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>No developer. No hosting. No stress.</h2>
+      <p>BrandsApp builds and runs everything behind your brand, so the only thing you manage is your business.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv">
+        <span class="num">1</span>
+        <h3>Answer three questions</h3>
+        <p>Your brand name, what you do, and your category. That's all we ask. No tech talk, ever.</p>
+      </div>
+      <div class="step rv" style="transition-delay:.08s">
+        <span class="num">2</span>
+        <h3>AI sets everything up</h3>
+        <p>Your website, storefront, database and your own address at yourname.brandsapp.io. All handled for you.</p>
+      </div>
+      <div class="step rv" style="transition-delay:.16s">
+        <span class="num">3</span>
+        <h3>Share it on WhatsApp</h3>
+        <p>Your link works everywhere your customers already are. Take orders the same day you sign up.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= EXPLORER: PICK YOUR BUSINESS ======================= -->
+<section class="explorer-sec" id="explorer">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="sec-eyebrow">Built for your business, specifically</p>
+      <h2>Pick your business. Watch your stack come alive.</h2>
+      <p>Search across 500+ Nigerian business types. See the real problem it solves and the exact apps we'd switch on for you.</p>
+    </div>
+    <div class="explorer rv">
+      <div class="x-panel">
+        <div class="x-search">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" data-x-search placeholder="Search your business, e.g. tailor, caterer, gym" aria-label="Search your business type">
+        </div>
+        <div class="x-cats" data-x-cats></div>
+        <p class="x-count" data-x-count>Popular picks</p>
+        <ul class="x-list" data-x-list></ul>
+      </div>
+      <div class="x-detail">
+        <div class="who">
+          <div class="badge"><i class="ph-fill ph-storefront" data-x-icon></i></div>
+          <div>
+            <h3 data-x-name>Fashion Designer</h3>
+            <span data-x-cat>Fashion &amp; Craft</span>
+          </div>
+        </div>
+        <div class="x-problem">
+          <h4>The problem it solves</h4>
+          <p data-x-problem></p>
+        </div>
+        <div class="x-stack">
+          <h4>Your stack, switched on at signup</h4>
+          <div class="x-apps" data-x-apps></div>
+        </div>
+        <p class="x-note">Every stack is a starting point. Add or remove apps any time from your App Store.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FOUNDING PERKS ======================= -->
+<section>
+  <div class="wrap">
+    <div class="perks-panel rv">
+      <div class="perks-inner">
+        <div>
+          <span class="perks-tag"><i class="ph-fill ph-star"></i> First 500 brands only</span>
+          <h2>Founding members get the best of it.</h2>
+          <p class="lead">Founding pricing is reserved for the first 500 brands on the list. After that, standard pricing applies.</p>
+          <a href="#final-join" class="btn" data-open-form>Join the waitlist</a>
+        </div>
+        <div>
+          <div class="perk">
+            <i class="ph-fill ph-seal-percent"></i>
+            <div>
+              <h3>₦2,000/month, locked for life</h3>
+              <p>Your founding price never increases, no matter what we add later.</p>
+            </div>
+          </div>
+          <div class="perk">
+            <i class="ph-fill ph-rocket-launch"></i>
+            <div>
+              <h3>First in line at launch</h3>
+              <p>Waitlist members get their invites before public signup opens.</p>
+            </div>
+          </div>
+          <div class="perk">
+            <i class="ph-fill ph-medal"></i>
+            <div>
+              <h3>Founding badge on your brand</h3>
+              <p>A permanent mark on your brand page showing you were here first.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FAQ ======================= -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <h2>Questions, answered plainly.</h2>
+    </div>
+    <div class="faq rv">
+      <details open>
+        <summary>How much will it cost? <i class="ph ph-plus"></i></summary>
+        <div class="a">Plans start at ₦2,000 per month, about the price of a data bundle. Every new brand starts with a free 7-day trial with full access, and founding members keep the ₦2,000 price for life.</div>
+      </details>
+      <details>
+        <summary>Do I need a laptop or any tech skills? <i class="ph ph-plus"></i></summary>
+        <div class="a">No. BrandsApp is built for your phone, on Nigerian networks. If you can use WhatsApp, you can run your brand. There are no servers, domains or settings to manage.</div>
+      </details>
+      <details>
+        <summary>What exactly do I get? <i class="ph ph-plus"></i></summary>
+        <div class="a">Your own live app at yourname.brandsapp.io with a public website, plus any apps you install: a store, bookings, courses, POS, email marketing, loyalty and more. Your data sits in your own private database.</div>
+      </details>
+      <details>
+        <summary>When does it launch? <i class="ph ph-plus"></i></summary>
+        <div class="a">We're opening in batches, starting with the waitlist. Join now and you'll get your invite by email as soon as your spot opens.</div>
+      </details>
+      <details>
+        <summary>Can I use my own logo and colours? <i class="ph ph-plus"></i></summary>
+        <div class="a">Yes. Your brand page carries your name, logo and colours from day one, and higher tiers can remove BrandsApp branding completely.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FINAL CTA ======================= -->
+<section class="final">
+  <div class="wrap">
+    <p class="pidgin rv">Na your time be this.</p>
+    <p class="sub rv">Be first through the door when BrandsApp opens. It takes ten seconds.</p>
+    <div class="cta-zone rv">
+      <form class="wl-form" id="final-join" data-wl>
+        <input type="email" name="email" placeholder="Enter your email" autocomplete="email" required aria-label="Email address">
+        <button type="submit" class="btn">Join the waitlist</button>
+      </form>
+      <p class="form-err" data-err>Please enter a valid email address.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FOOTER ======================= -->
+<footer>
+  <div class="wrap">
+    <span class="brand">
+      <img src="brandsapp-logo.svg" alt="">
+      <span class="wordmark">Brands<span>App</span></span>
+    </span>
+    <p><b>Proudly Nigerian.</b> © 2026 BrandsApp · hello@brandsapp.io</p>
+  </div>
+</footer>
+
+<!-- ======================= WAITLIST MODAL (step 2, fields from the original site) ======================= -->
+<div class="overlay" data-overlay role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="modal">
+    <button type="button" class="m-close" data-m-close aria-label="Close"><i class="ph ph-x"></i></button>
+
+    <form data-m-form novalidate>
+      <span class="m-step" data-m-step><i class="ph-fill ph-check-circle"></i> Step 2 of 2</span>
+      <h3 class="m-title" id="m-title">Tell us about your brand</h3>
+      <p class="m-sub">This helps us set up your apps and your website before your invite arrives.</p>
+
+      <label class="field" data-f="name">
+        <span>Your name *</span>
+        <input type="text" name="name" placeholder="e.g. Chioma Adebayo" autocomplete="name">
+      </label>
+      <label class="field" data-f="email">
+        <span>Email *</span>
+        <input type="email" name="email" placeholder="you@example.com" autocomplete="email">
+      </label>
+      <div class="f-2col">
+        <label class="field" data-f="brandName">
+          <span>Brand name *</span>
+          <input type="text" name="brandName" placeholder="e.g. Ade's Kitchen">
+        </label>
+        <label class="field" data-f="whatsapp">
+          <span>WhatsApp number *</span>
+          <input type="tel" name="whatsapp" placeholder="e.g. +2348012345678" autocomplete="tel">
+        </label>
+      </div>
+      <label class="field" data-f="category">
+        <span>Category *</span>
+        <input type="text" name="category" placeholder="e.g. Fashion Designer, Baker, School...">
+      </label>
+      <label class="field" data-f="about">
+        <span>What does your business do? *</span>
+        <textarea name="about" rows="3" placeholder="What do you sell, and who buys it? The more detail, the better we can build your site."></textarea>
+      </label>
+      <label class="field" data-f="social">
+        <span>Social media page link <span class="opt">(optional)</span></span>
+        <input type="text" name="social" placeholder="e.g. instagram.com/yourbrand">
+      </label>
+
+      <p class="m-err" data-m-err>Please fill in the highlighted fields.</p>
+      <button type="submit" class="btn btn-full">Join the waitlist</button>
+      <p class="m-note">Free to join · No card required</p>
+    </form>
+
+    <div class="m-success" data-m-success>
+      <div class="s-check"><i class="ph-fill ph-check"></i></div>
+      <h3>You're on the list.</h3>
+      <p>You are number <b data-pos>2,141</b> in line. We'll email your invite the moment your spot opens.</p>
+      <a class="btn btn-wa" data-wa target="_blank" rel="noopener"><i class="ph-fill ph-whatsapp-logo"></i> Share on WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- reveal on scroll ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.15});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* ---------- interactive ripple background (hero) ---------- */
+  var hero = document.querySelector('.hero');
+  var rippleLayer = document.querySelector('[data-ripple-layer]');
+  function spawnRipple(x, y){
+    if(reduce || !rippleLayer) return;
+    var r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    r.innerHTML = '<span></span><span></span><span></span>';
+    rippleLayer.appendChild(r);
+    setTimeout(function(){ r.remove(); }, 2600);
+  }
+  hero.addEventListener('click', function(e){
+    var rect = hero.getBoundingClientRect();
+    spawnRipple(e.clientX - rect.left, e.clientY - rect.top);
+  });
+  /* ambient auto-ripples every 3s, only while the hero is on screen */
+  var heroVisible = true, ambientTimer = null;
+  function startAmbient(){
+    if(ambientTimer || reduce) return;
+    ambientTimer = setInterval(function(){
+      if(!heroVisible) return;
+      var rect = hero.getBoundingClientRect();
+      spawnRipple(Math.random() * rect.width, Math.random() * rect.height);
+    }, 3000);
+  }
+  new IntersectionObserver(function(entries){
+    heroVisible = entries[0].isIntersecting;
+    if(heroVisible) startAmbient();
+    else if(ambientTimer){ clearInterval(ambientTimer); ambientTimer = null; }
+  },{threshold:.1}).observe(hero);
+  startAmbient();
+
+  /* ---------- confetti (tiny hand-rolled burst) ---------- */
+  function burst(canvas){
+    if(reduce || !canvas) return;
+    var ctx = canvas.getContext('2d');
+    var w = canvas.width = canvas.offsetWidth, h = canvas.height = canvas.offsetHeight;
+    var colors = ['#C4451C','#E8734A','#F3B23C','#FAF8F5'];
+    var parts = [];
+    for(var i=0;i<70;i++){
+      parts.push({
+        x:w/2, y:h*0.45,
+        vx:(Math.random()-.5)*9, vy:-(Math.random()*7+3),
+        s:Math.random()*5+3, r:Math.random()*Math.PI,
+        vr:(Math.random()-.5)*.3,
+        c:colors[i%colors.length], life:1
+      });
+    }
+    function frame(){
+      var done = true;
+      ctx.clearRect(0,0,w,h);
+      parts.forEach(function(p){
+        p.vy += .18; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= .011;
+        if(p.life > 0 && p.y < h + 20){
+          done = false;
+          ctx.save();
+          ctx.globalAlpha = Math.max(p.life,0);
+          ctx.translate(p.x,p.y); ctx.rotate(p.r);
+          ctx.fillStyle = p.c;
+          ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.62);
+          ctx.restore();
+        }
+      });
+      if(!done) requestAnimationFrame(frame);
+      else ctx.clearRect(0,0,w,h);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ============================================================
+     Two-step waitlist flow (demo: stores locally, no backend)
+     Step 1: email capture in hero / final CTA -> opens modal (step 2)
+     CTAs (nav, perks): open the full modal including email
+     ============================================================ */
+  var count = 2140;  /* mock baseline */
+  var shareText = encodeURIComponent("I just joined the BrandsApp waitlist. Your brand, live in one minute, for the price of a data bundle. Join me: https://brandsapp.io");
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  var overlay  = document.querySelector('[data-overlay]');
+  var mForm    = document.querySelector('[data-m-form]');
+  var mStep    = document.querySelector('[data-m-step]');
+  var mErr     = document.querySelector('[data-m-err]');
+  var mSuccess = document.querySelector('[data-m-success]');
+  var modalEl  = overlay.querySelector('.modal');
+
+  function openModal(email){
+    /* reset views */
+    mForm.style.display = '';
+    mSuccess.classList.remove('show');
+    mErr.classList.remove('show');
+    mForm.querySelectorAll('.field').forEach(function(f){ f.classList.remove('err'); });
+    /* step badge only when email was captured in step 1 */
+    if(email){
+      mForm.email.value = email;
+      mStep.classList.add('show');
+    } else {
+      mStep.classList.remove('show');
+    }
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    modalEl.scrollTop = 0;
+    /* focus the first empty required field */
+    var first = email ? mForm.name : mForm.email;
+    setTimeout(function(){ first.focus(); }, 60);
+  }
+  function closeModal(){
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+  document.querySelector('[data-m-close]').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
+  });
+
+  /* step 1: email capture forms */
+  document.querySelectorAll('[data-wl]').forEach(function(form){
+    var err = form.parentElement.querySelector('[data-err]');
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var email = form.email.value.trim();
+      if(!emailRe.test(email)){ err.classList.add('show'); return; }
+      err.classList.remove('show');
+      openModal(email);
+    });
+  });
+
+  /* CTAs that open the full form (nav, perks) */
+  document.querySelectorAll('[data-open-form]').forEach(function(el){
+    el.addEventListener('click', function(ev){
+      ev.preventDefault();
+      openModal(null);
+    });
+  });
+
+  /* step 2: full form submit */
+  var REQUIRED = ['name','email','brandName','whatsapp','category','about'];
+  mForm.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var bad = false;
+    REQUIRED.forEach(function(n){
+      var input = mForm[n === 'whatsapp' ? 'whatsapp' : n];
+      var val = input.value.trim();
+      var invalid = !val || (n === 'email' && !emailRe.test(val));
+      input.closest('.field').classList.toggle('err', invalid);
+      if(invalid) bad = true;
+    });
+    if(bad){ mErr.classList.add('show'); return; }
+    mErr.classList.remove('show');
+    var data = {
+      name: mForm.name.value.trim(),
+      email: mForm.email.value.trim(),
+      brandName: mForm.brandName.value.trim(),
+      whatsappNumber: mForm.whatsapp.value.trim(),
+      category: mForm.category.value.trim(),
+      brandDescription: mForm.about.value.trim(),
+      socialMediaLink: mForm.social.value.trim() || undefined
+    };
+    try{ localStorage.setItem('brandsapp-waitlist', JSON.stringify(data)); }catch(e){}
+    mSuccess.querySelector('[data-pos]').textContent = (count + 1).toLocaleString('en-NG');
+    mSuccess.querySelector('[data-wa]').href = 'https://wa.me/?text=' + shareText;
+    mForm.style.display = 'none';
+    mSuccess.classList.add('show');
+    modalEl.scrollTop = 0;
+    var c = document.createElement('canvas');
+    c.style.cssText = 'position:absolute;inset:0;pointer-events:none';
+    mSuccess.style.position = 'relative';
+    mSuccess.appendChild(c);
+    burst(c);
+    setTimeout(function(){ c.remove(); }, 3200);
+  });
+
+  /* ============================================================
+     Explorer: pick your business, watch your stack come alive.
+     Data extracted from the original brandsapp.io bundle
+     (popular picks subset; full catalog is 500+ at launch).
+     ============================================================ */
+  var CATS = {
+    "fashion":"Fashion & Craft","food":"Food & Hospitality","education":"Education",
+    "beauty":"Beauty & Wellness","health":"Health & Wellness","tech":"Tech & Digital",
+    "entertainment":"Entertainment","sports":"Fitness & Sports","services":"Services",
+    "real-estate":"Real Estate","agriculture":"Agriculture","media":"Media & Content","other":"Retail"
+  };
+  var APPS = {
+    "commerce":       {n:"Commerce",        d:"Sell online with payments & inventory", i:"ph-storefront"},
+    "appointments":   {n:"Appointments",    d:"Book slots & pay upfront",              i:"ph-calendar-check"},
+    "crm":            {n:"CRM",             d:"Track every client & lead",             i:"ph-users-three"},
+    "messaging":      {n:"Messaging",       d:"SMS, email & WhatsApp campaigns",       i:"ph-chat-circle-text"},
+    "reservations":   {n:"Reservations",    d:"Table & room booking, waitlists",       i:"ph-fork-knife"},
+    "logistics":      {n:"Logistics",       d:"Delivery zones & dispatch",             i:"ph-truck"},
+    "loyalty":        {n:"Loyalty",         d:"Points that bring them back",           i:"ph-heart"},
+    "reviews":        {n:"Reviews",         d:"Collect and showcase reviews",          i:"ph-star"},
+    "forms":          {n:"Forms",           d:"Applications, intake & quizzes",        i:"ph-clipboard-text"},
+    "school":         {n:"School",          d:"Classes, fees, results & registers",    i:"ph-graduation-cap"},
+    "accounting":     {n:"Accounting",      d:"Invoicing & expense tracking",          i:"ph-calculator"},
+    "sessions":       {n:"Sessions",        d:"1-on-1 & group sessions",               i:"ph-video-camera"},
+    "attendance":     {n:"Attendance",      d:"QR check-ins & reports",                i:"ph-qr-code"},
+    "social-media":   {n:"Social Media",    d:"Plan and publish everywhere",           i:"ph-share-network"},
+    "hospital":       {n:"Hospital",        d:"Records, billing & pharmacy",           i:"ph-first-aid"},
+    "media":          {n:"Media",           d:"Galleries & client delivery",           i:"ph-image"},
+    "docs":           {n:"Docs",            d:"Wikis & shareable documents",           i:"ph-file-text"},
+    "real-estate":    {n:"Real Estate",     d:"Professional property listings",        i:"ph-house-line"},
+    "marketing":      {n:"Marketing",       d:"Email campaigns & analytics",           i:"ph-megaphone"},
+    "expenses":       {n:"Expenses",        d:"Track costs & revenue",                 i:"ph-wallet"},
+    "events":         {n:"Events",          d:"Ticketed events & shows",               i:"ph-ticket"},
+    "tasks":          {n:"Tasks",           d:"Project & task management",             i:"ph-check-circle"},
+    "blog":           {n:"Blog",            d:"Publish to grow organically",           i:"ph-pen-nib"},
+    "email-marketing":{n:"Email Marketing", d:"Own and grow your audience",            i:"ph-envelope-simple-open"},
+    "podcast":        {n:"Podcast",         d:"Host & distribute episodes",            i:"ph-microphone"}
+  };
+  var BIZ = [
+    {l:"Fashion Designer", c:"fashion", ic:"ph-dress", p:"Made-to-order commissions and a ready-to-wear line share nothing but a phone number.", a:["commerce","crm","social-media","appointments","messaging"]},
+    {l:"Tailor", c:"fashion", ic:"ph-scissors", p:"Fitting appointments and measurement records live in a notebook, not a system.", a:["appointments","crm","messaging","commerce"]},
+    {l:"Boutique Owner", c:"other", ic:"ph-handbag", p:"A boutique's stock turns over with trends, but selling through WhatsApp and Instagram DMs when a piece drops means missed sizes and lost sales.", a:["commerce","social-media","reviews","loyalty"]},
+    {l:"Restaurant Owner", c:"food", ic:"ph-fork-knife", p:"Dine-in bookings, walk-in orders and delivery all get juggled through phone calls and paper tickets, so tables and kitchen capacity are never actually managed.", a:["reservations","commerce","logistics","loyalty","reviews"]},
+    {l:"Caterer", c:"food", ic:"ph-cooking-pot", p:"Every job starts as a quote for a headcount and menu that gets negotiated over WhatsApp, then forgotten once the event is booked.", a:["crm","forms","commerce","messaging"]},
+    {l:"Baker", c:"food", ic:"ph-cake", p:"Every cake is a custom order with its own size, flavor and delivery date, but orders come in as photos and voice notes with no tracking.", a:["commerce","forms","crm","social-media"]},
+    {l:"Hotel Owner", c:"food", ic:"ph-bed", p:"Room bookings, walk-ins and add-on services are tracked across a paper ledger and phone calls, with no live view of room availability.", a:["reservations","commerce","reviews","messaging"]},
+    {l:"School Owner", c:"education", ic:"ph-graduation-cap", p:"Running the school day-to-day still depends on paper registers, a WhatsApp group per class, and a spreadsheet for fees and results.", a:["school","accounting","messaging","forms"]},
+    {l:"Tutor", c:"education", ic:"ph-chalkboard-teacher", p:"Lessons get booked through calls and WhatsApp messages, so no-shows and unpaid sessions are a regular loss.", a:["sessions","accounting","messaging","crm"]},
+    {l:"Makeup Artist", c:"beauty", ic:"ph-paint-brush", p:"Bridal and event bookings get juggled across DMs with no deposit to hold the date.", a:["appointments","messaging","reviews","loyalty","social-media"]},
+    {l:"Barber", c:"beauty", ic:"ph-scissors", p:"Walk-in chaos and no-shows make a barbershop's day unpredictable.", a:["appointments","loyalty","reviews","messaging"]},
+    {l:"Hairstylist", c:"beauty", ic:"ph-sparkle", p:"Long sessions and last-minute reschedules eat into a stylist's booked hours.", a:["appointments","loyalty","reviews","messaging"]},
+    {l:"Pharmacist", c:"health", ic:"ph-pill", p:"Customers call to ask if a drug is in stock or safe to combine, but there's no way to log stock or answer safely at scale.", a:["commerce","hospital","messaging","forms"]},
+    {l:"Photographer", c:"entertainment", ic:"ph-camera", p:"Shoot bookings and gallery delivery happen manually, with no way to sell prints or packages after the shoot.", a:["sessions","commerce","media","social-media"]},
+    {l:"DJ", c:"entertainment", ic:"ph-vinyl-record", p:"Gig bookings, dates, and deposits are scattered across DMs, so double-bookings and no-shows keep happening.", a:["events","sessions","commerce","social-media"]},
+    {l:"Event Planner", c:"entertainment", ic:"ph-confetti", p:"Managing vendors, budgets, and timelines for multiple events at once is done from memory and scattered chat threads.", a:["events","crm","forms","tasks"]},
+    {l:"Fitness Coach", c:"sports", ic:"ph-barbell", p:"Training sessions and client progress are tracked in personal notes, with no structured way to sell plans or track renewals.", a:["appointments","attendance","commerce","forms"]},
+    {l:"Lawyer", c:"services", ic:"ph-scales", p:"Wins clients through referrals and reputation, but engagement letters, case documents and retainer invoices are scattered across email and physical files with no single record.", a:["crm","accounting","docs","forms","appointments"]},
+    {l:"Accountant", c:"services", ic:"ph-calculator", p:"Handles bookkeeping and statutory filing for several small businesses, but client ledgers, deadlines and document requests are tracked across separate spreadsheets with no shared view.", a:["accounting","crm","docs","forms","appointments"]},
+    {l:"Software Developer", c:"tech", ic:"ph-code", p:"They win work on referrals and cold outreach but run the business on scattered tools and chase invoices for weeks, with no professional home they own.", a:["tasks","crm","accounting","blog","commerce"]},
+    {l:"Real Estate Agent", c:"real-estate", ic:"ph-house-line", p:"Listings live scattered across WhatsApp statuses and flyers, so serious buyers can't browse or inquire in one place.", a:["real-estate","crm","appointments","forms","marketing"]},
+    {l:"Farmer", c:"agriculture", ic:"ph-plant", p:"Harvests are sold to whoever shows up first at the farm gate, with no way to reach buyers directly or track what's owed.", a:["commerce","crm","expenses","logistics","messaging"]},
+    {l:"Blogger", c:"media", ic:"ph-pen-nib", p:"Your blog lives on a platform you don't own, so ad revenue is your only income and one policy change can wipe it out.", a:["blog","email-marketing","marketing","commerce"]},
+    {l:"Podcaster", c:"media", ic:"ph-microphone", p:"Episodes are hosted on a free platform with no owned RSS feed, so you can't prove your reach to sponsors or reliably grow the show.", a:["podcast","email-marketing","crm","commerce"]},
+    {l:"Supermarket Owner", c:"other", ic:"ph-shopping-cart", p:"Supermarkets run on thin margins across thousands of SKUs, and a notebook stock count can't catch shrinkage or expiry before it hurts profit.", a:["commerce","loyalty","accounting","logistics","marketing"]}
+  ];
+
+  var q = "", cat = null, sel = BIZ[0];
+  var $search = document.querySelector('[data-x-search]');
+  var $cats   = document.querySelector('[data-x-cats]');
+  var $count  = document.querySelector('[data-x-count]');
+  var $list   = document.querySelector('[data-x-list]');
+  var $name   = document.querySelector('[data-x-name]');
+  var $cat    = document.querySelector('[data-x-cat]');
+  var $icon   = document.querySelector('[data-x-icon]');
+  var $prob   = document.querySelector('[data-x-problem]');
+  var $apps   = document.querySelector('[data-x-apps]');
+
+  function catKeys(){
+    var seen = [];
+    BIZ.forEach(function(b){ if(seen.indexOf(b.c) < 0) seen.push(b.c); });
+    return seen;
+  }
+  function renderCats(){
+    $cats.innerHTML = '';
+    var all = document.createElement('button');
+    all.type = 'button'; all.className = 'x-cat' + (cat === null ? ' on' : '');
+    all.textContent = 'All';
+    all.onclick = function(){ cat = null; renderCats(); renderList(); };
+    $cats.appendChild(all);
+    catKeys().forEach(function(k){
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'x-cat' + (cat === k ? ' on' : '');
+      btn.textContent = CATS[k];
+      btn.onclick = function(){ cat = (cat === k ? null : k); renderCats(); renderList(); };
+      $cats.appendChild(btn);
+    });
+  }
+  function filtered(){
+    return BIZ.filter(function(b){
+      if(cat && b.c !== cat) return false;
+      if(q && b.l.toLowerCase().indexOf(q) < 0 && CATS[b.c].toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+  function renderList(){
+    var items = filtered();
+    $count.textContent = (q || cat) ? items.length + ' match' + (items.length === 1 ? '' : 'es') : 'Popular picks';
+    $list.innerHTML = '';
+    if(!items.length){
+      var li = document.createElement('li');
+      li.className = 'x-empty';
+      li.textContent = 'No match here yet, but with 500+ business types at launch, yours is covered. Join the waitlist to be sure.';
+      $list.appendChild(li);
+      return;
+    }
+    items.forEach(function(b){
+      var li = document.createElement('li');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'x-item' + (b === sel ? ' on' : '');
+      btn.innerHTML = '<span>' + b.l + '</span><span class="cat">' + CATS[b.c] + '</span>';
+      btn.onclick = function(){ sel = b; renderList(); renderDetail(true); };
+      li.appendChild(btn);
+      $list.appendChild(li);
+    });
+  }
+  function renderDetail(animate){
+    $name.textContent = sel.l;
+    $cat.textContent = CATS[sel.c];
+    $icon.className = 'ph-fill ' + sel.ic;
+    $prob.textContent = sel.p;
+    $apps.innerHTML = '';
+    sel.a.forEach(function(slug, idx){
+      var app = APPS[slug]; if(!app) return;
+      var el = document.createElement('div');
+      el.className = 'x-app';
+      el.innerHTML = '<i class="ph-fill ' + app.i + '"></i><div><b>' + app.n + '</b><span>' + app.d + '</span></div>';
+      $apps.appendChild(el);
+      if(reduce || !animate){ el.classList.add('pop'); }
+      else setTimeout(function(){ el.classList.add('pop'); }, 90 + idx * 110);
+    });
+  }
+  $search.addEventListener('input', function(){
+    q = $search.value.trim().toLowerCase();
+    renderList();
+  });
+  renderCats(); renderList(); renderDetail(false);
+  /* animate the first stack in when the section scrolls into view */
+  new IntersectionObserver(function(entries, obs){
+    if(entries[0].isIntersecting){ renderDetail(true); obs.disconnect(); }
+  },{threshold:.3}).observe(document.querySelector('.x-detail'));
+})();
+</script>
+</body>
+</html>
