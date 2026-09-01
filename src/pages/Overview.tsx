@@ -35,9 +35,10 @@ export default function Overview() {
   if (brand.error) {
     return (
       <main className="page">
-        <div className="crumbs">
-          <Link to="/dashboard">My Brands</Link>
-        </div>
+        <Link className="back-link always" to="/dashboard">
+          <Icon name="back" size={16} />
+          <span>My Brands</span>
+        </Link>
         <ErrorState message={brand.error} onRetry={brand.retry} />
       </main>
     )
@@ -47,11 +48,6 @@ export default function Overview() {
 
   return (
     <main className="page">
-      <div className="crumbs">
-        <Link to="/dashboard">My Brands</Link>
-        <span aria-hidden="true">/</span>
-        <span>{brand.data?.name ?? "…"}</span>
-      </div>
       <Link className="back-link" to="/dashboard">
         <Icon name="back" size={16} />
         <span>My Brands</span>

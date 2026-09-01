@@ -67,12 +67,7 @@ export default function CreateBrand() {
 
   return (
     <main className="page" style={{ maxWidth: 620 }}>
-      <div className="crumbs">
-        <Link to="/dashboard">My Brands</Link>
-        <span aria-hidden="true">/</span>
-        <span>New brand</span>
-      </div>
-      <Link className="back-link" to="/dashboard">
+      <Link className="back-link always" to="/dashboard">
         <Icon name="back" size={16} />
         <span>My Brands</span>
       </Link>

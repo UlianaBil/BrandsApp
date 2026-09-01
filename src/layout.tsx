@@ -45,12 +45,19 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   const match = pathname.match(/^\/dashboard\/([^/]+)/)
   const slug = match && match[1] !== "create" ? match[1] : null
 
+  // The section header names the brand you're inside — it replaces
+  // desktop breadcrumbs as the identity signal.
+  const brand = useAsync(
+    () => (slug ? api.getBrand(slug) : Promise.resolve(null)),
+    [slug],
+  )
+
   return (
     <nav className="sidebar-nav" aria-label="Dashboard">
       <NavItem to="/dashboard" icon="grid" label="My Brands" end onClick={onNavigate} />
       {slug && (
         <>
-          <div className="nav-section">This brand</div>
+          <div className="nav-section">{brand.data?.name ?? "This brand"}</div>
           <NavItem to={`/dashboard/${slug}`} icon="layout" label="Overview" end onClick={onNavigate} />
           <NavItem to={`/dashboard/${slug}/billing`} icon="card" label="Billing" onClick={onNavigate} />
           <NavItem to={`/dashboard/${slug}/finances`} icon="wallet" label="Finances" onClick={onNavigate} />
@@ -118,7 +125,9 @@ export function Shell({ children }: { children: ReactNode }) {
           >
             <Icon name="menu" size={22} />
           </button>
-          <BrandMark />
+          <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
+            <img src="/brandsapp-logo.svg" alt="" />
+          </Link>
         </header>
 
         {drawerOpen && (
@@ -154,19 +163,6 @@ export function BrandHeader({ slug, title }: { slug: string; title?: string }) {
 
   return (
     <>
-      <div className="crumbs">
-        <Link to="/dashboard">My Brands</Link>
-        <span aria-hidden="true">/</span>
-        {title ? (
-          <>
-            <Link to={`/dashboard/${slug}`}>{name ?? "…"}</Link>
-            <span aria-hidden="true">/</span>
-            <span>{title}</span>
-          </>
-        ) : (
-          <span>{name ?? "…"}</span>
-        )}
-      </div>
       <Link className="back-link" to={title ? `/dashboard/${slug}` : "/dashboard"}>
         <Icon name="back" size={16} />
         <span>{title ? (name ?? "Back") : "My Brands"}</span>
