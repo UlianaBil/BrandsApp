@@ -173,9 +173,14 @@ export default function Overview() {
           {usage.data && (
             <>
               <div className="ov-num">{usage.data.requests.toLocaleString()}</div>
-              <p className="ov-sub">visits to your site this month.</p>
-              <div className="stat-actions ov-sub" style={{ marginTop: "auto" }}>
-                {usage.data.storageMb} MB storage · {usage.data.emailsSent} emails sent
+              <p className="ov-sub">
+                visits to your site this month · {usage.data.storageMb} MB storage ·{" "}
+                {usage.data.emailsSent} emails sent
+              </p>
+              <div className="stat-actions">
+                <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm">
+                  Usage &amp; credits
+                </Link>
               </div>
             </>
           )}

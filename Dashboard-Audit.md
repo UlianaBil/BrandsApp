@@ -97,7 +97,8 @@
 - **Issue:** Production showed "No subscription found for this brand." (a raw backend message) and "No usage recorded yet."
 - **Recommendation:** The plan card should always answer "am I okay, and what should I do next?" — trial with days left → "Choose a plan"; active → renewal date; none → clear CTA. Usage should show the three numbers an owner recognizes (visits, storage, emails) rather than nothing.
 - **Priority:** Medium
-- **Implemented:** ✅ All three plan states designed and wired; usage card with real numbers and an honest "appears once your site gets its first visits" empty state; per-card inline error + retry so one failed call doesn't blank the page.
+- **CTA rule (documented for the real implementation):** having no paid plan is not a free state — a brand without a chosen plan is heading offline. So while the brand is on a trial or has no plan, the plan card's CTA is **primary** ("Choose a plan"). Once a plan is selected and active, the same slot becomes a **secondary** "Manage plan" — the urgency is gone and the primary visual weight belongs elsewhere. The Usage card links to Billing ("Usage & credits") so the at-a-glance number is never a dead end; Billing should show usage-vs-allowance where credits are bought.
+- **Implemented:** ✅ All three plan states designed and wired (CTA primary on trial/no-plan, secondary when active); Usage card action links to Billing; usage card with real numbers and an honest "appears once your site gets its first visits" empty state; per-card inline error + retry so one failed call doesn't blank the page.
 
 ### 12. Member view
 - **Implemented:** ✅ A member sees the overview with a read-only note ("billing, team and settings are read-only for you") instead of being locked out or misled. Open "Lagos Bites" to review.
