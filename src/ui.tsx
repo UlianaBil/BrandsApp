@@ -144,6 +144,20 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Initials — brand and people avatars show real initials, not icons   */
+/* ------------------------------------------------------------------ */
+
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
+}
+
+/* ------------------------------------------------------------------ */
 /* Role chip                                                           */
 /* ------------------------------------------------------------------ */
 

@@ -1,7 +1,9 @@
 /* ==========================================================
    BrandsApp dashboard · design tokens
-   Brand-locked to the landing: terracotta #C4451C, cream
-   #FAF8F5, Inter. Pills for actions, 16px cards, no italics.
+   Component styling follows the ORIGINAL production dashboard:
+   white ground, 12px bordered cards, ~10px squarish buttons and
+   inputs, terracotta accent, plain-icon manage cards, tinted
+   "live" card. Pills are reserved for chips/badges only.
    ========================================================== */
 
 :root {
@@ -22,7 +24,10 @@
   --bad: #b3372f;
   --bad-bg: #f9e9e7;
   --info-bg: #edf1f7;
-  --r-card: 16px;
+  --tint-card-bg: #fdf5f0;
+  --tint-card-border: #f2ddd1;
+  --r-card: 12px;
+  --r-btn: 10px;
   --r-pill: 999px;
   --shadow-card: 0 1px 2px rgba(37, 37, 37, 0.04);
   --sans: "Inter", -apple-system, system-ui, sans-serif;
@@ -35,7 +40,7 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--sans);
   color: var(--ink);
-  background: var(--cream);
+  background: var(--paper);
   -webkit-font-smoothing: antialiased;
   font-size: 15px;
   line-height: 1.55;
@@ -152,7 +157,7 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
   box-shadow: var(--shadow-card);
   padding: 18px;
 }
-.card + .card, .stack > * + * { margin-top: 14px; }
+.stack > * + * { margin-top: 14px; }
 
 .card h2 { font-size: 1.02rem; font-weight: 600; margin-bottom: 4px; }
 .card .hint { color: var(--body-c); font-size: 0.9rem; }
@@ -164,23 +169,36 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .grid-3 { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 700px) { .grid-3 { grid-template-columns: 1fr 1fr 1fr; } }
 
+/* Brand card (approved redesign): avatar with the brand's initials. */
 .linkcard {
   display: flex; align-items: flex-start; gap: 14px;
   transition: border-color 0.15s, transform 0.15s;
 }
 .linkcard:hover { border-color: var(--terracotta); }
-.linkcard .lc-icon {
-  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-  background: var(--tint); color: var(--terracotta);
+.linkcard h2 { margin-bottom: 2px; }
+
+.brand-avatar {
+  width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+  background: var(--tint); color: var(--terracotta-deep);
+  font-weight: 700; font-size: 0.95rem; letter-spacing: 0.01em;
   display: flex; align-items: center; justify-content: center;
 }
-.linkcard h2 { margin-bottom: 2px; }
+.brand-avatar.lg { width: 48px; height: 48px; font-size: 1.05rem; }
+
+/* Manage cards keep the original pattern: plain icon above the title. */
+.managecard { display: block; transition: border-color 0.15s; }
+.managecard:hover { border-color: var(--terracotta); }
+.managecard .mc-icon { color: var(--terracotta); margin-bottom: 8px; }
+.managecard h2 { margin-bottom: 2px; }
+
+/* Tinted "your brand is live" card, as in the original overview. */
+.hero-live { background: var(--tint-card-bg); border-color: var(--tint-card-border); }
 
 /* ---------- buttons ---------- */
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  border: none; border-radius: var(--r-pill);
+  border: none; border-radius: var(--r-btn);
   font-weight: 600; font-size: 0.93rem;
   padding: 10px 20px;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -229,7 +247,7 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .input, select.input, textarea.input {
   width: 100%;
   border: 1px solid rgba(37, 37, 37, 0.18);
-  border-radius: 12px;
+  border-radius: var(--r-btn);
   padding: 10px 14px;
   background: var(--paper);
   transition: border-color 0.15s;
@@ -290,7 +308,7 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 }
 .toast {
   background: var(--ink); color: #fff;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-card);
   padding: 10px 18px; font-size: 0.9rem; font-weight: 500;
   box-shadow: 0 8px 24px rgba(20, 15, 12, 0.25);
   animation: toast-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -304,7 +322,7 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
   position: fixed; right: 14px; bottom: 14px; z-index: 55;
   border: 1px solid var(--hairline);
   background: var(--paper); color: var(--body-c);
-  border-radius: var(--r-pill);
+  border-radius: var(--r-btn);
   padding: 8px 14px; font-size: 0.8rem; font-weight: 600;
   box-shadow: 0 4px 16px rgba(20, 15, 12, 0.12);
 }

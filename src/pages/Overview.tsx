@@ -1,18 +1,16 @@
 import { Link, useParams } from "react-router-dom"
 import { api, ngn } from "../mock"
 import { BrandHeader } from "../layout"
-import { CardSkeleton, ErrorState, Icon, RoleChip, Skeleton, useAsync, useToast, type IconName } from "../ui"
+import { CardSkeleton, ErrorState, Icon, initials, RoleChip, Skeleton, useAsync, useToast, type IconName } from "../ui"
 
 function ManageCard({ to, icon, title, body }: { to: string; icon: IconName; title: string; body: string }) {
   return (
-    <Link to={to} className="card linkcard">
-      <div className="lc-icon">
-        <Icon name={icon} />
+    <Link to={to} className="card managecard">
+      <div className="mc-icon" aria-hidden="true">
+        <Icon name={icon} size={22} />
       </div>
-      <div>
-        <h2>{title}</h2>
-        <p className="hint">{body}</p>
-      </div>
+      <h2>{title}</h2>
+      <p className="hint">{body}</p>
     </Link>
   )
 }
@@ -52,7 +50,7 @@ export default function Overview() {
       <BrandHeader slug={slug} />
 
       {/* The single most important action: run the business. */}
-      <section className="card" aria-label="Your brand">
+      <section className="card hero-live" aria-label="Your brand">
         {brand.loading ? (
           <>
             <Skeleton h={16} w="55%" />
@@ -61,7 +59,10 @@ export default function Overview() {
           </>
         ) : brand.data ? (
           <>
-            <div className="card-row">
+            <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+              <div className="brand-avatar lg" aria-hidden="true">
+                {initials(brand.data.name)}
+              </div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                   <span className="chip chip-good">
@@ -84,7 +85,7 @@ export default function Overview() {
                 View live site
                 <Icon name="external" size={15} />
               </a>
-              <button className="btn btn-ghost" onClick={copyLink}>
+              <button className="btn btn-secondary" onClick={copyLink}>
                 <Icon name="copy" size={16} />
                 Copy link
               </button>

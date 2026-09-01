@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { api } from "../mock"
-import { CardSkeleton, EmptyState, ErrorState, Icon, RoleChip, useAsync } from "../ui"
+import { CardSkeleton, EmptyState, ErrorState, Icon, initials, RoleChip, useAsync } from "../ui"
 
 export default function MyBrands() {
   const brands = useAsync(() => api.listBrands(), [])
@@ -43,8 +43,8 @@ export default function MyBrands() {
         <div className="stack">
           {brands.data.map((b) => (
             <Link key={b.slug} to={`/dashboard/${b.slug}`} className="card linkcard">
-              <div className="lc-icon">
-                <Icon name="globe" />
+              <div className="brand-avatar" aria-hidden="true">
+                {initials(b.name)}
               </div>
               <div className="grow" style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { api, roleHelp, roleLabel, type Role } from "../mock"
 import { BrandHeader } from "../layout"
-import { CardSkeleton, ErrorState, RoleChip, useAsync, useToast } from "../ui"
+import { CardSkeleton, ErrorState, initials, RoleChip, useAsync, useToast } from "../ui"
 
 export default function Team() {
   const { slug = "" } = useParams()
@@ -74,12 +74,7 @@ export default function Team() {
               {team.data.map((m) => (
                 <div key={m.id} className="row-item">
                   <div className="avatar" aria-hidden="true">
-                    {m.name
-                      .split(" ")
-                      .map((p) => p[0])
-                      .slice(0, 2)
-                      .join("")
-                      .toUpperCase()}
+                    {initials(m.name)}
                   </div>
                   <div className="grow">
                     <div className="title">
