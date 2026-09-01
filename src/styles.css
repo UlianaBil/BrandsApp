@@ -258,6 +258,9 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
   .brand-head-actions { margin-left: 0; flex-basis: 100%; }
   .brand-head-actions .btn { flex: 1 1 auto; }
 }
+@media (max-width: 899px) {
+  .chip.head-badge { display: none; }
+}
 .copy-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; border-radius: 7px;

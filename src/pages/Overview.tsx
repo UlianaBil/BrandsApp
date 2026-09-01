@@ -69,7 +69,7 @@ export default function Overview() {
             <div style={{ minWidth: 0, flex: "1 1 240px" }}>
               <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                 <h1>{brand.data.name}</h1>
-                <span className="chip chip-good">
+                <span className="chip chip-good head-badge">
                   <Icon name="check" size={11} />
                   Live
                 </span>
