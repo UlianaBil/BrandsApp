@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/layout.tsx","./src/main.tsx","./src/mock.ts","./src/ui.tsx","./src/pages/billing.tsx","./src/pages/createbrand.tsx","./src/pages/finances.tsx","./src/pages/marketplace.tsx","./src/pages/mybrands.tsx","./src/pages/overview.tsx","./src/pages/settings.tsx","./src/pages/team.tsx"],"version":"5.9.3"}

@@ -1,0 +1,69 @@
+import { Link } from "react-router-dom"
+import { api } from "../mock"
+import { CardSkeleton, EmptyState, ErrorState, Icon, RoleChip, useAsync } from "../ui"
+
+export default function MyBrands() {
+  const brands = useAsync(() => api.listBrands(), [])
+
+  return (
+    <main className="page">
+      <div className="page-head">
+        <div>
+          <h1>My Brands</h1>
+          <p className="sub">Every brand you own or help run, in one place.</p>
+        </div>
+        <Link to="/dashboard/create" className="btn btn-primary">
+          <Icon name="plus" size={17} />
+          New brand
+        </Link>
+      </div>
+
+      {brands.loading && (
+        <div className="stack">
+          <CardSkeleton lines={2} />
+          <CardSkeleton lines={2} />
+        </div>
+      )}
+
+      {brands.error && <ErrorState message={brands.error} onRetry={brands.retry} />}
+
+      {brands.data && brands.data.length === 0 && (
+        <EmptyState
+          title="No brands yet"
+          body="Create your first brand and get your website, storefront and business apps — all in one place."
+          action={
+            <Link to="/dashboard/create" className="btn btn-primary btn-sm">
+              Create your first brand
+            </Link>
+          }
+        />
+      )}
+
+      {brands.data && brands.data.length > 0 && (
+        <div className="stack">
+          {brands.data.map((b) => (
+            <Link key={b.slug} to={`/dashboard/${b.slug}`} className="card linkcard">
+              <div className="lc-icon">
+                <Icon name="globe" />
+              </div>
+              <div className="grow" style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                  <h2 style={{ marginBottom: 0 }}>{b.name}</h2>
+                  <RoleChip role={b.role} />
+                </div>
+                <p className="domain-line">{b.domain}</p>
+              </div>
+              <span style={{ color: "var(--muted)", alignSelf: "center" }} aria-hidden="true">
+                <Icon name="arrow-right" size={18} />
+              </span>
+            </Link>
+          ))}
+          <p className="hint" style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
+            Brands where you're a member are listed too — what you can do inside each one depends on
+            your role.
+          </p>
+        </div>
+      )}
+    </main>
+  )
+}
