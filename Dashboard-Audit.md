@@ -218,7 +218,7 @@ After review, the visual layer was pulled back toward the original production co
 
 ## Visual language (second pass, owner-approved reference)
 
-The surface styling was retuned to a warmer, more editorial feel based on a design reference supplied by the owner, without touching layout or logic: warm greige page ground with floating white cards (20px radius, soft shadows, hairline borders); serif display (Playfair, matching the landing wordmark) for page titles and hero values; letterspaced uppercase micro-labels for card titles and section headings; monospace for technical strings (domains, addresses); terracotta arrow text-links for in-card navigation (boxed buttons remain for real actions and forms); and soft per-section pastel icon tiles on the manage cards.
+The surface styling was retuned to a warmer, more editorial feel based on a design reference supplied by the owner, without touching layout or logic: warm greige page ground with floating white cards (20px radius, soft shadows, hairline borders); letterspaced uppercase micro-labels for card titles and section headings; terracotta arrow text-links for in-card navigation (boxed buttons remain for real actions and forms); and soft per-section pastel icon tiles on the manage cards. Typography stays on the original's font stack (system sans for titles and body — the original declares Geist but never loads it, so users see the system font; the demo matches that behaviour and loads no webfonts, which is also lighter on slow connections).
 
 ## What was deliberately kept
 
