@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router-dom"
 import { api, ngn } from "../mock"
-import { BrandHeader } from "../layout"
 import { CardSkeleton, ErrorState, Icon, initials, RoleChip, Skeleton, useAsync, useToast, type IconName } from "../ui"
 
 function ManageCard({ to, icon, title, body }: { to: string; icon: IconName; title: string; body: string }) {
@@ -48,36 +47,42 @@ export default function Overview() {
 
   return (
     <main className="page">
-      <BrandHeader slug={slug} />
+      <div className="crumbs">
+        <Link to="/dashboard">My Brands</Link>
+        <span aria-hidden="true">/</span>
+        <span>{brand.data?.name ?? "…"}</span>
+      </div>
 
-      {/* The single most important action: run the business. */}
-      <section className="card hero-live" aria-label="Your brand">
+      {/* One entity header: identity + status on the left, actions on the right. */}
+      <header className="brand-head" aria-label="Your brand">
         {brand.loading ? (
-          <>
-            <Skeleton h={16} w="55%" />
+          <div style={{ flex: 1 }}>
+            <Skeleton h={26} w="45%" />
             <div style={{ height: 10 }} />
-            <Skeleton h={38} w="70%" />
-          </>
+            <Skeleton h={14} w="60%" />
+          </div>
         ) : brand.data ? (
           <>
-            <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-              <div className="brand-avatar lg" aria-hidden="true">
-                {initials(brand.data.name)}
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                  <span className="chip chip-good">
-                    <Icon name="check" size={11} />
-                    Live
-                  </span>
-                  <RoleChip role={brand.data.role} />
-                </div>
-                <p className="domain-line" style={{ marginTop: 8 }}>
-                  {brand.data.domain}
-                </p>
-              </div>
+            <div className="brand-avatar lg" aria-hidden="true">
+              {initials(brand.data.name)}
             </div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+            <div style={{ minWidth: 0, flex: "1 1 240px" }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <h1>{brand.data.name}</h1>
+                <span className="chip chip-good">
+                  <Icon name="check" size={11} />
+                  Live
+                </span>
+                <RoleChip role={brand.data.role} />
+              </div>
+              <p className="domain-line copy-inline" style={{ marginTop: 4 }}>
+                {brand.data.domain}
+                <button className="copy-btn" onClick={copyLink} aria-label="Copy link to your live site">
+                  <Icon name="copy" size={15} />
+                </button>
+              </p>
+            </div>
+            <div className="brand-head-actions">
               <a className="btn btn-primary" href={brand.data.adminUrl} target="_blank" rel="noreferrer">
                 Open brand admin
                 <Icon name="arrow-right" size={16} />
@@ -86,17 +91,10 @@ export default function Overview() {
                 View live site
                 <Icon name="external" size={15} />
               </a>
-              <button className="btn btn-secondary" onClick={copyLink}>
-                <Icon name="copy" size={16} />
-                Copy link
-              </button>
             </div>
-            <p className="hint" style={{ marginTop: 10 }}>
-              Products, orders, pages and apps are managed in your brand admin.
-            </p>
           </>
         ) : null}
-      </section>
+      </header>
 
       <div className="grid-3" style={{ marginTop: 14 }}>
         {/* Plan */}

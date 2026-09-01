@@ -90,7 +90,7 @@
 - **Recommendation:** Make "Open brand admin" the primary action of the overview, with "View live site" secondary.
 - **Expected benefit:** The most common task becomes the most prominent button.
 - **Priority:** High
-- **Implemented:** ✅ Hero card: Live status chip + role chip, primary **Open brand admin**, secondary **View live site**, tertiary **Copy link** (with toast), and a one-line explanation of what lives in the admin.
+- **Implemented:** ✅ A single entity header (identity left, actions right): avatar + brand name with Live and role chips, the domain shown once with an inline copy button (toast on copy), primary **Open brand admin**, secondary **View live site**. An earlier iteration used a separate tinted hero card; it was merged into the header to remove the duplicated name/domain and let the page start with content sooner.
 
 ### 11. Plan and usage cards were empty shells
 - **Issue:** Production showed "No subscription found for this brand." (a raw backend message) and "No usage recorded yet."
