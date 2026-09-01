@@ -58,10 +58,6 @@ export default function MyBrands() {
               </span>
             </Link>
           ))}
-          <p className="hint" style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
-            Brands where you're a member are listed too — what you can do inside each one depends on
-            your role.
-          </p>
         </div>
       )}
     </main>
