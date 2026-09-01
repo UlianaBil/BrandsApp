@@ -221,12 +221,9 @@ const paths: Record<IconName, ReactNode> = {
   ),
   store: (
     <>
-      <path d="m8.5 10 3-6" />
-      <path d="m15.5 10-3-6" />
-      <path d="M3 10h18" />
-      <path d="m4.5 10 1.5 8a2 2 0 0 0 2 1.6h8a2 2 0 0 0 2-1.6l1.5-8" />
-      <path d="m9.5 13.5.5 3.5" />
-      <path d="m14.5 13.5-.5 3.5" />
+      <path d="M7 3.5 4.5 7v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7L17 3.5Z" />
+      <path d="M4.5 7h15" />
+      <path d="M15.5 10.5a3.5 3.5 0 0 1-7 0" />
     </>
   ),
   gear: (
