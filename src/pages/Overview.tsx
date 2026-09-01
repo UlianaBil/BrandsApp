@@ -2,11 +2,11 @@ import { Link, useParams } from "react-router-dom"
 import { api, ngn } from "../mock"
 import { CardSkeleton, ErrorState, Icon, initials, Skeleton, useAsync, useToast, type IconName } from "../ui"
 
-function ManageCard({ to, icon, title, body }: { to: string; icon: IconName; title: string; body: string }) {
+function ManageCard({ to, icon, title, body, tone = "" }: { to: string; icon: IconName; title: string; body: string; tone?: string }) {
   return (
     <Link to={to} className="card managecard">
-      <div className="mc-icon" aria-hidden="true">
-        <Icon name={icon} size={22} />
+      <div className={`mc-icon ${tone}`} aria-hidden="true">
+        <Icon name={icon} size={20} />
       </div>
       <h2>{title}</h2>
       <p className="hint">{body}</p>
@@ -133,7 +133,7 @@ export default function Overview() {
                 {plan.data.name} · renews {plan.data.renewsOn}.
               </p>
               <div className="stat-actions">
-                <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm">
+                <Link to={`/dashboard/${slug}/billing`} className="link-cta">
                   Manage plan
                 </Link>
               </div>
@@ -178,7 +178,7 @@ export default function Overview() {
                 {usage.data.emailsSent} emails sent
               </p>
               <div className="stat-actions">
-                <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm">
+                <Link to={`/dashboard/${slug}/billing`} className="link-cta">
                   Usage &amp; credits
                 </Link>
               </div>
@@ -213,7 +213,7 @@ export default function Overview() {
               <div className="ov-num">{ngn(wallet.data.balanceNgn)}</div>
               <p className="ov-sub">Earned by your brand — spendable on your plan, credits or apps.</p>
               <div className="stat-actions">
-                <Link to={`/dashboard/${slug}/finances`} className="btn btn-secondary btn-sm">
+                <Link to={`/dashboard/${slug}/finances`} className="link-cta">
                   View finances
                 </Link>
               </div>
@@ -222,7 +222,7 @@ export default function Overview() {
         </section>
       </div>
 
-      <h2 style={{ fontSize: "1.05rem", margin: "26px 0 12px" }}>Manage this brand</h2>
+      <h2 className="section-label" style={{ margin: "28px 0 12px" }}>Manage this brand</h2>
       {brand.loading ? (
         <CardSkeleton lines={2} />
       ) : (
@@ -237,24 +237,28 @@ export default function Overview() {
             to={`/dashboard/${slug}/finances`}
             icon="wallet"
             title="Finances"
+            tone="mc-mint"
             body="Money made, money spent, and your wallet."
           />
           <ManageCard
             to={`/dashboard/${slug}/team`}
             icon="team"
             title="Team"
+            tone="mc-lav"
             body="Who has access to this brand, and what they can do."
           />
           <ManageCard
             to={`/dashboard/${slug}/marketplace`}
             icon="store"
             title="Marketplace"
+            tone="mc-sand"
             body="Page sections built by other creators."
           />
           <ManageCard
             to={`/dashboard/${slug}/settings`}
             icon="gear"
             title="Settings"
+            tone="mc-stone"
             body="Brand name, domains and brand-level configuration."
           />
         </div>

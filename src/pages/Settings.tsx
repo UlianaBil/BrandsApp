@@ -97,7 +97,7 @@ export default function Settings() {
 
         {/* Domains */}
         <section aria-label="Domains">
-          <h2 style={{ fontSize: "1.05rem", margin: "10px 0 6px" }}>Domains</h2>
+          <h2 className="section-label" style={{ margin: "12px 0 6px" }}>Domains</h2>
           <p className="hint" style={{ marginBottom: 12 }}>
             Connect a domain you already own. Your brand stays reachable at its brandsapp.io address
             either way.

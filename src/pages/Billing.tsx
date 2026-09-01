@@ -58,7 +58,7 @@ export default function Billing() {
 
         {/* Plans */}
         <section aria-label="Available plans">
-          <h2 style={{ fontSize: "1.05rem", margin: "10px 0 12px" }}>Plans</h2>
+          <h2 className="section-label" style={{ margin: "12px 0 12px" }}>Plans</h2>
           <div className="grid-2">
             {PLANS.map((p) => {
               const isCurrent = plan.data?.status === "active" && plan.data.name === p.name

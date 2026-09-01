@@ -216,6 +216,10 @@ After review, the visual layer was pulled back toward the original production co
 - **Brand card** (My Brands) keeps its approved redesign, with the avatar now showing the brand's real initials ("AF" for Acme Fashion Group) instead of a generic globe icon; the same initials avatar identifies the brand on the Overview.
 - Pill shapes are now reserved for chips/badges only, matching how the original used them.
 
+## Visual language (second pass, owner-approved reference)
+
+The surface styling was retuned to a warmer, more editorial feel based on a design reference supplied by the owner, without touching layout or logic: warm greige page ground with floating white cards (20px radius, soft shadows, hairline borders); serif display (Playfair, matching the landing wordmark) for page titles and hero values; letterspaced uppercase micro-labels for card titles and section headings; monospace for technical strings (domains, addresses); terracotta arrow text-links for in-card navigation (boxed buttons remain for real actions and forms); and soft per-section pastel icon tiles on the manage cards.
+
 ## What was deliberately kept
 
 - The existing information architecture (My Brands → brand → Billing/Finances/Team/Settings/Marketplace) — it's sound; the problems were states and gaps, not structure.
