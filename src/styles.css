@@ -248,6 +248,25 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .stat-num { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .stat-label { font-size: 0.8rem; color: var(--muted); }
 
+/* Overview stat cards: icon + muted label (utility in the corner),
+   one hero number, a short supporting line, then the action. */
+.stat-card { display: flex; flex-direction: column; }
+.stat-headrow { display: flex; align-items: center; gap: 8px; }
+.stat-ico {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: var(--tint); color: var(--terracotta);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.stat-title { font-size: 0.88rem; font-weight: 600; color: var(--body-c); }
+.stat-corner { margin-left: auto; font-size: 0.78rem; }
+.ov-num {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums; margin-top: 12px; line-height: 1.15;
+}
+.ov-sub { font-size: 0.85rem; color: var(--body-c); margin-top: 4px; }
+.stat-actions { margin-top: 14px; }
+.stat-card .stat-actions { margin-top: auto; padding-top: 14px; }
+
 /* ---------- forms ---------- */
 
 .field { margin-bottom: 16px; }

@@ -97,16 +97,18 @@ export default function Overview() {
 
       <div className="grid-3" style={{ marginTop: 14 }}>
         {/* Plan */}
-        <section className="card" aria-label="Plan">
-          <h2>Plan</h2>
-          {plan.loading && (
-            <>
-              <div style={{ height: 8 }} />
-              <Skeleton h={14} w="70%" />
-            </>
-          )}
+        <section className="card stat-card" aria-label="Plan">
+          <div className="stat-headrow">
+            <span className="stat-ico" aria-hidden="true">
+              <Icon name="card" size={16} />
+            </span>
+            <span className="stat-title">Plan</span>
+            {plan.data?.status === "trial" && <span className="chip chip-warn stat-corner">Free trial</span>}
+            {plan.data?.status === "active" && <span className="chip chip-good stat-corner">Active</span>}
+          </div>
+          {plan.loading && <Skeleton h={30} w="55%" style={{ marginTop: 12 }} />}
           {plan.error && (
-            <p className="hint">
+            <p className="hint" style={{ marginTop: 10 }}>
               Couldn't load your plan.{" "}
               <button className="btn btn-ghost btn-sm" onClick={plan.retry}>
                 Try again
@@ -115,48 +117,53 @@ export default function Overview() {
           )}
           {plan.data && plan.data.status === "trial" && (
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "6px 0" }}>
-                <span className="chip chip-warn">Free trial</span>
-                <span className="hint">{plan.data.daysLeft} days left</span>
+              <div className="ov-num">{plan.data.daysLeft} days</div>
+              <p className="ov-sub">left in your free trial — pick a plan to keep your brand online.</p>
+              <div className="stat-actions">
+                <Link to={`/dashboard/${slug}/billing`} className="btn btn-primary btn-sm">
+                  Choose a plan
+                </Link>
               </div>
-              <p className="hint">Pick a plan before your trial ends to keep your brand online.</p>
-              <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm" style={{ marginTop: 10 }}>
-                Choose a plan
-              </Link>
             </>
           )}
           {plan.data && plan.data.status === "active" && (
             <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "6px 0" }}>
-                <span className="chip chip-good">{plan.data.name}</span>
-                <span className="hint">{plan.data.priceNgn ? `${ngn(plan.data.priceNgn)}/month` : ""}</span>
+              <div className="ov-num">{plan.data.priceNgn ? ngn(plan.data.priceNgn) : plan.data.name}</div>
+              <p className="ov-sub">
+                {plan.data.name} · renews {plan.data.renewsOn}.
+              </p>
+              <div className="stat-actions">
+                <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm">
+                  Manage plan
+                </Link>
               </div>
-              <p className="hint">Renews on {plan.data.renewsOn}.</p>
             </>
           )}
           {plan.data && plan.data.status === "none" && (
             <>
-              <p className="hint" style={{ margin: "6px 0 10px" }}>
-                This brand doesn't have a plan yet.
-              </p>
-              <Link to={`/dashboard/${slug}/billing`} className="btn btn-secondary btn-sm">
-                Choose a plan
-              </Link>
+              <div className="ov-num">No plan</div>
+              <p className="ov-sub">Choose one to keep this brand online.</p>
+              <div className="stat-actions">
+                <Link to={`/dashboard/${slug}/billing`} className="btn btn-primary btn-sm">
+                  Choose a plan
+                </Link>
+              </div>
             </>
           )}
         </section>
 
         {/* Usage */}
-        <section className="card" aria-label="Usage">
-          <h2>Usage · {usage.data?.period ?? "this month"}</h2>
-          {usage.loading && (
-            <>
-              <div style={{ height: 8 }} />
-              <Skeleton h={14} w="80%" />
-            </>
-          )}
+        <section className="card stat-card" aria-label="Usage">
+          <div className="stat-headrow">
+            <span className="stat-ico" aria-hidden="true">
+              <Icon name="globe" size={16} />
+            </span>
+            <span className="stat-title">Usage</span>
+            {usage.data && <span className="stat-corner hint">{usage.data.period}</span>}
+          </div>
+          {usage.loading && <Skeleton h={30} w="55%" style={{ marginTop: 12 }} />}
           {usage.error && (
-            <p className="hint">
+            <p className="hint" style={{ marginTop: 10 }}>
               Couldn't load usage.{" "}
               <button className="btn btn-ghost btn-sm" onClick={usage.retry}>
                 Try again
@@ -164,39 +171,32 @@ export default function Overview() {
             </p>
           )}
           {usage.data && (
-            <div style={{ display: "flex", gap: 24, marginTop: 8, flexWrap: "wrap" }}>
-              <div>
-                <div className="stat-num">{usage.data.requests.toLocaleString()}</div>
-                <div className="stat-label">visits</div>
+            <>
+              <div className="ov-num">{usage.data.requests.toLocaleString()}</div>
+              <p className="ov-sub">visits to your site this month.</p>
+              <div className="stat-actions ov-sub" style={{ marginTop: "auto" }}>
+                {usage.data.storageMb} MB storage · {usage.data.emailsSent} emails sent
               </div>
-              <div>
-                <div className="stat-num">{usage.data.storageMb} MB</div>
-                <div className="stat-label">storage</div>
-              </div>
-              <div>
-                <div className="stat-num">{usage.data.emailsSent}</div>
-                <div className="stat-label">emails sent</div>
-              </div>
-            </div>
+            </>
           )}
           {!usage.loading && !usage.error && !usage.data && (
-            <p className="hint" style={{ marginTop: 6 }}>
+            <p className="ov-sub" style={{ marginTop: 10 }}>
               No usage recorded yet — it appears once your site gets its first visits.
             </p>
           )}
         </section>
 
         {/* Wallet: one number only — the breakdown lives on Finances. */}
-        <section className="card" aria-label="Wallet">
-          <h2>Wallet</h2>
-          {wallet.loading && (
-            <>
-              <div style={{ height: 8 }} />
-              <Skeleton h={22} w="45%" />
-            </>
-          )}
+        <section className="card stat-card" aria-label="Wallet">
+          <div className="stat-headrow">
+            <span className="stat-ico" aria-hidden="true">
+              <Icon name="wallet" size={16} />
+            </span>
+            <span className="stat-title">Wallet balance</span>
+          </div>
+          {wallet.loading && <Skeleton h={30} w="55%" style={{ marginTop: 12 }} />}
           {wallet.error && (
-            <p className="hint">
+            <p className="hint" style={{ marginTop: 10 }}>
               Couldn't load your wallet.{" "}
               <button className="btn btn-ghost btn-sm" onClick={wallet.retry}>
                 Try again
@@ -205,13 +205,13 @@ export default function Overview() {
           )}
           {wallet.data && (
             <>
-              <div className="stat-num" style={{ margin: "2px 0" }}>{ngn(wallet.data.balanceNgn)}</div>
-              <p className="hint">
-                What your brand has earned — spendable on your plan, credits or apps.
-              </p>
-              <Link to={`/dashboard/${slug}/finances`} className="btn btn-secondary btn-sm" style={{ marginTop: 10 }}>
-                View finances
-              </Link>
+              <div className="ov-num">{ngn(wallet.data.balanceNgn)}</div>
+              <p className="ov-sub">Earned by your brand — spendable on your plan, credits or apps.</p>
+              <div className="stat-actions">
+                <Link to={`/dashboard/${slug}/finances`} className="btn btn-secondary btn-sm">
+                  View finances
+                </Link>
+              </div>
             </>
           )}
         </section>
