@@ -21,6 +21,7 @@ export default function Overview() {
   const brand = useAsync(() => api.getBrand(slug), [slug])
   const plan = useAsync(() => api.getPlan(slug), [slug])
   const usage = useAsync(() => api.getUsage(slug), [slug])
+  const wallet = useAsync(() => api.getWallet(slug), [slug])
 
   const copyLink = async () => {
     if (!brand.data) return
@@ -97,7 +98,7 @@ export default function Overview() {
         ) : null}
       </section>
 
-      <div className="grid-2" style={{ marginTop: 14 }}>
+      <div className="grid-3" style={{ marginTop: 14 }}>
         {/* Plan */}
         <section className="card" aria-label="Plan">
           <h2>Plan</h2>
@@ -185,6 +186,36 @@ export default function Overview() {
             <p className="hint" style={{ marginTop: 6 }}>
               No usage recorded yet — it appears once your site gets its first visits.
             </p>
+          )}
+        </section>
+
+        {/* Wallet: one number only — the breakdown lives on Finances. */}
+        <section className="card" aria-label="Wallet">
+          <h2>Wallet</h2>
+          {wallet.loading && (
+            <>
+              <div style={{ height: 8 }} />
+              <Skeleton h={22} w="45%" />
+            </>
+          )}
+          {wallet.error && (
+            <p className="hint">
+              Couldn't load your wallet.{" "}
+              <button className="btn btn-ghost btn-sm" onClick={wallet.retry}>
+                Try again
+              </button>
+            </p>
+          )}
+          {wallet.data && (
+            <>
+              <div className="stat-num" style={{ margin: "2px 0" }}>{ngn(wallet.data.balanceNgn)}</div>
+              <p className="hint">
+                What your brand has earned — spendable on your plan, credits or apps.
+              </p>
+              <Link to={`/dashboard/${slug}/finances`} className="btn btn-secondary btn-sm" style={{ marginTop: 10 }}>
+                View finances
+              </Link>
+            </>
           )}
         </section>
       </div>

@@ -210,6 +210,7 @@ After review, the visual layer was pulled back toward the original production co
 - **Cards** returned to the original 12px radius; the page ground returned to white.
 - **Manage cards** returned to the original pattern — plain terracotta icon above the title, no decorative icon tiles.
 - **"Your brand is live" card** returned to the original tinted (peach) treatment, now carrying the improved actions.
+- **Wallet on Overview** (added on request): a single wallet-balance card beside Plan and Usage, linking to Finances — one number only; the money-in/out and credits breakdown deliberately stays on the Finances page so Overview remains a status screen.
 - **Brand card** (My Brands) keeps its approved redesign, with the avatar now showing the brand's real initials ("AF" for Acme Fashion Group) instead of a generic globe icon; the same initials avatar identifies the brand on the Overview.
 - Pill shapes are now reserved for chips/badges only, matching how the original used them.
 
