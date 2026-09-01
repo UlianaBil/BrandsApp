@@ -12,7 +12,7 @@ export default function MyBrands() {
           <h1>My Brands</h1>
           <p className="sub">Every brand you own or help run, in one place.</p>
         </div>
-        <Link to="/dashboard/create" className="btn btn-primary">
+        <Link to="/dashboard/create" className="btn btn-secondary newbrand-btn">
           <Icon name="plus" size={17} />
           New brand
         </Link>

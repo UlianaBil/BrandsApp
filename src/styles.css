@@ -165,6 +165,10 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 /* Flow pages (e.g. Create brand) keep an explicit back button everywhere. */
 .back-link.always { display: inline-flex; }
 
+@media (max-width: 699px) {
+  .newbrand-btn { width: 100%; }
+}
+
 .topbar-mark { display: flex; align-items: center; }
 .topbar-mark img { width: 28px; height: 28px; }
 
