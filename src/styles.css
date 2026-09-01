@@ -151,6 +151,19 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .crumbs a { color: var(--body-c); font-weight: 500; }
 .crumbs a:hover { color: var(--terracotta); }
 
+/* On mobile, breadcrumbs become a single back button to the parent. */
+.back-link {
+  display: none; align-items: center; gap: 6px;
+  color: var(--body-c); font-weight: 600; font-size: 0.9rem;
+  margin-bottom: 12px; max-width: 100%;
+}
+.back-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.back-link:hover { color: var(--terracotta); }
+@media (max-width: 899px) {
+  .crumbs { display: none; }
+  .back-link { display: inline-flex; }
+}
+
 .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
 .page-head h1 { font-family: var(--serif); font-size: 1.7rem; font-weight: 600; letter-spacing: 0; line-height: 1.2; }
 .page-head .sub { color: var(--body-c); margin-top: 4px; max-width: 56ch; }

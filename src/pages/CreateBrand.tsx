@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { api } from "../mock"
-import { useToast } from "../ui"
+import { Icon, useToast } from "../ui"
 
 const slugify = (s: string) =>
   s
@@ -72,6 +72,10 @@ export default function CreateBrand() {
         <span aria-hidden="true">/</span>
         <span>New brand</span>
       </div>
+      <Link className="back-link" to="/dashboard">
+        <Icon name="back" size={16} />
+        <span>My Brands</span>
+      </Link>
       <div className="page-head">
         <div>
           <h1>Create a new brand</h1>

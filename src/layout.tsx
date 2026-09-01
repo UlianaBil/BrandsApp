@@ -167,6 +167,10 @@ export function BrandHeader({ slug, title }: { slug: string; title?: string }) {
           <span>{name ?? "…"}</span>
         )}
       </div>
+      <Link className="back-link" to={title ? `/dashboard/${slug}` : "/dashboard"}>
+        <Icon name="back" size={16} />
+        <span>{title ? (name ?? "Back") : "My Brands"}</span>
+      </Link>
       <div className="page-head" style={{ marginBottom: 16 }}>
         <div>
           <h1>{title ?? name ?? " "}</h1>

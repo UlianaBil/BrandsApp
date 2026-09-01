@@ -52,6 +52,10 @@ export default function Overview() {
         <span aria-hidden="true">/</span>
         <span>{brand.data?.name ?? "…"}</span>
       </div>
+      <Link className="back-link" to="/dashboard">
+        <Icon name="back" size={16} />
+        <span>My Brands</span>
+      </Link>
 
       {/* One entity header: identity + status on the left, actions on the right. */}
       <header className="brand-head" aria-label="Your brand">
