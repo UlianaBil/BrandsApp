@@ -108,9 +108,9 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .page { max-width: 880px; margin: 0 auto; padding: 24px 16px 96px; }
 @media (min-width: 900px) { .page { padding: 32px 32px 96px; } }
 
-.brandmark { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 1.05rem; }
+/* Wordmark: one color, dark — as in the original. */
+.brandmark { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 1.05rem; color: var(--ink); }
 .brandmark img { width: 28px; height: 28px; }
-.brandmark b { color: var(--terracotta); font-weight: 700; }
 
 /* mobile drawer */
 .drawer-scrim {
@@ -287,6 +287,12 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .rowlist > * + * { border-top: 1px solid var(--hairline); }
 .row-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
 .row-item .grow { flex: 1; min-width: 0; }
+/* On narrow screens, chips and actions wrap under the name instead of
+   squeezing the email into mid-word breaks. */
+@media (max-width: 560px) {
+  .row-item { flex-wrap: wrap; row-gap: 4px; }
+  .row-item .grow { flex: 1 1 calc(100% - 52px); }
+}
 .row-item .title { font-weight: 600; font-size: 0.95rem; }
 .row-item .meta { color: var(--muted); font-size: 0.85rem; overflow-wrap: anywhere; }
 

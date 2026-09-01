@@ -7,9 +7,7 @@ function BrandMark() {
   return (
     <Link to="/dashboard" className="brandmark" aria-label="BrandsApp — My Brands">
       <img src="/brandsapp-logo.svg" alt="" />
-      <span>
-        Brands<b>App</b>
-      </span>
+      <span>BrandsApp</span>
     </Link>
   )
 }
