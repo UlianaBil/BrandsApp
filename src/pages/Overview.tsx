@@ -221,7 +221,7 @@ export default function Overview() {
       {brand.loading ? (
         <CardSkeleton lines={2} />
       ) : (
-        <div className="grid-2">
+        <div className="grid-3">
           <ManageCard
             to={`/dashboard/${slug}/billing`}
             icon="card"

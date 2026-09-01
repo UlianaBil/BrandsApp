@@ -105,9 +105,8 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 @media (min-width: 900px) { .topbar { display: none; } }
 
 .main { flex: 1; min-width: 0; }
-/* Left-anchored after the sidebar, as in the original; the max-width
-   only caps line length on very wide screens. */
-.page { max-width: 880px; margin: 0; padding: 24px 16px 96px; }
+/* Fills the main area (margins via padding only). */
+.page { margin: 0; padding: 24px 16px 96px; }
 @media (min-width: 900px) { .page { padding: 32px 32px 96px; } }
 
 /* Logo lockup: the BrandsApp logo mark + dark one-color logotype. */
