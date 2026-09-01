@@ -90,7 +90,8 @@
 - **Recommendation:** Make "Open brand admin" the primary action of the overview, with "View live site" secondary.
 - **Expected benefit:** The most common task becomes the most prominent button.
 - **Priority:** High
-- **Implemented:** ✅ A single entity header (identity left, actions right): avatar + brand name with Live and role chips, the domain shown once with an inline copy button (toast on copy), primary **Open brand admin**, secondary **View live site**. An earlier iteration used a separate tinted hero card; it was merged into the header to remove the duplicated name/domain and let the page start with content sooner.
+- **Implemented:** ✅ A single entity header (identity left, actions right): avatar + brand name with Live and role chips, the domain shown once with an inline copy button (toast on copy), primary **Open brand admin**, secondary **View live site**. An earlier iteration used a separate tinted hero card; it was merged into the header to remove the duplicated name/domain and let the page start with content sooner. The role badge was removed from this header (owners don't need to be told they own their brand — role chips remain on My Brands, and non-owners get the read-only note lower on the page); only the status chip stays.
+- **Status rule for the real implementation:** the **"View live site" CTA (and the Live chip) must be conditional on the brand actually being live.** If the brand is provisioning, paused, or its trial/plan has lapsed, the header should show that status instead (e.g. "Provisioning…", "Paused") and swap the CTA for the relevant recovery action (e.g. "Choose a plan"). Never show a link to a site that won't load. The prototype's mock brands are always live, so it always renders the Live chip + CTA.
 
 ### 11. Plan and usage cards were empty shells
 - **Issue:** Production showed "No subscription found for this brand." (a raw backend message) and "No usage recorded yet."

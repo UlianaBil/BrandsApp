@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom"
 import { api, ngn } from "../mock"
-import { CardSkeleton, ErrorState, Icon, initials, RoleChip, Skeleton, useAsync, useToast, type IconName } from "../ui"
+import { CardSkeleton, ErrorState, Icon, initials, Skeleton, useAsync, useToast, type IconName } from "../ui"
 
 function ManageCard({ to, icon, title, body }: { to: string; icon: IconName; title: string; body: string }) {
   return (
@@ -73,7 +73,6 @@ export default function Overview() {
                   <Icon name="check" size={11} />
                   Live
                 </span>
-                <RoleChip role={brand.data.role} />
               </div>
               <p className="domain-line copy-inline" style={{ marginTop: 4 }}>
                 {brand.data.domain}
