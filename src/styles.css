@@ -108,9 +108,14 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 .page { max-width: 880px; margin: 0 auto; padding: 24px 16px 96px; }
 @media (min-width: 900px) { .page { padding: 32px 32px 96px; } }
 
-/* Wordmark: one color, dark — as in the original. */
+/* Logo lockup, as in the original: terracotta "B" tile + dark one-color logotype. */
 .brandmark { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 1.05rem; color: var(--ink); }
-.brandmark img { width: 28px; height: 28px; }
+.brandmark-tile {
+  width: 28px; height: 28px; border-radius: 9px; flex-shrink: 0;
+  background: var(--terracotta); color: #fff;
+  font-size: 0.85rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 
 /* mobile drawer */
 .drawer-scrim {

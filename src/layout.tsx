@@ -6,7 +6,7 @@ import { Icon, useAsync, type IconName } from "./ui"
 function BrandMark() {
   return (
     <Link to="/dashboard" className="brandmark" aria-label="BrandsApp — My Brands">
-      <img src="/brandsapp-logo.svg" alt="" />
+      <span className="brandmark-tile" aria-hidden="true">B</span>
       <span>BrandsApp</span>
     </Link>
   )
