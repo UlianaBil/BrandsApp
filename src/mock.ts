@@ -34,6 +34,11 @@ export interface Usage {
   storageMb: number
   emailsSent: number
   period: string
+  limits: {
+    requests: number
+    storageMb: number
+    emails: number
+  }
 }
 
 export interface TeamMember {
@@ -170,12 +175,14 @@ const store = {
       storageMb: 62,
       emailsSent: 8,
       period: "August",
+      limits: { requests: 50000, storageMb: 500, emails: 2000 },
     } as Usage,
     "lagos-bites": {
       requests: 45210,
       storageMb: 480,
       emailsSent: 960,
       period: "August",
+      limits: { requests: 50000, storageMb: 500, emails: 2000 },
     } as Usage,
   } as Record<string, Usage>,
 

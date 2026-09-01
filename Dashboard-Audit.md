@@ -112,7 +112,7 @@
 - **Issue:** In production the page showed a raw "No subscription record found for this brand", a spinner that never resolved (the plans area), and an empty payment history — no plans to choose, nothing to do.
 - **Recommendation:** Show the subscription state in human terms, always show the available plans with prices and a clear current-plan marker, and give payment history a true empty state ("Once you're on a paid plan, every charge shows up here").
 - **Priority:** High
-- **Implemented:** ✅ Subscription card (trial/active/none states), plan cards with "Current plan" chip and Choose/Switch actions, payment history list with Paid/Failed chips and a proper empty state. (Checkout intentionally shows a "not wired up in this prototype" toast — see Non-UI-Issues.md.)
+- **Implemented:** ✅ Subscription card (trial/active/none states); a **"Usage this month" section with usage-vs-allowance meters** (visits, storage, emails — amber past 80%, red past 95%) so credits are bought next to the numbers that justify them, with a plain-language note that overages draw on credits rather than switching the brand off; plan cards with "Current plan" chip and Choose/Switch actions; payment history list with Paid/Failed chips and a proper empty state. (Checkout intentionally shows a "not wired up in this prototype" toast — see Non-UI-Issues.md.)
 
 ---
 

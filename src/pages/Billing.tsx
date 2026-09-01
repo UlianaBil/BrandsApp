@@ -8,10 +8,36 @@ const PLANS = [
   { id: "growth", name: "Growth", priceNgn: 18000, blurb: "Everything in Starter plus 15 apps and priority support." },
 ]
 
+function Meter({ label, used, limit, format }: { label: string; used: number; limit: number; format: (v: number) => string }) {
+  const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0
+  const tone = pct >= 95 ? "bad" : pct >= 80 ? "warn" : ""
+  return (
+    <div className="meter-row">
+      <div className="meter-head">
+        <span className="meter-label">{label}</span>
+        <span className="meter-value">
+          {format(used)} of {format(limit)}
+        </span>
+      </div>
+      <div
+        className="meter"
+        role="progressbar"
+        aria-valuenow={Math.round(pct)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${label}: ${format(used)} of ${format(limit)} used`}
+      >
+        <div className={`meter-fill ${tone}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  )
+}
+
 export default function Billing() {
   const { slug = "" } = useParams()
   const toast = useToast()
   const plan = useAsync(() => api.getPlan(slug), [slug])
+  const usage = useAsync(() => api.getUsage(slug), [slug])
   const payments = useAsync(() => api.listPayments(slug), [slug])
 
   return (
@@ -53,6 +79,42 @@ export default function Billing() {
                 This brand doesn't have a plan yet — choose one below to keep it online.
               </p>
             )}
+          </section>
+        )}
+
+        {/* Usage vs allowance — the numbers behind usage credits. */}
+        {usage.loading && <CardSkeleton lines={3} />}
+        {usage.error && <ErrorState message={usage.error} onRetry={usage.retry} />}
+        {usage.data && (
+          <section className="card" aria-label="Usage this month">
+            <div className="card-row">
+              <h2>Usage this month</h2>
+              <span className="hint">{usage.data.period}</span>
+            </div>
+            <div style={{ marginTop: 4 }}>
+              <Meter
+                label="Visits"
+                used={usage.data.requests}
+                limit={usage.data.limits.requests}
+                format={(v) => v.toLocaleString()}
+              />
+              <Meter
+                label="Storage"
+                used={usage.data.storageMb}
+                limit={usage.data.limits.storageMb}
+                format={(v) => `${v.toLocaleString()} MB`}
+              />
+              <Meter
+                label="Emails"
+                used={usage.data.emailsSent}
+                limit={usage.data.limits.emails}
+                format={(v) => v.toLocaleString()}
+              />
+            </div>
+            <p className="hint" style={{ marginTop: 10, fontSize: "0.83rem", color: "var(--muted)" }}>
+              Allowances come with your plan. If you go past one, usage credits cover the difference —
+              your brand never just switches off.
+            </p>
           </section>
         )}
 

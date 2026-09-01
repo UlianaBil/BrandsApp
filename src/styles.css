@@ -402,6 +402,18 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 
 .money { font-variant-numeric: tabular-nums; font-weight: 600; }
 
+/* ---------- usage meters ---------- */
+
+.meter-row { padding: 10px 0; }
+.meter-row + .meter-row { border-top: 1px solid var(--hairline); }
+.meter-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.meter-label { font-weight: 600; font-size: 0.92rem; }
+.meter-value { font-size: 0.85rem; color: var(--body-c); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.meter { height: 6px; border-radius: 999px; background: var(--tint-stone); margin-top: 8px; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 999px; background: var(--terracotta); }
+.meter-fill.warn { background: var(--warn); }
+.meter-fill.bad { background: var(--bad); }
+
 /* ---------- toast ---------- */
 
 .toasts {
