@@ -4,9 +4,12 @@ import { api, ngn, type UsageResource } from "../mock"
 import { BrandHeader } from "../layout"
 import { CardSkeleton, EmptyState, ErrorState, useAsync, useToast } from "../ui"
 
+// Tiers from the platform rate card (pricing.md): 1 credit = ₦1.
 const PLANS = [
-  { id: "starter", name: "Starter", priceNgn: 7500, blurb: "Website, store and 5 apps." },
-  { id: "growth", name: "Growth", priceNgn: 18000, blurb: "15 apps and priority support." },
+  { id: "free", name: "Free", priceNgn: 0, credits: 0, blurb: "5 apps" },
+  { id: "starter", name: "Starter", priceNgn: 2000, credits: 2000, blurb: "10 apps · custom domain" },
+  { id: "growth", name: "Growth", priceNgn: 5000, credits: 5000, blurb: "Unlimited apps" },
+  { id: "scale", name: "Scale", priceNgn: 15000, credits: 15000, blurb: "Unlimited apps · high volume" },
 ]
 
 const fmt = (v: number, unit: UsageResource["unit"]) =>
@@ -90,7 +93,23 @@ export default function Billing() {
                   <span className="sub-value">{plan.data.renewsOn}</span>
                 </div>
               )}
+              {plan.data.status === "active" && plan.data.monthlyCredits != null && (
+                <div className="sub-col">
+                  <span className="stat-title">Monthly credits</span>
+                  <span className="sub-value">{plan.data.monthlyCredits.toLocaleString()} cr</span>
+                </div>
+              )}
             </div>
+            {plan.data.status === "active" && (
+              <div style={{ marginTop: 14 }}>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => toast("Top-ups aren't wired up in this prototype")}
+                >
+                  Top up credits
+                </button>
+              </div>
+            )}
             {plan.data.status === "trial" && (
               <p className="hint" style={{ marginTop: 12 }}>
                 Your brand stays online through the trial. Pick a plan below and you won't be charged
@@ -125,8 +144,9 @@ export default function Billing() {
               </button>
             )}
             <p className="hint" style={{ marginTop: 10, fontSize: "0.83rem", color: "var(--muted)" }}>
-              Sorted by how close each is to its limit. Go past an allowance and usage credits cover
-              the difference — your brand never just switches off.
+              Sorted by how close each is to its limit. Past an allowance, extra usage draws down
+              your plan's credits (1 credit = ₦1). If credits run out, usage pauses until you top up
+              or upgrade.
             </p>
           </section>
         )}
@@ -140,7 +160,11 @@ export default function Billing() {
               return (
                 <div key={p.id} className={`plan-cell${isCurrent ? " current" : ""}`}>
                   <div className="pc-name">{p.name}</div>
-                  <div className="pc-price">{ngn(p.priceNgn)}/month</div>
+                  <div className="pc-price">{p.priceNgn === 0 ? "₦0" : `${ngn(p.priceNgn)}/month`}</div>
+                  <div className="pc-price">
+                    {p.credits > 0 ? `${p.credits.toLocaleString()} credits · ` : ""}
+                    {p.blurb}
+                  </div>
                   {isCurrent ? (
                     <div className="pc-current">Current plan</div>
                   ) : (
@@ -156,7 +180,8 @@ export default function Billing() {
             })}
           </div>
           <p className="hint" style={{ color: "var(--muted)", fontSize: "0.83rem", marginTop: 12 }}>
-            Priced in Naira. You can pay with your wallet balance instead of a card.
+            Prepaid and priced in Naira — pay once with card, transfer or USSD; no card kept on
+            file. You can also pay from your wallet balance.
           </p>
         </section>
 
