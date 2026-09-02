@@ -29,6 +29,14 @@ export interface Plan {
   priceNgn?: number
 }
 
+export interface UsageResource {
+  key: string
+  label: string
+  used: number
+  limit: number
+  unit: "" | "MB" | "GB" | "min"
+}
+
 export interface Usage {
   requests: number
   storageMb: number
@@ -39,6 +47,7 @@ export interface Usage {
     storageMb: number
     emails: number
   }
+  resources: UsageResource[]
 }
 
 export interface TeamMember {
@@ -176,6 +185,17 @@ const store = {
       emailsSent: 8,
       period: "August",
       limits: { requests: 50000, storageMb: 500, emails: 2000 },
+      resources: [
+        { key: "visits", label: "Visits", used: 1284, limit: 50000, unit: "" },
+        { key: "emails", label: "Emails", used: 8, limit: 2000, unit: "" },
+        { key: "db", label: "Database storage", used: 62, limit: 500, unit: "MB" },
+        { key: "files", label: "File storage", used: 210, limit: 2000, unit: "MB" },
+        { key: "bandwidth", label: "Bandwidth", used: 1.4, limit: 20, unit: "GB" },
+        { key: "video", label: "Video streaming", used: 12, limit: 500, unit: "min" },
+        { key: "reads", label: "Database reads", used: 84000, limit: 5000000, unit: "" },
+        { key: "writes", label: "Database writes", used: 9000, limit: 1000000, unit: "" },
+        { key: "deploys", label: "Site publishes", used: 6, limit: 100, unit: "" },
+      ],
     } as Usage,
     "lagos-bites": {
       requests: 45210,
@@ -183,6 +203,17 @@ const store = {
       emailsSent: 960,
       period: "August",
       limits: { requests: 50000, storageMb: 500, emails: 2000 },
+      resources: [
+        { key: "visits", label: "Visits", used: 45210, limit: 50000, unit: "" },
+        { key: "emails", label: "Emails", used: 960, limit: 2000, unit: "" },
+        { key: "db", label: "Database storage", used: 480, limit: 500, unit: "MB" },
+        { key: "files", label: "File storage", used: 1650, limit: 2000, unit: "MB" },
+        { key: "bandwidth", label: "Bandwidth", used: 16.8, limit: 20, unit: "GB" },
+        { key: "video", label: "Video streaming", used: 340, limit: 500, unit: "min" },
+        { key: "reads", label: "Database reads", used: 4200000, limit: 5000000, unit: "" },
+        { key: "writes", label: "Database writes", used: 610000, limit: 1000000, unit: "" },
+        { key: "deploys", label: "Site publishes", used: 41, limit: 100, unit: "" },
+      ],
     } as Usage,
   } as Record<string, Usage>,
 

@@ -402,6 +402,26 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 
 .money { font-variant-numeric: tabular-nums; font-weight: 600; }
 
+/* ---------- billing: subscription columns & compact plan cells ---------- */
+
+.sub-cols { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 10px; }
+.sub-col .stat-title { display: block; margin-bottom: 6px; }
+.sub-col .sub-value { font-weight: 600; font-size: 1.05rem; }
+
+.plan-cells { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.plan-cell {
+  border: 1px solid rgba(37, 37, 37, 0.12);
+  border-radius: 12px;
+  padding: 14px 18px;
+  min-width: 150px;
+  background: var(--paper);
+}
+.plan-cell.current { border: 1.5px solid var(--terracotta); background: #fdf7f3; }
+.plan-cell .pc-name { font-weight: 600; font-size: 0.97rem; }
+.plan-cell .pc-price { font-size: 0.83rem; color: var(--body-c); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.plan-cell .pc-action { margin-top: 8px; font-size: 0.85rem; }
+.plan-cell .pc-current { margin-top: 8px; font-size: 0.85rem; color: var(--body-c); }
+
 /* ---------- usage meters ---------- */
 
 .meter-row { padding: 10px 0; }
