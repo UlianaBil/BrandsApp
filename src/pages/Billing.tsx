@@ -4,12 +4,11 @@ import { api, ngn, type UsageResource } from "../mock"
 import { BrandHeader } from "../layout"
 import { CardSkeleton, EmptyState, ErrorState, useAsync, useToast } from "../ui"
 
-// Tiers from the platform rate card (pricing.md): 1 credit = ₦1.
+// Paid tiers from the platform rate card (pricing.md): 1 credit = ₦1.
 const PLANS = [
-  { id: "free", name: "Free", priceNgn: 0, credits: 0, blurb: "5 apps" },
-  { id: "starter", name: "Starter", priceNgn: 2000, credits: 2000, blurb: "10 apps · custom domain" },
-  { id: "growth", name: "Growth", priceNgn: 5000, credits: 5000, blurb: "Unlimited apps" },
-  { id: "scale", name: "Scale", priceNgn: 15000, credits: 15000, blurb: "Unlimited apps · high volume" },
+  { id: "starter", name: "Starter", priceNgn: 2000, credits: 2000, blurb: "2,000 credits · 10 apps · custom domain" },
+  { id: "growth", name: "Growth", priceNgn: 5000, credits: 5000, blurb: "5,000 credits · unlimited apps" },
+  { id: "scale", name: "Scale", priceNgn: 15000, credits: 15000, blurb: "15,000 credits · unlimited apps, for high volume" },
 ]
 
 const fmt = (v: number, unit: UsageResource["unit"]) =>
@@ -66,52 +65,50 @@ export default function Billing() {
         {plan.loading && <CardSkeleton lines={2} />}
         {plan.error && <ErrorState message={plan.error} onRetry={plan.retry} />}
         {plan.data && (
-          <section className="card" aria-label="Current subscription">
-            <h2>Current subscription</h2>
-            <div className="sub-cols">
-              <div className="sub-col">
+          <section aria-label="Current subscription">
+            <div className="sub-cards">
+              <div className="card">
                 <span className="stat-title">Plan</span>
                 <span className="sub-value">
                   {plan.data.status === "none" ? "No plan" : plan.data.name}
                 </span>
               </div>
-              <div className="sub-col">
+              <div className="card">
                 <span className="stat-title">Status</span>
                 {plan.data.status === "trial" && <span className="chip chip-warn">Free trial</span>}
                 {plan.data.status === "active" && <span className="chip chip-good">Active</span>}
                 {plan.data.status === "none" && <span className="chip chip-neutral">Inactive</span>}
               </div>
               {plan.data.status === "trial" && (
-                <div className="sub-col">
+                <div className="card">
                   <span className="stat-title">Trial ends</span>
                   <span className="sub-value">in {plan.data.daysLeft} days</span>
                 </div>
               )}
               {plan.data.status === "active" && (
-                <div className="sub-col">
+                <div className="card">
                   <span className="stat-title">Renews</span>
                   <span className="sub-value">{plan.data.renewsOn}</span>
                 </div>
               )}
               {plan.data.status === "active" && plan.data.monthlyCredits != null && (
-                <div className="sub-col">
+                <div className="card">
                   <span className="stat-title">Monthly credits</span>
                   <span className="sub-value">{plan.data.monthlyCredits.toLocaleString()} cr</span>
+                  <div style={{ marginTop: 8 }}>
+                    <button
+                      className="link-cta"
+                      style={{ fontSize: "0.85rem" }}
+                      onClick={() => toast("Top-ups aren't wired up in this prototype")}
+                    >
+                      Top up
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
-            {plan.data.status === "active" && (
-              <div style={{ marginTop: 14 }}>
-                <button
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => toast("Top-ups aren't wired up in this prototype")}
-                >
-                  Top up credits
-                </button>
-              </div>
-            )}
             {plan.data.status === "trial" && (
-              <p className="hint" style={{ marginTop: 12 }}>
+              <p className="hint" style={{ marginTop: 10 }}>
                 Your brand stays online through the trial. Pick a plan below and you won't be charged
                 until the trial ends.
               </p>
@@ -151,35 +148,37 @@ export default function Billing() {
           </section>
         )}
 
-        {/* Plans — compact cells, current one highlighted. */}
-        <section className="card" aria-label="Plans">
-          <h2>Plans</h2>
-          <div className="plan-cells">
+        {/* Plans — full cards, current one highlighted. */}
+        <section aria-label="Plans">
+          <h2 className="section-label" style={{ margin: "12px 0 12px" }}>Plans</h2>
+          <div className="grid-3">
             {PLANS.map((p) => {
               const isCurrent = plan.data?.status === "active" && plan.data.name === p.name
               return (
-                <div key={p.id} className={`plan-cell${isCurrent ? " current" : ""}`}>
-                  <div className="pc-name">{p.name}</div>
-                  <div className="pc-price">{p.priceNgn === 0 ? "₦0" : `${ngn(p.priceNgn)}/month`}</div>
-                  <div className="pc-price">
-                    {p.credits > 0 ? `${p.credits.toLocaleString()} credits · ` : ""}
-                    {p.blurb}
+                <div key={p.id} className={`card${isCurrent ? " plan-card-current" : ""}`}>
+                  <div className="card-row">
+                    <h2>{p.name}</h2>
+                    {isCurrent && <span className="chip chip-good">Current plan</span>}
                   </div>
-                  {isCurrent ? (
-                    <div className="pc-current">Current plan</div>
-                  ) : (
-                    <button
-                      className="link-cta pc-action"
-                      onClick={() => toast("Checkout isn't wired up in this prototype")}
-                    >
-                      {plan.data?.status === "active" ? "Switch" : "Choose"}
-                    </button>
-                  )}
+                  <div style={{ margin: "4px 0 6px" }}>
+                    <span className="stat-num">{ngn(p.priceNgn)}</span>
+                    <span className="stat-label"> /month</span>
+                  </div>
+                  <p className="hint" style={{ marginBottom: 12 }}>
+                    {p.blurb}
+                  </p>
+                  <button
+                    className={`btn btn-sm ${isCurrent ? "btn-secondary" : "btn-primary"}`}
+                    disabled={isCurrent}
+                    onClick={() => toast("Checkout isn't wired up in this prototype")}
+                  >
+                    {isCurrent ? "Current plan" : plan.data?.status === "active" ? "Switch plan" : "Choose plan"}
+                  </button>
                 </div>
               )
             })}
           </div>
-          <p className="hint" style={{ color: "var(--muted)", fontSize: "0.83rem", marginTop: 12 }}>
+          <p className="hint" style={{ color: "var(--muted)", fontSize: "0.83rem", marginTop: 10 }}>
             Prepaid and priced in Naira — pay once with card, transfer or USSD; no card kept on
             file. You can also pay from your wallet balance.
           </p>

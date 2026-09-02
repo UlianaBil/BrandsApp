@@ -404,23 +404,13 @@ input, select, textarea { font-family: var(--sans); font-size: inherit; color: v
 
 /* ---------- billing: subscription columns & compact plan cells ---------- */
 
-.sub-cols { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 10px; }
-.sub-col .stat-title { display: block; margin-bottom: 6px; }
-.sub-col .sub-value { font-weight: 600; font-size: 1.05rem; }
+/* Subscription facts as individual cards. */
+.sub-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.sub-cards .card { padding: 16px 18px; }
+.sub-cards .stat-title { display: block; margin-bottom: 8px; }
+.sub-cards .sub-value { font-weight: 700; font-size: 1.15rem; }
 
-.plan-cells { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
-.plan-cell {
-  border: 1px solid rgba(37, 37, 37, 0.12);
-  border-radius: 12px;
-  padding: 14px 18px;
-  min-width: 150px;
-  background: var(--paper);
-}
-.plan-cell.current { border: 1.5px solid var(--terracotta); background: #fdf7f3; }
-.plan-cell .pc-name { font-weight: 600; font-size: 0.97rem; }
-.plan-cell .pc-price { font-size: 0.83rem; color: var(--body-c); margin-top: 2px; font-variant-numeric: tabular-nums; }
-.plan-cell .pc-action { margin-top: 8px; font-size: 0.85rem; }
-.plan-cell .pc-current { margin-top: 8px; font-size: 0.85rem; color: var(--body-c); }
+.plan-card-current { border: 1.5px solid var(--terracotta); }
 
 /* ---------- usage meters ---------- */
 
