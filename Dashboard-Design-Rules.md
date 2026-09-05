@@ -31,14 +31,14 @@ Source of truth for every screen in the BrandsApp platform dashboard. It documen
 | `--soft-lift` | `#E8E8E8` | Hover/press on `--soft`. |
 | `--line` | `rgba(28,28,28,.07)` | Card borders, dividers, table rules. |
 | `--line-strong` | `rgba(28,28,28,.14)` | Input borders, outline buttons, separators inside pills. |
-| `--dark` / `--ink` | `#1C1C1C` | Primary buttons, active nav, headings, body text, meter fills. |
+| `--dark` / `--ink` | `#1C1C1C` | Primary buttons, active nav, headings, body text. |
 | `--dark-lift` | `#2E2E2E` | Hover/press on `--dark`. |
 | `--body` | `#5B5B5B` | Secondary text: subtitles, hints, card body. |
 | `--muted` | `#767676` | Tertiary text: meta, table headers, placeholders' neighbours. 4.5:1 on white — the lightest text allowed. |
 | `--accent` | `#EA542D` | Brand avatars, focus rings, the empty-state primary CTA, upgrade/marketing only. |
-| `--accent-soft` / `--accent-ink` | `#FDEEE8` / `#B93A18` | Owner role chip; initials tile in the collapsed rail. |
+| `--accent-soft` / `--accent-ink` | `#FDEEE8` / `#B93A18` | Owner role chip; the eyebrow on an upgrade tile. |
 | `--tile` | `#F8C8B0` | The "needs action" stat tile (peach). Dark ink on top, never white. |
-| `--good` / `--good-bg` | `#187A42` / `#E6F4EB` | Live, Active, Paid, Spendable. |
+| `--good` / `--good-bg` | `#187A42` / `#E6F4EB` | Live, Active, Paid, Spendable; the healthy range of a meter. |
 | `--warn` / `--warn-bg` | `#855A0C` / `#FBF1DC` | Free trial, Invited, Waiting for DNS, meter ≥ 80%. |
 | `--bad` / `--bad-bg` | `#B3372F` / `#FBE9E7` | Failed, errors, destructive actions, meter ≥ 95%. |
 
@@ -88,7 +88,7 @@ Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav,
 ### 3.1 The shell
 
 - **Sidebar** (≥ 900px): 252px, white, full height, sticky. Top: logomark + "BrandsApp". Nav: "My Brands", then — only when inside a brand — a section label with the brand's name and the six brand pages (Overview, Billing, Finances, Team, Marketplace, Settings). Foot: Collapse control and the signed-in account.
-- **Rail:** Collapse turns the sidebar into an 80px icon rail. Labels become tooltips; the brand section becomes a peach initials tile; the state persists in `localStorage("nav.collapsed")`.
+- **Rail:** Collapse turns the sidebar into an 80px icon rail. Labels become tooltips; the brand section label becomes a hairline divider; the state persists in `localStorage("nav.collapsed")`.
 - **Mobile** (< 900px): a 60px sticky, blurred top bar (menu button + logomark) and a slide-in drawer with the same nav, closed by scrim, Escape, or navigating.
 - Every route change scrolls to the top and closes the drawer.
 
@@ -166,7 +166,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - **Fact card** (`facts`) — label over a single value; for short "current state" facts (Plan / Status / Renews). Values may be a chip.
 - **Link card** (`managecard`, `brandcard`) — the whole card is the link; icon circle turns orange on pointer hover; a small arrow sits top-right; press feedback on touch. No buttons inside a link card.
 - **Flush card** (`card.flush`) — zero padding so a table or row list runs edge to edge; header and footer get their own padding.
-- **Plan card** — name, price with "/ month", feature list with tick circles, button pinned to the bottom. Current plan gets a dark inset outline and a dark "Current plan" chip.
+- **Plan card** — name, price with "/ year" (plans are billed yearly), feature list with tick circles, button pinned to the bottom. Current plan gets a dark inset outline and a dark "Current plan" chip.
 
 ### 6.2 Chips & status
 
@@ -210,7 +210,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 
 ### 6.7 Meters
 
-Six-pixel pill track in `--soft`; dark fill. The fill turns amber at ≥ 80% and red at ≥ 95%. Label left, "used of limit" right, in the units the user recognises. Sort meters by how close each is to its limit; show the top three and expand in place.
+Six-pixel pill track in `--soft`. The fill follows the semantic scale: green (`--good`) while healthy, amber at ≥ 80%, red at ≥ 95%. Never the brand orange — in this system orange means "needs action", so a healthy bar in orange would read as a warning. Progress toward a *goal* (an onboarding checklist) uses `--dark` instead, because it has no danger threshold. Label left, "used of limit" right, in the units the user recognises. Sort meters by how close each is to its limit; show the top three and expand in place.
 
 ### 6.8 Modals
 
@@ -287,7 +287,7 @@ Never ask for confirmation of a non-destructive action, and never confirm succes
 ## 9. Content rules
 
 - **Missing numbers** are zero, formatted like every other value: "₦0", "0 emails", never "—", "N/A" or a blank. A missing *record* is an empty state, a missing *field* is omitted (don't render "Renews: —").
-- **Money:** Naira with the ₦ sign and thousands separators (`ngn()`), bold and tabular in tables; "/ month" as a muted suffix. Credits are "2,000 cr" in facts and "2,000 credits" in prose. 1 credit = ₦1, stated once per screen where credits are bought.
+- **Money:** Naira with the ₦ sign and thousands separators (`ngn()`), bold and tabular in tables; "/ year" as a muted suffix — plans are billed yearly; allowances inside them are monthly and say so ("2,000 usage credits a month"). Credits are "2,000 cr" in facts and "2,000 credits" in prose. 1 credit = ₦1, stated once per screen where credits are bought.
 - **Dates:** absolute, day month year — "24 Sep 2026" (`fmtDate()`). Countdowns are relative ("in 5 days", "5 days left"). Never show ISO strings or times unless the time matters.
 - **Long text:** single-line identity (brand name in a pill, card title) truncates with an ellipsis and exposes the full text in `title`; body copy wraps; domains and emails wrap anywhere (`overflow-wrap: anywhere`) rather than overflowing. Nothing is ever clipped without an ellipsis.
 - **Names:** the brand's display name everywhere; the slug only inside the domain. People get first-name-first as entered; "(you)" is appended to the signed-in user.

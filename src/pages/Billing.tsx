@@ -130,7 +130,7 @@ export default function Billing() {
 
         {/* Plans */}
         <section aria-label="Plans">
-          <SectionHead title="Plans" hint="Prepaid and priced in Naira · pay by card, transfer, USSD or from your wallet" />
+          <SectionHead title="Plans" hint="Billed yearly, prepaid in Naira · pay by card, transfer, USSD or from your wallet" />
           <div className="grid-3">
             {PLANS.map((p) => {
               const isCurrent = isActive && plan.data?.name === p.name
@@ -142,7 +142,7 @@ export default function Billing() {
                   </div>
                   <div className="price">
                     <span className="n">{ngn(p.priceNgn)}</span>
-                    <span className="per">/ month</span>
+                    <span className="per">/ year</span>
                   </div>
                   <ul>
                     {p.features.map((f) => (
@@ -156,7 +156,7 @@ export default function Billing() {
               )
             })}
           </div>
-          <p className="hint quiet" style={{ marginTop: 12 }}>No card is kept on file — each payment is a one-off.</p>
+          <p className="hint quiet" style={{ marginTop: 12 }}>One payment a year. No card is kept on file — each payment is a one-off.</p>
         </section>
 
         {/* Payment history */}
@@ -207,10 +207,11 @@ export default function Billing() {
       >
         {choosing && (
           <>
-            <p>{plan.data?.status === "trial" ? "You won't be charged until your trial ends." : isActive ? "Your new allowance starts right away; the remaining days on your current plan are credited." : "Your brand goes live on this plan as soon as payment clears."}</p>
+            <p>{plan.data?.status === "trial" ? "You won't be charged until your trial ends." : isActive ? "Your new allowance starts right away; the unused part of your current year is credited." : "Your brand goes live on this plan as soon as payment clears."}</p>
             <div className="summary">
               <div className="li"><span className="k">Plan</span><span className="v">{choosing.name}</span></div>
               <div className="li"><span className="k">Monthly credits</span><span className="v">{choosing.credits.toLocaleString()} cr</span></div>
+              <div className="li"><span className="k">Billing</span><span className="v">Yearly</span></div>
               <div className="li"><span className="k">Due today</span><span className="v">{plan.data?.status === "trial" ? "₦0" : ngn(choosing.priceNgn)}</span></div>
             </div>
           </>

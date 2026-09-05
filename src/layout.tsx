@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { api } from "./mock"
-import { DemoPanel, Icon, initials, useAsync, type IconName } from "./ui"
+import { DemoPanel, Icon, useAsync, type IconName } from "./ui"
 
 function BrandMark() {
   return (
@@ -41,7 +41,6 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
         <>
           <div className="nav-section">
             <span className="sec-label">{name ?? "This brand"}</span>
-            <span className="sec-avatar" title={name ?? "This brand"} aria-hidden="true">{name ? initials(name) : "··"}</span>
           </div>
           <NavItem to={`/dashboard/${slug}`} icon="layout" label="Overview" end onClick={onNavigate} />
           <NavItem to={`/dashboard/${slug}/billing`} icon="card" label="Billing" onClick={onNavigate} />

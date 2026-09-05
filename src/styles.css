@@ -114,14 +114,9 @@ body.collapsed .sidebar .navlink:focus-visible::after{opacity:1;transform:transl
   padding:16px 12px 6px;white-space:nowrap;overflow:hidden;
 }
 .nav-section .sec-label{overflow:hidden;text-overflow:ellipsis}
-.nav-section .sec-avatar{display:none}
-body.collapsed .sidebar .nav-section{padding:12px 0 6px;justify-content:center;border-top:1px solid var(--line);margin-top:8px}
+/* Collapsed: the brand section becomes a hairline divider between My Brands and the brand pages. */
+body.collapsed .sidebar .nav-section{padding:0;height:0;border-top:1px solid var(--line);margin:10px 14px 6px;overflow:hidden}
 body.collapsed .sidebar .nav-section .sec-label{display:none}
-body.collapsed .sidebar .nav-section .sec-avatar{
-  display:flex;width:32px;height:32px;border-radius:10px;
-  background:var(--accent-soft);color:var(--accent-ink);
-  font-size:.72rem;font-weight:700;letter-spacing:.02em;align-items:center;justify-content:center;
-}
 
 .sidebar-foot{border-top:1px solid var(--line);padding:12px}
 .collapse-btn{
@@ -540,7 +535,7 @@ select.input{
 .meter-label{font-weight:600;font-size:.9rem}
 .meter-value{font-size:.83rem;color:var(--body);font-variant-numeric:tabular-nums;white-space:nowrap}
 .meter{height:6px;border-radius:999px;background:var(--soft);margin-top:9px;overflow:hidden}
-.meter-fill{height:100%;border-radius:999px;background:var(--dark);transition:width .4s var(--ease)}
+.meter-fill{height:100%;border-radius:999px;background:var(--good);transition:width .4s var(--ease)}
 .meter-fill.warn{background:#D69A1E}
 .meter-fill.bad{background:var(--bad)}
 
