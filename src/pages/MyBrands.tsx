@@ -58,8 +58,7 @@ export default function MyBrands() {
       )}
 
       {brands.data && brands.data.length > 0 && (
-        <>
-          <div className="grid-brands">
+        <div className="grid-brands">
             {brands.data.map((b) => (
               <Link key={b.slug} to={`/dashboard/${b.slug}`} className="card brandcard" aria-label={`${b.name} — open overview`}>
                 <div className="bc-top">
@@ -76,12 +75,7 @@ export default function MyBrands() {
                 </div>
               </Link>
             ))}
-          </div>
-          <p className="member-note" style={{ marginTop: 18 }}>
-            <span className="ico"><Icon name="info" size={14} /></span>
-            Brands where you're a member open in read-only mode — billing, team and settings are managed by their owner.
-          </p>
-        </>
+        </div>
       )}
     </main>
   )
