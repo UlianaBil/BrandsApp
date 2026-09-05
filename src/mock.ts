@@ -163,6 +163,15 @@ const store = {
       adminUrl: "https://lagos-bites.brandsapp.io/admin",
       createdAt: "2026-07-02",
     },
+    {
+      slug: "ada-interiors-and-home-styling",
+      name: "Ada Interiors & Home Styling Studio",
+      domain: "ada-interiors-and-home-styling.brandsapp.io",
+      role: "owner" as Role,
+      liveUrl: "https://ada-interiors-and-home-styling.brandsapp.io",
+      adminUrl: "https://ada-interiors-and-home-styling.brandsapp.io/admin",
+      createdAt: "2026-09-01",
+    },
   ],
 
   plans: {
@@ -177,6 +186,11 @@ const store = {
       renewsOn: "2026-09-24",
       priceNgn: 2000,
       monthlyCredits: 2000,
+    } as Plan,
+    "ada-interiors-and-home-styling": {
+      status: "trial",
+      name: "Free trial",
+      daysLeft: 12,
     } as Plan,
   } as Record<string, Plan>,
 
@@ -217,6 +231,24 @@ const store = {
         { key: "realtime", label: "Realtime events", used: 17800, limit: 20000, unit: "" },
       ],
     } as Usage,
+    "ada-interiors-and-home-styling": {
+      requests: 37,
+      storageMb: 4,
+      emailsSent: 0,
+      period: "September",
+      limits: { requests: 50000, storageMb: 100, emails: 1000 },
+      resources: [
+        { key: "requests", label: "Requests", used: 37, limit: 50000, unit: "" },
+        { key: "emails", label: "Emails", used: 0, limit: 1000, unit: "" },
+        { key: "db", label: "Database storage", used: 4, limit: 100, unit: "MB" },
+        { key: "reads", label: "Database reads", used: 900, limit: 5000000, unit: "" },
+        { key: "writes", label: "Database writes", used: 120, limit: 50000, unit: "" },
+        { key: "files", label: "File storage", used: 12, limit: 500, unit: "MB" },
+        { key: "vstore", label: "Video storage", used: 0, limit: 500, unit: "MB" },
+        { key: "vbw", label: "Video bandwidth", used: 0, limit: 2, unit: "GB" },
+        { key: "realtime", label: "Realtime events", used: 4, limit: 20000, unit: "" },
+      ],
+    } as Usage,
   } as Record<string, Usage>,
 
   team: {
@@ -254,33 +286,38 @@ const store = {
         status: "active" as const,
       },
     ],
+    "ada-interiors-and-home-styling": [
+      {
+        id: "u1",
+        name: "Uliana Bilenkiy",
+        email: "ulianabilenkiy@gmail.com",
+        role: "owner" as Role,
+        you: true,
+        status: "active" as const,
+      },
+      {
+        id: "u4",
+        name: "Ada Okonkwo",
+        email: "ada@adainteriors.ng",
+        role: "admin" as Role,
+        status: "invited" as const,
+      },
+    ],
   } as Record<string, TeamMember[]>,
 
   payments: {
     "acme-fashion-group": [] as Payment[],
     "lagos-bites": [
-      {
-        id: "p1",
-        date: "2026-08-24",
-        description: "Starter plan · monthly",
-        amountNgn: 2000,
-        status: "paid" as const,
-      },
-      {
-        id: "p2",
-        date: "2026-08-09",
-        description: "Credit top-up · 1,000 credits",
-        amountNgn: 1000,
-        status: "paid" as const,
-      },
-      {
-        id: "p3",
-        date: "2026-07-24",
-        description: "Starter plan · monthly",
-        amountNgn: 2000,
-        status: "paid" as const,
-      },
+      { id: "p1", date: "2026-08-24", description: "Starter plan · monthly", amountNgn: 2000, status: "paid" as const },
+      { id: "p2", date: "2026-08-09", description: "Credit top-up · 1,000 credits", amountNgn: 1000, status: "paid" as const },
+      { id: "p3", date: "2026-07-24", description: "Starter plan · monthly", amountNgn: 2000, status: "paid" as const },
+      { id: "p4", date: "2026-07-22", description: "Starter plan · monthly", amountNgn: 2000, status: "failed" as const },
+      { id: "p5", date: "2026-06-24", description: "Starter plan · monthly", amountNgn: 2000, status: "paid" as const },
+      { id: "p6", date: "2026-06-02", description: "App purchase · WhatsApp order strip", amountNgn: 2500, status: "paid" as const },
+      { id: "p7", date: "2026-05-24", description: "Starter plan · monthly", amountNgn: 2000, status: "paid" as const },
+      { id: "p8", date: "2026-04-24", description: "Starter plan · monthly", amountNgn: 2000, status: "paid" as const },
     ],
+    "ada-interiors-and-home-styling": [] as Payment[],
   } as Record<string, Payment[]>,
 
   wallet: {
@@ -295,6 +332,12 @@ const store = {
       earnedNgn: 101200,
       spentNgn: 5000,
       appCredits: 5000,
+    } as WalletSummary,
+    "ada-interiors-and-home-styling": {
+      balanceNgn: 0,
+      earnedNgn: 0,
+      spentNgn: 0,
+      appCredits: 0,
     } as WalletSummary,
   } as Record<string, WalletSummary>,
 
@@ -320,6 +363,27 @@ const store = {
       priceNgn: 3500,
       category: "Food & hospitality",
     },
+    {
+      id: "l4",
+      title: "Testimonial wall",
+      author: "Femi builds",
+      priceNgn: 1500,
+      category: "Conversion",
+    },
+    {
+      id: "l5",
+      title: "Split hero with price tag",
+      author: "Kunle Design Co.",
+      priceNgn: 3000,
+      category: "Hero sections",
+    },
+    {
+      id: "l6",
+      title: "Reservation strip with time picker",
+      author: "Kunle Design Co.",
+      priceNgn: 4500,
+      category: "Food & hospitality",
+    },
   ] as Listing[],
 
   domains: {
@@ -332,9 +396,10 @@ const store = {
         addedAt: "2026-07-10",
       },
     ],
+    "ada-interiors-and-home-styling": [] as DomainRecord[],
   } as Record<string, DomainRecord[]>,
 
-  takenSlugs: ["acme-fashion-group", "lagos-bites", "ada-fashion"],
+  takenSlugs: ["acme-fashion-group", "lagos-bites", "ada-interiors-and-home-styling", "ada-fashion"],
 }
 
 /* ------------------------------------------------------------------ */

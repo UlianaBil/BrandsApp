@@ -226,3 +226,17 @@ The surface styling was retuned to a warmer, more editorial feel based on a desi
 - All existing copy that worked ("Don't own one yet? Buying a domain through BrandsApp is coming soon.", the trial reassurance, the Team page's account-vs-app-staff distinction).
 - The brand look: terracotta/cream/Inter, pill buttons, soft cards — matched to the landing page in this repository so dashboard and marketing feel like one product.
 - The visual tone of the production dashboard (light ground, bordered cards, generous spacing) — refined, not replaced.
+
+## Visual system (third pass, 2026-09-05) — the approved Overview redesign applied to every screen
+
+The whole dashboard now uses the design system established by the owner-approved Overview redesign (artifact 992ba6b6). The Overview is a direct port; every other page was rebuilt with the same language so all screens read as one product. Nothing functional was removed.
+
+- **Tokens:** ground `#F9F9F9`, white cards with 20px radius, hairline `rgba(28,28,28,.07)` borders and a soft shadow; dark `#1C1C1C` is the primary action colour; orange `#EA542D` is reserved for the brand avatar, focus rings and the peach "needs action" plan tile; Inter loaded from Google Fonts.
+- **Shell:** full-height white sidebar with pill nav (dark pill = active), a brand section that shows the brand's name (or initials tile when collapsed), and a Collapse control that turns the sidebar into an 80px icon rail with tooltips (persisted in `localStorage`). Mobile keeps the top bar + drawer.
+- **Page header** (`PageHeader`): brand context pill (initials + name, links to the overview) on desktop / back link on mobile, title, one-line subtitle, actions on the right. Overview keeps its identity pill + free-standing pill buttons.
+- **Controls:** every button is a pill (primary dark, secondary grey, white, ghost, danger); inputs and selects are pills with a dark focus ring, textareas 14px; `input-group` carries fixed prefixes/suffixes (web address, domain); switches, segmented control (`Segmented`) for tabs and filters; search field with clear.
+- **Data display:** stat cards (icon circle + label, hero number, support line, arrow link); manage/brand cards with hover lift and corner arrow; `facts` cards for subscription; `table` with real columns on desktop that stack on phones; `rowlist` for people; meters (dark fill, amber ≥80%, red ≥95%); plan cards with feature ticks and a dark outline on the current plan.
+- **Status:** chips with a leading dot (Live, Active, Free trial, Paid, Failed, Invited, Waiting for DNS); role chips (Owner peach, Admin dark, Member grey); notes as `member-note` pills.
+- **Overlays:** `Modal` (centred dialog on desktop, bottom sheet on phones) used for the plan checkout confirmation, marketplace preview & buy, and remove/cancel-invite confirmation; `Menu` dropdown on team rows; toasts are dark pills with a success/error icon.
+- **States:** skeletons everywhere data loads, `ErrorState` with retry, `EmptyState` with a soft icon circle, pagination on payment history (5 per page).
+- **Added on top of existing functionality (same system):** marketplace search + category filter, team Active/Invited filter, confirmation before removing a person, richer mock data (a third brand, 8 payments, 6 listings) so those patterns can be reviewed; the Demo panel gained a brand switcher.

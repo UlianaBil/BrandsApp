@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { Shell } from "./layout"
-import { DemoPanel, ToastProvider } from "./ui"
+import { ToastProvider } from "./ui"
 import MyBrands from "./pages/MyBrands"
 import CreateBrand from "./pages/CreateBrand"
 import Overview from "./pages/Overview"
@@ -28,7 +28,6 @@ export default function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Shell>
-        <DemoPanel />
       </ToastProvider>
     </BrowserRouter>
   )

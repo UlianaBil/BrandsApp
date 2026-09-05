@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react"
-import { Link, NavLink, useLocation } from "react-router-dom"
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { api } from "./mock"
-import { Icon, useAsync, type IconName } from "./ui"
+import { DemoPanel, Icon, initials, useAsync, type IconName } from "./ui"
 
 function BrandMark() {
   return (
@@ -12,52 +12,37 @@ function BrandMark() {
   )
 }
 
-function NavItem({
-  to,
-  icon,
-  label,
-  end,
-  onClick,
-}: {
-  to: string
-  icon: IconName
-  label: string
-  end?: boolean
-  onClick?: () => void
-}) {
+function NavItem({ to, icon, label, end, onClick }: { to: string; icon: IconName; label: string; end?: boolean; onClick?: () => void }) {
   return (
-    <NavLink
-      to={to}
-      end={end}
-      onClick={onClick}
-      className={({ isActive }) => `navlink${isActive ? " active" : ""}`}
-    >
-      <Icon name={icon} size={19} />
-      {label}
+    <NavLink to={to} end={end} onClick={onClick} data-label={label} className={({ isActive }) => `navlink${isActive ? " active" : ""}`}>
+      <span className="ico"><Icon name={icon} size={19} /></span>
+      <span className="lbl">{label}</span>
     </NavLink>
   )
 }
 
-function NavContent({ onNavigate }: { onNavigate?: () => void }) {
-  // The shell lives outside the routed elements, so read the active brand
-  // from the URL rather than useParams().
+/** Reads the active brand slug from the URL (the shell sits outside the routes). */
+export function useActiveSlug(): string | null {
   const { pathname } = useLocation()
   const match = pathname.match(/^\/dashboard\/([^/]+)/)
-  const slug = match && match[1] !== "create" ? match[1] : null
+  return match && match[1] !== "create" ? match[1] : null
+}
 
-  // The section header names the brand you're inside — it replaces
-  // desktop breadcrumbs as the identity signal.
-  const brand = useAsync(
-    () => (slug ? api.getBrand(slug) : Promise.resolve(null)),
-    [slug],
-  )
+function NavContent({ onNavigate }: { onNavigate?: () => void }) {
+  const slug = useActiveSlug()
+  // The section header names the brand you're inside; collapsed it becomes an initials tile.
+  const brand = useAsync(() => (slug ? api.getBrand(slug) : Promise.resolve(null)), [slug])
+  const name = brand.data?.name
 
   return (
     <nav className="sidebar-nav" aria-label="Dashboard">
       <NavItem to="/dashboard" icon="grid" label="My Brands" end onClick={onNavigate} />
       {slug && (
         <>
-          <div className="nav-section">{brand.data?.name ?? "This brand"}</div>
+          <div className="nav-section">
+            <span className="sec-label">{name ?? "This brand"}</span>
+            <span className="sec-avatar" title={name ?? "This brand"} aria-hidden="true">{name ? initials(name) : "··"}</span>
+          </div>
           <NavItem to={`/dashboard/${slug}`} icon="layout" label="Overview" end onClick={onNavigate} />
           <NavItem to={`/dashboard/${slug}/billing`} icon="card" label="Billing" onClick={onNavigate} />
           <NavItem to={`/dashboard/${slug}/finances`} icon="wallet" label="Finances" onClick={onNavigate} />
@@ -70,32 +55,48 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-function AccountFooter() {
+function Account() {
   return (
-    <div className="sidebar-footer">
-      <div className="avatar" aria-hidden="true">
-        UB
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>Uliana Bilenkiy</div>
-        <div style={{ fontSize: "0.8rem", color: "var(--muted)", overflowWrap: "anywhere" }}>
-          ulianabilenkiy@gmail.com
-        </div>
+    <div className="sidebar-account" title="Uliana Bilenkiy · ulianabilenkiy@gmail.com">
+      <div className="avatar" aria-hidden="true">UB</div>
+      <div className="acct-text">
+        <div className="n">Uliana Bilenkiy</div>
+        <div className="e">ulianabilenkiy@gmail.com</div>
       </div>
     </div>
   )
 }
 
+function readCollapsed(): boolean {
+  try {
+    return localStorage.getItem("nav.collapsed") === "1"
+  } catch {
+    return false
+  }
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(readCollapsed)
   const location = useLocation()
+  const navigate = useNavigate()
+  const slug = useActiveSlug()
 
-  // Always open a new page at the top (live product sometimes kept the
+  // Always open a new page at the top (the live product sometimes kept the
   // previous scroll position and landed users on a footer).
   useEffect(() => {
     window.scrollTo(0, 0)
     setDrawerOpen(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    document.body.classList.toggle("collapsed", collapsed)
+    try {
+      localStorage.setItem("nav.collapsed", collapsed ? "1" : "0")
+    } catch {
+      /* private mode */
+    }
+  }, [collapsed])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -108,25 +109,31 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <div className="sidebar-head">
-          <BrandMark />
-        </div>
+        <div className="sidebar-head"><BrandMark /></div>
         <NavContent />
-        <AccountFooter />
+        <div className="sidebar-foot">
+          <button
+            className="collapse-btn"
+            type="button"
+            aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed((c) => !c)}
+          >
+            <span className="ico"><Icon name="chevrons-left" size={16} /></span>
+            <span className="lbl">{collapsed ? "Expand" : "Collapse"}</span>
+          </button>
+          <Account />
+        </div>
       </aside>
 
       <div className="main">
         <header className="topbar">
-          <button
-            className="iconbtn"
-            aria-label="Open navigation"
-            aria-expanded={drawerOpen}
-            onClick={() => setDrawerOpen(true)}
-          >
+          <button className="iconbtn" aria-label="Open navigation" aria-expanded={drawerOpen} onClick={() => setDrawerOpen(true)}>
             <Icon name="menu" size={22} />
           </button>
           <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
             <img src="/brandsapp-logo.svg" alt="" />
+            <span>BrandsApp</span>
           </Link>
         </header>
 
@@ -134,45 +141,22 @@ export function Shell({ children }: { children: ReactNode }) {
           <>
             <div className="drawer-scrim" onClick={() => setDrawerOpen(false)} aria-hidden="true" />
             <div className="drawer" role="dialog" aria-label="Navigation">
-              <div className="sidebar-head" style={{ justifyContent: "space-between", display: "flex" }}>
+              <div className="sidebar-head">
                 <BrandMark />
                 <button className="iconbtn" aria-label="Close navigation" onClick={() => setDrawerOpen(false)}>
                   <Icon name="close" size={20} />
                 </button>
               </div>
               <NavContent onNavigate={() => setDrawerOpen(false)} />
-              <AccountFooter />
+              <div className="sidebar-foot"><Account /></div>
             </div>
           </>
         )}
 
         {children}
       </div>
+
+      <DemoPanel slug={slug} onSwitchBrand={(s) => navigate(s ? `/dashboard/${s}` : "/dashboard")} />
     </div>
-  )
-}
-
-/**
- * Brand page header: breadcrumb back to My Brands, the brand's display
- * name (never the raw slug — the slug only ever appears as part of the
- * domain), and the domain on a line that wraps cleanly.
- */
-export function BrandHeader({ slug, title }: { slug: string; title?: string }) {
-  const brand = useAsync(() => api.getBrand(slug), [slug])
-  const name = brand.data?.name
-
-  return (
-    <>
-      <Link className="back-link" to={title ? `/dashboard/${slug}` : "/dashboard"}>
-        <Icon name="back" size={16} />
-        <span>{title ? (name ?? "Back") : "My Brands"}</span>
-      </Link>
-      <div className="page-head" style={{ marginBottom: 16 }}>
-        <div>
-          <h1>{title ?? name ?? " "}</h1>
-          {!title && <p className="domain-line">{brand.data?.domain}</p>}
-        </div>
-      </div>
-    </>
   )
 }

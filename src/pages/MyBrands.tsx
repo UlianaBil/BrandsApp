@@ -1,27 +1,48 @@
 import { Link } from "react-router-dom"
 import { api } from "../mock"
-import { CardSkeleton, EmptyState, ErrorState, Icon, initials, RoleChip, useAsync } from "../ui"
+import { EmptyState, ErrorState, Icon, initials, PageHeader, RoleChip, Skeleton, useAsync } from "../ui"
+
+function BrandCardSkeleton() {
+  return (
+    <div className="card brandcard" aria-hidden="true">
+      <div className="bc-top">
+        <Skeleton h={40} w={40} round />
+        <div style={{ flex: 1 }}>
+          <Skeleton h={14} w="55%" />
+          <Skeleton h={11} w="70%" style={{ marginTop: 8 }} />
+        </div>
+      </div>
+      <div className="bc-foot"><Skeleton h={11} w="40%" /></div>
+    </div>
+  )
+}
+
+const since = (iso: string) => {
+  const d = new Date(iso)
+  return d.toLocaleDateString("en-GB", { month: "short", year: "numeric" })
+}
 
 export default function MyBrands() {
   const brands = useAsync(() => api.listBrands(), [])
 
   return (
     <main className="page">
-      <div className="page-head">
-        <div>
-          <h1>My Brands</h1>
-          <p className="sub">Every brand you own or help run, in one place.</p>
-        </div>
-        <Link to="/dashboard/create" className="btn btn-secondary newbrand-btn">
-          <Icon name="plus" size={17} />
-          New brand
-        </Link>
-      </div>
+      <PageHeader
+        title="My Brands"
+        sub="Every brand you own or help run, in one place."
+        actions={
+          brands.data && brands.data.length > 0 ? (
+            <Link to="/dashboard/create" className="btn btn-primary">
+              <span className="ico-circle"><Icon name="plus" size={13} /></span>
+              New brand
+            </Link>
+          ) : undefined
+        }
+      />
 
       {brands.loading && (
-        <div className="stack">
-          <CardSkeleton lines={2} />
-          <CardSkeleton lines={2} />
+        <div className="grid-brands" role="status" aria-label="Loading">
+          <BrandCardSkeleton /><BrandCardSkeleton />
         </div>
       )}
 
@@ -29,36 +50,38 @@ export default function MyBrands() {
 
       {brands.data && brands.data.length === 0 && (
         <EmptyState
+          icon="grid"
           title="No brands yet"
           body="Create your first brand and get your website, storefront and business apps — all in one place."
-          action={
-            <Link to="/dashboard/create" className="btn btn-primary btn-sm">
-              Create your first brand
-            </Link>
-          }
+          action={<Link to="/dashboard/create" className="btn btn-primary">Create your first brand</Link>}
         />
       )}
 
       {brands.data && brands.data.length > 0 && (
-        <div className="stack">
-          {brands.data.map((b) => (
-            <Link key={b.slug} to={`/dashboard/${b.slug}`} className="card linkcard">
-              <div className="brand-avatar" aria-hidden="true">
-                {initials(b.name)}
-              </div>
-              <div className="grow" style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <h2 style={{ marginBottom: 0 }}>{b.name}</h2>
+        <>
+          <div className="grid-brands">
+            {brands.data.map((b) => (
+              <Link key={b.slug} to={`/dashboard/${b.slug}`} className="card brandcard" aria-label={`${b.name} — open overview`}>
+                <div className="bc-top">
+                  <div className="brand-avatar" aria-hidden="true">{initials(b.name)}</div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <h2 title={b.name}>{b.name}</h2>
+                    <p className="domain-line"><span className="dom">{b.domain}</span></p>
+                  </div>
                   <RoleChip role={b.role} />
                 </div>
-                <p className="domain-line">{b.domain}</p>
-              </div>
-              <span style={{ color: "var(--muted)", alignSelf: "center" }} aria-hidden="true">
-                <Icon name="arrow-right" size={18} />
-              </span>
-            </Link>
-          ))}
-        </div>
+                <div className="bc-foot">
+                  <span className="bc-meta">Since {since(b.createdAt)}</span>
+                  <span className="mc-arrow" aria-hidden="true"><Icon name="arrow-up-right" size={16} /></span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <p className="member-note" style={{ marginTop: 18 }}>
+            <span className="ico"><Icon name="info" size={14} /></span>
+            Brands where you're a member open in read-only mode — billing, team and settings are managed by their owner.
+          </p>
+        </>
       )}
     </main>
   )

@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { api } from "../mock"
-import { Icon, useToast } from "../ui"
+import { Icon, PageHeader, useToast } from "../ui"
 
 const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/['’]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+  s.toLowerCase().trim().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 
 export default function CreateBrand() {
   const navigate = useNavigate()
@@ -57,45 +52,33 @@ export default function CreateBrand() {
     setSubmitting(true)
     try {
       const brand = await api.createBrand(name.trim(), effectiveSlug)
-      toast(`${brand.name} is being set up`)
+      toast(`${brand.name} is being set up`, "success")
       navigate(`/dashboard/${brand.slug}`)
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Something went wrong — try again.")
+      toast(err instanceof Error ? err.message : "Something went wrong — try again.", "error")
       setSubmitting(false)
     }
   }
 
   return (
-    <main className="page" style={{ maxWidth: 620 }}>
-      <Link className="back-link always" to="/dashboard">
-        <Icon name="back" size={16} />
-        <span>My Brands</span>
-      </Link>
-      <div className="page-head">
-        <div>
-          <h1>Create a new brand</h1>
-          <p className="sub">Set up a new store or website — we'll provision everything for you.</p>
-        </div>
-      </div>
+    <main className="page narrow">
+      <PageHeader
+        title="Create a new brand"
+        sub="Set up a new store or website — we'll provision everything for you."
+        backTo="/dashboard"
+        backLabel="My Brands"
+      />
 
       <form className="card" onSubmit={submit} noValidate>
         <div className="field">
           <label htmlFor="cb-name">Brand name</label>
-          <input
-            id="cb-name"
-            className="input"
-            placeholder="e.g. Adaeze Fashion"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            autoComplete="organization"
-            required
-          />
+          <input id="cb-name" className="input" placeholder="e.g. Adaeze Fashion" value={name} onChange={(e) => setName(e.target.value)} autoComplete="organization" required />
           <p className="help">This is how your brand appears everywhere — you can change it later.</p>
         </div>
 
         <div className="field">
           <label htmlFor="cb-slug">Web address</label>
-          <div className="slug-input">
+          <div className={`input-group${availability === "taken" ? " invalid" : ""}`}>
             <input
               id="cb-slug"
               className="input"
@@ -108,44 +91,25 @@ export default function CreateBrand() {
               aria-invalid={availability === "taken"}
               aria-describedby="cb-slug-status"
             />
-            <span className="slug-suffix">.brandsapp.io</span>
+            <span className="addon">.brandsapp.io</span>
           </div>
-          <p id="cb-slug-status" className={availability === "taken" ? "error-text" : "help"} aria-live="polite">
-            {availability === "checking" && "Checking availability…"}
-            {availability === "free" && `✓ ${effectiveSlug}.brandsapp.io is available`}
-            {availability === "taken" && `${effectiveSlug}.brandsapp.io is already taken — try another address.`}
+          <p id="cb-slug-status" className={availability === "taken" ? "error-text" : `help${availability === "free" ? " ok" : ""}`} aria-live="polite">
+            {availability === "checking" && (<><span className="spin" style={{ width: 14, height: 14, marginTop: 2 }} />Checking availability…</>)}
+            {availability === "free" && (<><Icon name="check" size={14} />{effectiveSlug}.brandsapp.io is available</>)}
+            {availability === "taken" && (<><Icon name="warning" size={14} />{effectiveSlug}.brandsapp.io is already taken — try another address.</>)}
             {availability === "idle" && "You can connect your own domain later."}
           </p>
         </div>
 
         <div className="field">
-          <label htmlFor="cb-desc">
-            Description<span className="optional">Optional</span>
-          </label>
-          <textarea
-            id="cb-desc"
-            className="input"
-            rows={3}
-            placeholder="What does this brand do?"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+          <label htmlFor="cb-desc">Description<span className="optional">Optional</span></label>
+          <textarea id="cb-desc" className="input" rows={3} placeholder="What does this brand do?" value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
         <div className="field">
-          <label htmlFor="cb-email">
-            Contact email<span className="optional">Optional</span>
-          </label>
-          <input
-            id="cb-email"
-            className="input"
-            type="email"
-            placeholder="hello@yourbrand.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-invalid={emailInvalid}
-          />
-          {emailInvalid && <p className="error-text">That doesn't look like an email address.</p>}
+          <label htmlFor="cb-email">Contact email<span className="optional">Optional</span></label>
+          <input id="cb-email" className="input" type="email" placeholder="hello@yourbrand.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={emailInvalid} />
+          {emailInvalid && <p className="error-text"><Icon name="warning" size={14} />That doesn't look like an email address.</p>}
         </div>
 
         <div className="field">
@@ -156,10 +120,10 @@ export default function CreateBrand() {
           </select>
         </div>
 
-        <button className="btn btn-primary" type="submit" disabled={!canSubmit} style={{ width: "100%" }}>
-          {submitting ? "Setting up your brand…" : "Create brand"}
+        <button className="btn btn-primary btn-lg btn-block" type="submit" disabled={!canSubmit} style={{ marginTop: 24 }}>
+          {submitting ? (<><span className="spin" style={{ borderColor: "rgba(255,255,255,.3)", borderTopColor: "#fff" }} />Setting up your brand…</>) : "Create brand"}
         </button>
-        <p className="help" style={{ textAlign: "center", marginTop: 10 }}>
+        <p className="hint quiet" style={{ textAlign: "center", marginTop: 12 }}>
           You get a 7-day free trial. No card required to get started.
         </p>
       </form>
