@@ -33,7 +33,7 @@ export default function MyBrands() {
         actions={
           brands.data && brands.data.length > 0 ? (
             <Link to="/dashboard/create" className="btn btn-white">
-              <span className="ico-circle"><Icon name="plus" size={13} /></span>
+              <Icon name="plus" size={16} />
               New brand
             </Link>
           ) : undefined
