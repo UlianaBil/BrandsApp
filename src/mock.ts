@@ -493,6 +493,10 @@ export const api = {
 
 export const ngn = (v: number) => `₦${v.toLocaleString("en-NG")}`
 
+/** Absolute dates read "24 Sep 2026" everywhere (Design Rules §9). */
+export const fmtDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+
 export const roleLabel: Record<Role, string> = {
   owner: "Owner",
   admin: "Admin",

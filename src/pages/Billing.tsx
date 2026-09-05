@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
-import { api, ngn, type UsageResource } from "../mock"
+import { api, fmtDate, ngn, type UsageResource } from "../mock"
 import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, Pagination, SectionHead, Skeleton, useAsync, useToast } from "../ui"
 
 // Paid tiers from the platform rate card (pricing.md): 1 credit = ₦1.
@@ -83,7 +83,7 @@ export default function Billing() {
               {plan.data.status === "active" && (
                 <div className="card">
                   <span className="stat-title">Renews</span>
-                  <span className="fact-v">{plan.data.renewsOn}</span>
+                  <span className="fact-v">{plan.data.renewsOn && fmtDate(plan.data.renewsOn)}</span>
                 </div>
               )}
               {plan.data.status === "active" && plan.data.monthlyCredits != null && (
@@ -173,7 +173,7 @@ export default function Billing() {
               {pagedPayments.map((p) => (
                 <div key={p.id} className="tr">
                   <span className="td strong span">{p.description}</span>
-                  <span className="td muted"><span className="lbl">Date</span>{p.date}</span>
+                  <span className="td muted"><span className="lbl">Date</span>{fmtDate(p.date)}</span>
                   <span className="td num">{ngn(p.amountNgn)}</span>
                   <span className="td end span">
                     <span className={`chip ${p.status === "paid" ? "chip-good" : "chip-bad"}`}><span className="dot" />{p.status === "paid" ? "Paid" : "Failed"}</span>

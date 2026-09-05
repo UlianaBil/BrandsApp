@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { api } from "../mock"
+import { api, fmtDate } from "../mock"
 import { CardSkeleton, EmptyState, ErrorState, Icon, PageHeader, SectionHead, useAsync, useToast } from "../ui"
 
 const HOSTNAME_RE = /^(?!-)[a-z0-9-]{1,63}(?<!-)(\.(?!-)[a-z0-9-]{1,63}(?<!-))+$/
@@ -144,7 +144,7 @@ export default function Settings() {
                   {domains.data.map((d) => (
                     <div key={d.id} className="tr">
                       <span className="td strong" style={{ overflowWrap: "anywhere" }}>{d.hostname}</span>
-                      <span className="td muted"><span className="lbl">Added</span>{d.addedAt}</span>
+                      <span className="td muted"><span className="lbl">Added</span>{fmtDate(d.addedAt)}</span>
                       <span className="td end">
                         {d.status === "active"
                           ? <span className="chip chip-good"><span className="dot" />Active</span>

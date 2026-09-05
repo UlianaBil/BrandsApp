@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom"
-import { api, ngn } from "../mock"
+import { api, fmtDate, ngn } from "../mock"
 import { CardSkeleton, ErrorState, Icon, InlineError, initials, SectionHead, Skeleton, useAsync, useToast, type IconName } from "../ui"
 
 function ManageCard({ to, icon, title, body }: { to: string; icon: IconName; title: string; body: string }) {
@@ -112,7 +112,7 @@ export default function Overview() {
           {plan.data?.status === "active" && (
             <>
               <div className="ov-num">{plan.data.priceNgn ? ngn(plan.data.priceNgn) : plan.data.name}</div>
-              <p className="ov-sub">{plan.data.name} · renews {plan.data.renewsOn}.</p>
+              <p className="ov-sub">{plan.data.name} · renews {plan.data.renewsOn && fmtDate(plan.data.renewsOn)}.</p>
               <div className="stat-actions"><Link to={`/dashboard/${slug}/billing`} className="link-cta">Manage plan</Link></div>
             </>
           )}
