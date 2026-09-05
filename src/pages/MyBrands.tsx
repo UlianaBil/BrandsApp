@@ -32,7 +32,7 @@ export default function MyBrands() {
         sub="Every brand you own or help run, in one place."
         actions={
           brands.data && brands.data.length > 0 ? (
-            <Link to="/dashboard/create" className="btn btn-accent">
+            <Link to="/dashboard/create" className="btn btn-white">
               <span className="ico-circle"><Icon name="plus" size={13} /></span>
               New brand
             </Link>
