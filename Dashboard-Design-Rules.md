@@ -118,7 +118,7 @@ The page container is `max-width: 1240px`, centred, with 110px bottom padding so
 | `grid-manage` (link cards) | 1 | 2 | 2 | 3 | 5 |
 | `grid-brands` | 1 | 2 (from 640) | 2 | 2 | 3 (from 1100) |
 | `split` (list + side panel) | 1 | 1 | 1 | 1 (2 from 1000) | 2 |
-| `facts` | auto-fit, 160px min | | | | |
+| `facts` | 2 (always) | 2 (always) | auto-fit, 160px min | auto-fit | auto-fit |
 
 All grid tracks are `minmax(0, 1fr)` so long content shrinks and truncates instead of stretching the grid. A card group with two items uses `grid-2`, never `grid-3` with a hole.
 
