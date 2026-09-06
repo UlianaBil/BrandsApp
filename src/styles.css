@@ -401,7 +401,7 @@ body.collapsed .sidebar .acct-text{display:none}
 .chip-dark{background:var(--dark);color:#fff}
 .chip-accent{background:var(--accent-soft);color:var(--accent-ink)}
 .chip-owner{background:var(--accent-soft);color:var(--accent-ink)}
-.chip-admin{background:var(--dark);color:#fff}
+.chip-admin{background:rgba(28,28,28,.08);color:var(--ink)}
 .chip-member{background:var(--soft);color:var(--body)}
 
 /* ============================================================

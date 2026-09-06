@@ -174,7 +174,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 
 - Chips are pills, .74rem/600, with a leading 6px dot for *state* chips (Live, Active, Paid, Failed, Invited, Waiting for DNS). Chips without a dot are *labels* (a category, a period, "Current plan").
 - Tone mapping is fixed: good = healthy/complete, warn = temporary/pending/expiring, bad = failed/blocked, neutral = informational or inactive, dark = current selection, accent = ownership.
-- Role chips: Owner (peach), Admin (dark), Member (grey). Roles are always chips, never plain text.
+- Role chips are all soft tints with dark-ish ink, never solid fills: Owner (peach tint, `--accent-soft` / `--accent-ink`), Admin (8% ink tint on white, `--ink` text), Member (`--soft`, `--body` text). A role is a label, not an alert, so no role chip may be louder than the Owner chip. Roles are always chips, never plain text.
 - **Brand membership is Owner or Admin** (owner decision, 5 Sep 2026): a brand card on My Brands and the account menu only ever show those two. "Member (view only)" exists only as a *team* role assignable from the Team page; the read-only treatment (§7.5) applies to that role.
 - Status is always a worded chip. Never a bare coloured dot, never colour alone.
 
