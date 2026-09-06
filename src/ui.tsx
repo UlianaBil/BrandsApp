@@ -383,7 +383,7 @@ export function Menu({
   }, [open])
 
   return (
-    <div className="menu-wrap" ref={ref}>
+    <div className={`menu-wrap${trigger ? " full" : ""}`} ref={ref}>
       {trigger ? (
         <button type="button" className="menu-trigger" aria-label={label} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
           {trigger}

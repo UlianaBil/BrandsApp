@@ -268,7 +268,8 @@ body.collapsed .sidebar .acct-text{display:none}
 .card-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .card-head .hint{margin-top:2px}
-.card.flush{padding:0;overflow:hidden}
+.card.flush{padding:0}
+.card.flush > :last-child,.card.flush .rowlist:last-child > .row-item:last-child,.card.flush .table:last-child > .tr:last-child{border-bottom-left-radius:var(--r-card);border-bottom-right-radius:var(--r-card)}
 .card.flush .card-head{padding:20px 22px 0}
 .card.flush > .table,.card.flush > .rowlist{margin-top:14px}
 .card.flush .card-foot{padding:14px 22px 18px;border-top:1px solid var(--line)}
@@ -644,6 +645,8 @@ details.explainer p{font-size:.87rem;color:var(--body);margin:0 0 6px 36px}
 .menu.up{top:auto;bottom:calc(100% + 6px)}
 .menu.start{right:auto;left:0}
 .menu-trigger{border:none;background:none;padding:0;border-radius:14px;display:flex;width:100%;text-align:left}
+.menu-wrap.full{display:flex;width:100%}
+.menu-wrap.full .menu{left:0;right:0;min-width:0}
 .menu-head{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
 .menu button .ml{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .menu button .mm{margin-left:auto;flex-shrink:0}
@@ -652,7 +655,7 @@ details.explainer p{font-size:.87rem;color:var(--body);margin:0 0 6px 36px}
 .sidebar-account.as-trigger{border-radius:14px;padding:8px 6px;margin-top:6px;transition:background .15s;cursor:pointer;width:100%}
 .sidebar-account .caret{margin-left:auto;color:var(--muted);flex-shrink:0}
 body.collapsed .sidebar .sidebar-account .caret{display:none}
-body.collapsed .sidebar .menu{left:calc(100% + 10px);right:auto;bottom:0}
+body.collapsed .sidebar .menu-wrap.full .menu{left:calc(100% + 10px);right:auto;bottom:0;width:280px}
 .menu button{
   display:flex;align-items:center;gap:10px;width:100%;
   border:none;background:none;border-radius:10px;
