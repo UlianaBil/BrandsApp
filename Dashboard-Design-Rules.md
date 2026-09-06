@@ -124,6 +124,7 @@ All grid tracks are `minmax(0, 1fr)` so long content shrinks and truncates inste
 - A new top-level brand page gets a nav item with a 19px icon and joins the six existing pages in the brand section. Sub-flows (a domain's DNS detail, an order) do **not** get nav items; they get a back link to their parent list.
 - Links that leave the dashboard (brand admin, live site) open in a new tab and carry an arrow or external icon. Links inside the dashboard never do.
 - Deep links must work: every page fetches what it needs from the URL; nothing depends on having visited another page first.
+- **A CTA lands on the thing it names.** "Choose a plan" opens Billing scrolled to the Plans section (`/billing#plans`), "Usage & credits" to `#usage`, "Billing page" for history to `#payments`. Give every section a stable `id` and the `anchor` class (which clears the mobile top bar), scroll to the hash once the page has laid out, and never send a user to the top of a long page to find the section themselves.
 
 ---
 

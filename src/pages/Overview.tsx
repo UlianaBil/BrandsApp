@@ -106,21 +106,21 @@ export default function Overview() {
             <>
               <div className="ov-num">{plan.data.daysLeft} days</div>
               <p className="ov-sub">left in your free trial — pick a plan to keep your brand online.</p>
-              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing`} className="link-cta">Choose a plan</Link></div>
+              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing#plans`} className="link-cta">Choose a plan</Link></div>
             </>
           )}
           {plan.data?.status === "active" && (
             <>
               <div className="ov-num">{plan.data.priceNgn ? ngn(plan.data.priceNgn) : plan.data.name}</div>
               <p className="ov-sub">{plan.data.name} · renews {plan.data.renewsOn && fmtDate(plan.data.renewsOn)}.</p>
-              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing`} className="link-cta">Manage plan</Link></div>
+              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing#plans`} className="link-cta">Manage plan</Link></div>
             </>
           )}
           {plan.data?.status === "none" && (
             <>
               <div className="ov-num">No plan</div>
               <p className="ov-sub">Choose one to keep this brand online.</p>
-              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing`} className="link-cta">Choose a plan</Link></div>
+              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing#plans`} className="link-cta">Choose a plan</Link></div>
             </>
           )}
         </section>
@@ -138,7 +138,7 @@ export default function Overview() {
             <>
               <div className="ov-num">{usage.data.requests.toLocaleString()}</div>
               <p className="ov-sub">visits to your site this month · {usage.data.storageMb} MB storage · {usage.data.emailsSent} emails sent</p>
-              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing`} className="link-cta">Usage &amp; credits</Link></div>
+              <div className="stat-actions"><Link to={`/dashboard/${slug}/billing#usage`} className="link-cta">Usage &amp; credits</Link></div>
             </>
           )}
           {!usage.loading && !usage.error && !usage.data && (

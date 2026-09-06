@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useLocation, useParams } from "react-router-dom"
 import { api, fmtDate, ngn, type UsageResource } from "../mock"
 import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, Pagination, SectionHead, Skeleton, useAsync, useToast } from "../ui"
 
@@ -37,6 +37,15 @@ export default function Billing() {
   const usage = useAsync(() => api.getUsage(slug), [slug])
   const payments = useAsync(() => api.listPayments(slug), [slug])
   const kyc = useAsync(() => api.getKyc(slug), [slug])
+  const { hash } = useLocation()
+
+  // Deep links (#plans, #usage, #payments) land on the section, not the top of the page.
+  // Re-run when the async blocks above settle, since they change the layout height.
+  useEffect(() => {
+    if (!hash) return
+    const el = document.getElementById(hash.slice(1))
+    if (el) el.scrollIntoView({ block: "start", behavior: "auto" })
+  }, [hash, plan.loading, kyc.loading, usage.loading])
   const [showAllUsage, setShowAllUsage] = useState(false)
   const [page, setPage] = useState(1)
   const [choosing, setChoosing] = useState<PlanDef | null>(null)
@@ -140,7 +149,7 @@ export default function Billing() {
         {usage.loading && <CardSkeleton lines={3} />}
         {usage.error && <ErrorState message={usage.error} onRetry={usage.retry} />}
         {usage.data && (
-          <section className="card" aria-label="Usage this month">
+          <section className="card anchor" id="usage" aria-label="Usage this month">
             <div className="card-head" style={{ marginBottom: 4 }}>
               <div>
                 <h2>Usage this month</h2>
@@ -162,7 +171,7 @@ export default function Billing() {
         )}
 
         {/* Plans */}
-        <section aria-label="Plans">
+        <section aria-label="Plans" id="plans" className="anchor">
           <SectionHead title="Plans" hint="Billed yearly, prepaid in Naira · pay by card, transfer, USSD or from your wallet" />
           <div className="grid-3">
             {PLANS.map((p) => {
@@ -193,6 +202,7 @@ export default function Billing() {
         </section>
 
         {/* Payment history */}
+        <div id="payments" className="anchor" />
         <SectionHead title="Payment history" />
         {payments.loading && <CardSkeleton lines={2} />}
         {payments.error && <ErrorState message={payments.error} onRetry={payments.retry} />}

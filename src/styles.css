@@ -173,6 +173,8 @@ body.collapsed .sidebar .acct-text{display:none}
 .page{padding:24px 16px 110px;max-width:1240px;margin:0 auto}
 @media (min-width:900px){.page{padding:36px 36px 110px}}
 .page.narrow{max-width:680px}
+.anchor{scroll-margin-top:16px}
+@media (max-width:899px){.anchor{scroll-margin-top:72px}}
 
 /* ============================================================
    Page headers

@@ -84,9 +84,9 @@ export function Shell({ children }: { children: ReactNode }) {
   // Always open a new page at the top (the live product sometimes kept the
   // previous scroll position and landed users on a footer).
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (!location.hash) window.scrollTo(0, 0)
     setDrawerOpen(false)
-  }, [location.pathname])
+  }, [location.pathname, location.hash])
 
   useEffect(() => {
     document.body.classList.toggle("collapsed", collapsed)

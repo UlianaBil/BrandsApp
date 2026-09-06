@@ -39,7 +39,7 @@ export default function Finances() {
               Sales and commissions your brand has earned. Use it for your plan, usage credits or apps instead of a card.
             </p>
             <div className="stat-actions">
-              <Link to={`/dashboard/${slug}/billing`} className="btn btn-primary btn-sm">Pay for a plan <Icon name="arrow-right" size={14} /></Link>
+              <Link to={`/dashboard/${slug}/billing#plans`} className="btn btn-primary btn-sm">Pay for a plan <Icon name="arrow-right" size={14} /></Link>
               <Link to={`/dashboard/${slug}/marketplace`} className="btn btn-secondary btn-sm">Browse apps</Link>
             </div>
           </section>
@@ -55,7 +55,7 @@ export default function Finances() {
               <span className="ico"><Icon name="info" size={14} /></span>
               <span>
                 Nothing spent yet — your full payment history will appear on the{" "}
-                <Link to={`/dashboard/${slug}/billing`} className="text-link">Billing page</Link> once you're on a paid plan.
+                <Link to={`/dashboard/${slug}/billing#payments`} className="text-link">Billing page</Link> once you're on a paid plan.
               </span>
             </p>
           )}
