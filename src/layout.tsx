@@ -12,9 +12,9 @@ function BrandMark() {
   )
 }
 
-function NavItem({ to, icon, label, end, onClick }: { to: string; icon: IconName; label: string; end?: boolean; onClick?: () => void }) {
+function NavItem({ to, icon, label, end }: { to: string; icon: IconName; label: string; end?: boolean }) {
   return (
-    <NavLink to={to} end={end} onClick={onClick} data-label={label} className={({ isActive }) => `navlink${isActive ? " active" : ""}`}>
+    <NavLink to={to} end={end} data-label={label} className={({ isActive }) => `navlink${isActive ? " active" : ""}`}>
       <span className="ico"><Icon name={icon} size={19} /></span>
       <span className="lbl">{label}</span>
     </NavLink>
@@ -28,56 +28,64 @@ export function useActiveSlug(): string | null {
   return match && match[1] !== "create" ? match[1] : null
 }
 
-function NavContent({ onNavigate }: { onNavigate?: () => void }) {
-  const slug = useActiveSlug()
-  // The section header names the brand you're inside; collapsed it becomes an initials tile.
-  const brand = useAsync(() => (slug ? api.getBrand(slug) : Promise.resolve(null)), [slug])
-  const name = brand.data?.name
-
+function NavContent({ slug, brandName }: { slug: string | null; brandName?: string }) {
   return (
     <nav className="sidebar-nav" aria-label="Dashboard">
-      <NavItem to="/dashboard" icon="grid" label="My Brands" end onClick={onNavigate} />
+      <NavItem to="/dashboard" icon="grid" label="My Brands" end />
       {slug && (
         <>
           <div className="nav-section">
-            <span className="sec-label">{name ?? "This brand"}</span>
+            <span className="sec-label">{brandName ?? "This brand"}</span>
           </div>
-          <NavItem to={`/dashboard/${slug}`} icon="layout" label="Overview" end onClick={onNavigate} />
-          <NavItem to={`/dashboard/${slug}/billing`} icon="card" label="Billing" onClick={onNavigate} />
-          <NavItem to={`/dashboard/${slug}/finances`} icon="wallet" label="Finances" onClick={onNavigate} />
-          <NavItem to={`/dashboard/${slug}/team`} icon="team" label="Team" onClick={onNavigate} />
-          <NavItem to={`/dashboard/${slug}/marketplace`} icon="store" label="Marketplace" onClick={onNavigate} />
-          <NavItem to={`/dashboard/${slug}/settings`} icon="gear" label="Settings" onClick={onNavigate} />
+          <NavItem to={`/dashboard/${slug}`} icon="layout" label="Overview" end />
+          <NavItem to={`/dashboard/${slug}/billing`} icon="card" label="Billing" />
+          <NavItem to={`/dashboard/${slug}/finances`} icon="wallet" label="Finances" />
+          <NavItem to={`/dashboard/${slug}/team`} icon="team" label="Team" />
+          <NavItem to={`/dashboard/${slug}/marketplace`} icon="store" label="Marketplace" />
+          <NavItem to={`/dashboard/${slug}/settings`} icon="gear" label="Settings" />
         </>
       )}
     </nav>
   )
 }
 
-/**
- * Account menu (production parity): the avatar opens a menu with a brand switcher
- * (each brand by name), New brand, Account settings and Sign out (confirmed in a
- * modal). No "All brands" entry — the sidebar's My Brands already is that
- * (owner decision, 2026-09-05).
- */
-function Account({ onNavigate }: { onNavigate?: () => void }) {
-  const navigate = useNavigate()
+function SignOutModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const toast = useToast()
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Sign out of BrandsApp?"
+      icon="logout"
+      footer={
+        <>
+          <button className="btn btn-secondary" onClick={onClose}>Stay signed in</button>
+          <button className="btn btn-primary" onClick={() => { onClose(); toast("Sign-out isn't wired up in this prototype") }}>Sign out</button>
+        </>
+      }
+    >
+      <p>You'll need to sign in again to manage your brands.</p>
+    </Modal>
+  )
+}
+
+/**
+ * Desktop account menu (production parity): the avatar opens a menu with a brand
+ * switcher (each brand by name), New brand, Account settings and Sign out. No
+ * "All brands" entry — the sidebar's My Brands already is that (owner decision).
+ */
+function Account() {
+  const navigate = useNavigate()
   const account = useAsync(() => api.getAccount(), [])
   const brands = useAsync(() => api.listBrands(), [])
   const [signOut, setSignOut] = useState(false)
   const name = account.data?.name ?? "Your account"
   const email = account.data?.email ?? ""
-  const go = (to: string) => {
-    onNavigate?.()
-    navigate(to)
-  }
-
   const brandItems = (brands.data ?? []).map((b) => ({
     label: b.name,
     lead: <span className="mini-avatar" aria-hidden="true">{initials(b.name)}</span>,
     meta: <span className={`chip chip-${b.role}`} style={{ fontSize: ".66rem", padding: "2px 8px" }}>{b.role === "owner" ? "Owner" : "Admin"}</span>,
-    onSelect: () => go(`/dashboard/${b.slug}`),
+    onSelect: () => navigate(`/dashboard/${b.slug}`),
   }))
 
   return (
@@ -98,25 +106,64 @@ function Account({ onNavigate }: { onNavigate?: () => void }) {
         }
         items={[
           ...brandItems,
-          { label: "New brand", icon: "plus", onSelect: () => go("/dashboard/create") },
-          { label: "Account settings", icon: "user", sep: true, onSelect: () => go("/settings") },
+          { label: "New brand", icon: "plus", onSelect: () => navigate("/dashboard/create") },
+          { label: "Account settings", icon: "user", sep: true, onSelect: () => navigate("/settings") },
           { label: "Sign out", icon: "logout", onSelect: () => setSignOut(true) },
         ]}
       />
-      <Modal
-        open={signOut}
-        onClose={() => setSignOut(false)}
-        title="Sign out of BrandsApp?"
-        icon="logout"
-        footer={
-          <>
-            <button className="btn btn-secondary" onClick={() => setSignOut(false)}>Stay signed in</button>
-            <button className="btn btn-primary" onClick={() => { setSignOut(false); toast("Sign-out isn't wired up in this prototype") }}>Sign out</button>
-          </>
-        }
-      >
-        <p>You'll need to sign in again to manage your brands.</p>
+      <SignOutModal open={signOut} onClose={() => setSignOut(false)} />
+    </>
+  )
+}
+
+/**
+ * Phone "You" sheet — the fifth tab. Brand Settings for the current brand, then the
+ * brand switcher, New brand, Account settings and Sign out. Marketplace is reached
+ * from the Overview hub cards, not from here (pattern: Slack "You", Airbnb Profile).
+ */
+function AccountSheet({ open, onClose, slug }: { open: boolean; onClose: () => void; slug: string | null }) {
+  const navigate = useNavigate()
+  const account = useAsync(() => api.getAccount(), [])
+  const brands = useAsync(() => api.listBrands(), [])
+  const [signOut, setSignOut] = useState(false)
+  const go = (to: string) => {
+    onClose()
+    navigate(to)
+  }
+  return (
+    <>
+      <Modal open={open} onClose={onClose} title={account.data?.name ?? "You"} icon="user">
+        {account.data && <p style={{ marginTop: -6, marginBottom: 10 }}>{account.data.email}</p>}
+        <div className="sheet-list">
+          {slug && (
+            <>
+              <button type="button" onClick={() => go(`/dashboard/${slug}/settings`)}>
+                <span className="mi"><Icon name="gear" size={17} /></span>Brand settings
+              </button>
+              <div className="sep" role="separator" />
+            </>
+          )}
+          <div className="sh-label">Brands</div>
+          {(brands.data ?? []).map((b) => (
+            <button key={b.slug} type="button" onClick={() => go(`/dashboard/${b.slug}`)}>
+              <span className="mi brand"><span>{initials(b.name)}</span></span>
+              <span className="ml">{b.name}</span>
+              <span className={`chip chip-${b.role}`} style={{ fontSize: ".66rem", padding: "2px 8px" }}>{b.role === "owner" ? "Owner" : "Admin"}</span>
+            </button>
+          ))}
+          <button type="button" onClick={() => go("/dashboard/create")}>
+            <span className="mi"><Icon name="plus" size={17} /></span>New brand
+          </button>
+          <div className="sep" role="separator" />
+          <button type="button" onClick={() => go("/settings")}>
+            <span className="mi"><Icon name="user" size={17} /></span>Account settings
+          </button>
+          <button type="button" onClick={() => { onClose(); setSignOut(true) }}>
+            <span className="mi"><Icon name="logout" size={17} /></span>Sign out
+          </button>
+        </div>
       </Modal>
+      <SignOutModal open={signOut} onClose={() => setSignOut(false)} />
     </>
   )
 }
@@ -130,17 +177,19 @@ function readCollapsed(): boolean {
 }
 
 export function Shell({ children }: { children: ReactNode }) {
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(readCollapsed)
+  const [sheet, setSheet] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const slug = useActiveSlug()
+  const brand = useAsync(() => (slug ? api.getBrand(slug) : Promise.resolve(null)), [slug])
+  const account = useAsync(() => api.getAccount(), [])
 
   // Always open a new page at the top (the live product sometimes kept the
-  // previous scroll position and landed users on a footer).
+  // previous scroll position and landed users on a footer). Hash links scroll themselves.
   useEffect(() => {
     if (!location.hash) window.scrollTo(0, 0)
-    setDrawerOpen(false)
+    setSheet(false)
   }, [location.pathname, location.hash])
 
   useEffect(() => {
@@ -152,19 +201,18 @@ export function Shell({ children }: { children: ReactNode }) {
     }
   }, [collapsed])
 
+  // Phones get the bottom tab bar only inside a brand.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false)
-    }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [])
+    document.body.classList.toggle("has-tabbar", !!slug)
+  }, [slug])
+
+  const you = account.data ? initials(account.data.name) : "··"
 
   return (
     <div className="shell">
       <aside className="sidebar">
         <div className="sidebar-head"><BrandMark /></div>
-        <NavContent />
+        <NavContent slug={slug} brandName={brand.data?.name} />
         <div className="sidebar-foot">
           <button
             className="collapse-btn"
@@ -181,35 +229,51 @@ export function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="main">
+        {/* Phone top bar: inside a brand it's back + brand name; elsewhere the wordmark + account. */}
         <header className="topbar">
-          <button className="iconbtn" aria-label="Open navigation" aria-expanded={drawerOpen} onClick={() => setDrawerOpen(true)}>
-            <Icon name="menu" size={22} />
-          </button>
-          <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
-            <img src="/brandsapp-logo.svg" alt="" />
-            <span>BrandsApp</span>
-          </Link>
+          {slug ? (
+            <>
+              <Link to="/dashboard" className="iconbtn" aria-label="Back to My Brands"><Icon name="chevron-left" size={22} /></Link>
+              <span className="tb-title" aria-live="polite">{brand.data?.name ?? ""}</span>
+              <span className="tb-spacer" aria-hidden="true" />
+            </>
+          ) : (
+            <>
+              <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
+                <img src="/brandsapp-logo.svg" alt="" />
+                <span>BrandsApp</span>
+              </Link>
+              <button type="button" className="iconbtn tb-you" aria-label="Account" onClick={() => setSheet(true)}>
+                <span className="avatar sm" aria-hidden="true">{you}</span>
+              </button>
+            </>
+          )}
         </header>
 
-        {drawerOpen && (
-          <>
-            <div className="drawer-scrim" onClick={() => setDrawerOpen(false)} aria-hidden="true" />
-            <div className="drawer" role="dialog" aria-label="Navigation">
-              <div className="sidebar-head">
-                <BrandMark />
-                <button className="iconbtn" aria-label="Close navigation" onClick={() => setDrawerOpen(false)}>
-                  <Icon name="close" size={20} />
-                </button>
-              </div>
-              <NavContent onNavigate={() => setDrawerOpen(false)} />
-              <div className="sidebar-foot"><Account onNavigate={() => setDrawerOpen(false)} /></div>
-            </div>
-          </>
-        )}
-
         {children}
+
+        {slug && (
+          <nav className="tabbar" aria-label="Brand sections">
+            <NavLink to={`/dashboard/${slug}`} end className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
+              <span className="ti"><Icon name="layout" size={22} /></span>Overview
+            </NavLink>
+            <NavLink to={`/dashboard/${slug}/billing`} className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
+              <span className="ti"><Icon name="card" size={22} /></span>Billing
+            </NavLink>
+            <NavLink to={`/dashboard/${slug}/finances`} className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
+              <span className="ti"><Icon name="wallet" size={22} /></span>Finances
+            </NavLink>
+            <NavLink to={`/dashboard/${slug}/team`} className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
+              <span className="ti"><Icon name="team" size={22} /></span>Team
+            </NavLink>
+            <button type="button" className={`tab${sheet ? " active" : ""}`} aria-haspopup="dialog" aria-expanded={sheet} onClick={() => setSheet(true)}>
+              <span className="ti"><span className="avatar sm" aria-hidden="true">{you}</span></span>You
+            </button>
+          </nav>
+        )}
       </div>
 
+      <AccountSheet open={sheet} onClose={() => setSheet(false)} slug={slug} />
       <DemoPanel slug={slug} onSwitchBrand={(s) => navigate(s ? `/dashboard/${s}` : "/dashboard")} />
     </div>
   )

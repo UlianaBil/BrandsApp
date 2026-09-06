@@ -172,6 +172,7 @@
 ### 20. Brand sections were reachable only through the overview
 - **Issue:** In production, moving between Billing → Team → Settings required going through Overview each time on mobile (the drawer had the links, but the pages themselves had no persistent context navigation on desktop).
 - **Implemented:** ✅ Persistent sidebar (≥900px) with a "This brand" section when inside a brand; breadcrumbs (My Brands / Brand / Page) on every page; mobile gets a top bar + slide-in drawer (scrim, Esc to close, closes on navigation).
+- **Revised 2026-09-05 (owner decision):** the phone drawer is retired. Inside a brand, phones get an iOS-style bottom tab bar — Overview, Billing, Finances, Team, You — where You opens a sheet with Brand settings, the brand switcher, New brand, Account settings and Sign out. Marketplace is reached from the Overview hub cards. The top bar becomes a back chevron + brand name on brand pages, and wordmark + avatar elsewhere. Rationale and real-product references are in Dashboard-Design-Rules.md §3.1.
 - **Priority:** Medium
 
 ### 21. Accessibility & mobile ergonomics

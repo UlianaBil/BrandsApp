@@ -147,6 +147,47 @@ body.collapsed .sidebar .acct-text{display:none}
 @media (min-width:900px){.topbar{display:none}}
 .topbar-mark{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-0.02em}
 .topbar-mark img{width:30px;height:30px;border-radius:9px}
+.topbar .tb-title{flex:1;min-width:0;text-align:center;font-weight:600;font-size:.95rem;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .tb-spacer{width:40px;flex-shrink:0}
+.topbar .tb-you{margin-left:auto}
+.avatar.sm{width:28px;height:28px;font-size:.62rem}
+
+/* ---------- phone tab bar (brand pages only) ---------- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:35;display:none;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  min-height:50px;padding:4px 0 2px;border:none;background:none;border-radius:12px;
+  color:var(--muted);font-size:.66rem;font-weight:600;letter-spacing:.01em;text-decoration:none;
+  transition:color .15s;
+}
+.tab .ti{width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.tab.active{color:var(--ink)}
+.tab .avatar.sm{width:26px;height:26px;font-size:.58rem;background:var(--soft);color:var(--ink);transition:background .15s,color .15s}
+.tab.active .avatar.sm{background:var(--dark);color:#fff}
+@media (max-width:899px){
+  body.has-tabbar .tabbar{display:flex}
+  body.has-tabbar .page{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+  body.has-tabbar .demo-fab{bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+  body.has-tabbar .demo-panel{bottom:calc(128px + env(safe-area-inset-bottom,0px))}
+  body.has-tabbar .toasts{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  /* The tab bar and the top-bar back chevron replace the in-page back link on brand pages. */
+  body.has-tabbar .back-link:not(.always){display:none}
+  body.has-tabbar .modal-scrim{padding-bottom:0}
+}
+
+/* "You" sheet list */
+.sheet-list{display:flex;flex-direction:column;margin:0 -8px}
+.sheet-list button{display:flex;align-items:center;gap:12px;width:100%;border:none;background:none;padding:11px 10px;border-radius:12px;font-size:.95rem;font-weight:500;color:var(--ink);text-align:left}
+.sheet-list button .ml{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-list .mi{width:34px;height:34px;border-radius:50%;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;color:var(--ink);flex-shrink:0}
+.sheet-list .mi.brand{background:var(--accent);color:#fff;font-size:.66rem;font-weight:700}
+.sheet-list .sep{height:1px;background:var(--line);margin:8px 6px}
+.sheet-list .sh-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
 
 .iconbtn{
   display:inline-flex;align-items:center;justify-content:center;
@@ -157,17 +198,7 @@ body.collapsed .sidebar .acct-text{display:none}
 .iconbtn.sm{width:32px;height:32px}
 .iconbtn.framed{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow-card)}
 
-.drawer-scrim{position:fixed;inset:0;z-index:40;background:rgba(28,28,28,.42);animation:fade .2s}
-.drawer{
-  position:fixed;inset:0 64px 0 0;z-index:41;max-width:320px;
-  background:var(--paper);display:flex;flex-direction:column;
-  box-shadow:12px 0 40px rgba(28,28,28,.18);animation:slide .26s var(--ease);
-}
-.drawer .sidebar-head{justify-content:space-between}
-.drawer .sidebar-nav{padding-top:4px}
 @keyframes fade{from{opacity:0}}
-@keyframes slide{from{transform:translateX(-16px);opacity:0}}
-@media (prefers-reduced-motion:reduce){.drawer,.drawer-scrim{animation:none}}
 
 .main{flex:1;min-width:0}
 .page{padding:24px 16px 110px;max-width:1240px;margin:0 auto}
@@ -726,6 +757,7 @@ body.collapsed .sidebar .menu-wrap.full .menu{left:calc(100% + 10px);right:auto;
   .table .tr:not(.th):hover{background:rgba(28,28,28,.015)}
   .pagination .pg-num:hover{background:var(--soft);color:var(--ink)}
   .menu button:hover{background:var(--soft)}
+  .sheet-list button:hover{background:var(--soft)}
   .sidebar-account.as-trigger:hover{background:var(--soft)}
   .menu button.danger:hover{background:var(--bad-bg)}
   .demo-fab:hover{background:var(--dark-lift)}
@@ -742,6 +774,8 @@ body.collapsed .sidebar .menu-wrap.full .menu{left:calc(100% + 10px);right:auto;
   .btn-danger-ghost:active{background:var(--bad-bg)}
   .table .tr:not(.th):active,.card.flush .row-item:active{background:rgba(28,28,28,.03)}
   .link-cta:active{color:var(--accent)}
+  .tab:active{background:var(--soft)}
+  .sheet-list button:active{background:var(--soft)}
 }
 
 /* ============================================================

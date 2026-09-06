@@ -90,7 +90,13 @@ Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav,
 - **Sidebar** (≥ 900px): 252px, white, full height, sticky. Top: logomark + "BrandsApp". Nav: "My Brands", then — only when inside a brand — a section label with the brand's name and the six brand pages (Overview, Billing, Finances, Team, Marketplace, Settings). Foot: Collapse control and the signed-in account.
 - **Account menu:** the account row in the foot (avatar, name, email, up/down caret) is a menu trigger. It opens upward with a "Brands" header listing every brand by name (initials avatar, name, role chip) as a switcher, then "New brand", a divider, "Account settings" (`/settings`) and "Sign out". There is no "All brands" entry — the sidebar's My Brands already is that (owner decision, 5 Sep 2026). Sign out confirms in a modal ("Sign out of BrandsApp?" · Stay signed in / Sign out). The same menu lives in the mobile drawer. In the collapsed rail the menu opens beside the avatar.
 - **Rail:** Collapse turns the sidebar into an 80px icon rail. Labels become tooltips; the brand section label becomes a hairline divider; the state persists in `localStorage("nav.collapsed")`.
-- **Mobile** (< 900px): a 60px sticky, blurred top bar (menu button + logomark) and a slide-in drawer with the same nav, closed by scrim, Escape, or navigating.
+- **Phones** (< 900px) navigate differently from desktop (owner decision, 5 Sep 2026): there is no drawer.
+  - **Inside a brand:** a fixed bottom tab bar with five tabs — Overview, Billing, Finances, Team, **You** (the account avatar). iOS conventions: white blurred bar with a hairline top, 22px icon over an always-visible 10.5px label, active tab in `--ink`, inactive in `--muted`, no pill behind the icon, safe-area padding, never hides on scroll. Press feedback only.
+  - **You** opens a bottom sheet (the `Modal`): Brand settings for the current brand, a divider, the "Brands" switcher (initials, name, role chip), New brand, a divider, Account settings, Sign out. This mirrors Slack's "You" and Airbnb's Profile tab — settings live under the person.
+  - **Marketplace and other secondary brand pages** are reached from the Overview hub (the "Manage this brand" cards), not from a tab. Overview is the hub, like Revolut's or Wise's home. There is no "More" tab.
+  - **Top bar on brand pages:** back chevron to My Brands on the left, brand name centred. Because the bar and the chevron carry navigation, the in-page mobile back link is hidden on brand pages (sub-flows such as Business verification keep theirs).
+  - **Outside a brand** (My Brands, Create, Account settings): the top bar shows the wordmark and an avatar button that opens the same You sheet; no tab bar.
+  - The page's bottom padding, the Demo button and toasts all clear the tab bar.
 - Every route change scrolls to the top and closes the drawer.
 
 ### 3.2 Page anatomy (top to bottom)
@@ -122,7 +128,7 @@ All grid tracks are `minmax(0, 1fr)` so long content shrinks and truncates inste
 
 - The sidebar shows *where you are*; the page header says *what you're looking at*. Don't repeat the brand name in the h1 of a sub-page — the context pill carries it.
 - Brand identity is always the display name. The slug appears only inside the domain string.
-- A new top-level brand page gets a nav item with a 19px icon and joins the six existing pages in the brand section. Sub-flows (a domain's DNS detail, an order) do **not** get nav items; they get a back link to their parent list.
+- A new top-level brand page gets a nav item with a 19px icon and joins the six existing pages in the brand section. On phones decide where it lives: the tab bar is fixed at five (Overview, Billing, Finances, Team, You) — a new page either replaces a tab (rare, an owner decision) or becomes a hub card on Overview and, if it is a setting, an entry in the You sheet. Sub-flows (a domain's DNS detail, an order) do **not** get nav items or tabs; they get a back link to their parent list.
 - Links that leave the dashboard (brand admin, live site) open in a new tab and carry an arrow or external icon. Links inside the dashboard never do.
 - Deep links must work: every page fetches what it needs from the URL; nothing depends on having visited another page first.
 - **A CTA lands on the thing it names.** "Choose a plan" opens Billing scrolled to the Plans section (`/billing#plans`), "Usage & credits" to `#usage`, "Billing page" for history to `#payments`. Give every section a stable `id` and the `anchor` class (which clears the mobile top bar), scroll to the hash once the page has laid out, and never send a user to the top of a long page to find the section themselves.
@@ -316,7 +322,7 @@ Never ask for confirmation of a non-destructive action, and never confirm succes
 
 Follow this recipe and the screen will belong to the product.
 
-1. **Route and nav.** Top-level brand page → add a nav item with an icon; sub-flow → back link to its parent, no nav item.
+1. **Route and nav.** Top-level brand page → add a sidebar nav item with an icon and a hub card on Overview (the phone tab bar stays at five); sub-flow → back link to its parent, no nav item.
 2. **Header.** `PageHeader` with title, one-line subtitle, and at most one secondary action (white pill). The primary, if any, lives in the content.
 3. **Summary first.** If the screen answers a question ("how much?", "how many?"), open with stat or fact cards in a `grid-3`/`facts` row. Apply the needs-action tile rule if one figure is urgent.
 4. **Content.** Choose the component by the data: entities with people → row list; records with columns → table in a flush card with pagination; things to pick between → plan-style cards; navigation targets → link cards.
