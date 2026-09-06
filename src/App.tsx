@@ -11,6 +11,9 @@ import Settings from "./pages/Settings"
 import Marketplace from "./pages/Marketplace"
 import Kyc from "./pages/Kyc"
 import AccountSettings from "./pages/AccountSettings"
+import Domain from "./pages/Domain"
+import Sell from "./pages/Sell"
+import CheckoutCallback from "./pages/CheckoutCallback"
 
 export default function App() {
   return (
@@ -29,6 +32,9 @@ export default function App() {
             <Route path="/dashboard/:slug/settings" element={<Settings />} />
             <Route path="/dashboard/:slug/marketplace" element={<Marketplace />} />
             <Route path="/dashboard/:slug/kyc" element={<Kyc />} />
+            <Route path="/dashboard/:slug/settings/domains/:id" element={<Domain />} />
+            <Route path="/dashboard/:slug/marketplace/sell" element={<Sell />} />
+            <Route path="/checkout/callback" element={<CheckoutCallback />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Shell>

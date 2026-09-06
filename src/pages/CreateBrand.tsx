@@ -51,8 +51,12 @@ export default function CreateBrand() {
     if (!canSubmit) return
     setSubmitting(true)
     try {
-      const brand = await api.createBrand(name.trim(), effectiveSlug)
-      toast(`${brand.name} is being set up`, "success")
+      const brand = await api.createBrand(name.trim(), effectiveSlug, {
+        description: description.trim() || undefined,
+        contactEmail: email.trim() || undefined,
+        currency: region === "intl" ? "USD" : "NGN",
+      })
+      toast("Brand created. Setting things up now.", "success")
       navigate(`/dashboard/${brand.slug}`)
     } catch (err) {
       toast(err instanceof Error ? err.message : "Something went wrong — try again.", "error")

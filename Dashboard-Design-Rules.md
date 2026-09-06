@@ -38,7 +38,7 @@ Source of truth for every screen in the BrandsApp platform dashboard. It documen
 | `--accent` | `#EA542D` | Brand avatars, focus rings, the empty-state primary CTA, upgrade/marketing only. |
 | `--accent-soft` / `--accent-ink` | `#FDEEE8` / `#B93A18` | Owner role chip; the eyebrow on an upgrade tile. |
 | `--tile` | `#F8C8B0` | The "needs action" stat tile (peach). Dark ink on top, never white. |
-| `--good` / `--good-bg` | `#187A42` / `#E6F4EB` | Live, Active, Paid, Spendable; the healthy range of a meter. |
+| `--good` / `--good-bg` | `#187A42` / `#E6F4EB` | Live, Active, Paid, Spendable, DNS records verified; the healthy range of a meter. |
 | `--warn` / `--warn-bg` | `#855A0C` / `#FBF1DC` | Free trial, Invited, Waiting for DNS, meter ≥ 80%. |
 | `--bad` / `--bad-bg` | `#B3372F` / `#FBE9E7` | Failed, errors, destructive actions, meter ≥ 95%. |
 
@@ -237,6 +237,30 @@ Dark pill at the bottom centre with a leading icon circle: neutral (info), succe
 - `member-note` — a white pill with an icon circle for one-line contextual notes (read-only access, where history will appear). Use `.block` for two-line notes, `.warn` for temporary warnings.
 - `details.explainer` — a collapsed "How … works" for background the user might want once. Never put required information inside one.
 
+### 6.11 Long-running work (provisioning)
+
+When the product is doing something that takes real time, show a card with a spinner in the icon circle, a title that names the thing ("Setting up Kemi Bakes"), the reassurance "This usually takes under a minute. You can leave this page. It keeps going.", and an ordered step list (`.steps`): done steps get a green check circle, the current step a spinner, the rest stay muted. Poll every second or so and hand back to the normal page when done. Never block navigation while it runs.
+
+### 6.12 Paying for something (checkout)
+
+Every purchase follows one path: a confirmation modal with a summary box (what, credits, billing, due today in the brand's currency) → "Continue to payment" → the provider → `/checkout/callback?ref=…&brand=…`. The callback page is a single centred state card outside the brand shell: "Confirming your payment…" with a spinner, then one of "Payment confirmed" (green, Back to Billing / Overview), "Not confirmed yet" (amber) or "We couldn't confirm that" (red). All three say "Don't pay again. If the charge went through it will apply on its own." Plans and usage credits both use it; buying an app with credits or wallet settles inline instead, because no provider is involved.
+
+### 6.13 Buying usage credits
+
+A "Usage credits" fact card on Billing shows the balance, what expires and when, and a "Buy credits" arrow link (only on a paid plan; trial and no-plan brands see "Upgrade to a paid plan to buy usage credits."). The modal offers preset amounts as a segmented control (1,000 / 2,000 / 5,000 / 10,000), a custom amount with a minimum, and a summary; the button reads "Pay ₦2,000". Prices follow the brand's currency (₦2,000 = $1).
+
+### 6.14 Domain detail
+
+A domain is a sub-flow of Settings: back link to Settings, the hostname as the title, the status chip in the header, fact cards (Added, Last checked), a flush table of DNS records (Type chip, Name, monospace Value, copy button per row), a primary "Check DNS" button while not live, and "Remove domain" as a ghost button that opens a red modal. Adding a domain lands here so the records are in front of the owner immediately. The Settings table's row menu offers DNS records, Check DNS and Remove.
+
+### 6.15 Owned apps and app purchases
+
+Finances lists "Apps and bundles you own" as a flush row list: icon circle (grid for an app, box for a bundle), name, "Paid from your wallet on 2 Jun 2026", a kind chip and the price in credits. Buying opens from the app store with `?buy=<appId>` on Finances: a modal with the app's blurb, a "Pay with" segmented control that shows both balances, an inline "not enough" error, a summary, then a success state "It's yours" with Done.
+
+### 6.16 Marketplace listings
+
+Listing cards are stat cards: category chip, price and a row menu (Report) in the corner, title, "by <creator>", description, and a secondary Buy button. Buy opens a modal: page to install into, a Pay-in currency switch only when the brand is billed in USD and the listing has a dollar price, and a summary. Report opens a plain confirmation modal. "Sell a section" is a sub-flow page with Name, Description, Category, price in Naira and optional US dollars, and the section JSON (validated as JSON); the subtitle states the 80/20 split and a warn note explains that only Nigerian brands can sell. The mock keeps listings switched off (owner decision) with a Demo panel toggle to preview them.
+
 ---
 
 ## 7. States
@@ -272,7 +296,11 @@ Content per the component rules. When a list has content, the create action move
 - There is no read-only role, so pages don't need a view-only variant. The pattern still applies to *partial* permission: an admin sees the same layout as an owner with the owner-only actions removed (no actions on an owner's row, no Owner option), never disabled.
 - If the role itself can't be confirmed (brand fetch failed), fail closed: hide management, show a note with "Try again".
 
-### 7.6 Needs-action
+### 7.6 Lifecycle notices
+
+A brand's lifecycle drives the Overview header. Setting up → the stat cards are replaced by a provisioning card (see §6.11); the admin and live-site buttons are hidden. Paused (plan lapsed) → a warn note "Visitors can't reach your site right now" with a link to Plans, the live-site button hidden, the Plan tile peach. Suspended → a bad note pointing to support, both header buttons hidden. Live with a domain still waiting on DNS or failed → a note linking to that domain's records. Only one notice shows at a time, most severe first. The rule behind it: never show a link to a site that won't load.
+
+### 7.7 Needs-action
 
 A trial with ≤ 7 days left or no plan turns the Plan stat card peach with dark ink and a "Choose a plan" link. This is the only ambient use of colour for urgency; a second urgent item on the same screen gets a warn chip, not a second tile.
 
@@ -297,11 +325,11 @@ Never ask for confirmation of a non-destructive action, and never confirm succes
 ## 9. Content rules
 
 - **Missing numbers** are zero, formatted like every other value: "₦0", "0 emails", never "—", "N/A" or a blank. A missing *record* is an empty state, a missing *field* is omitted (don't render "Renews: —").
-- **Money:** Naira with the ₦ sign and thousands separators (`ngn()`), bold and tabular in tables; "/ year" as a muted suffix — plans are billed yearly; allowances inside them are monthly and say so ("2,000 usage credits a month"). Credits are "2,000 cr" in facts and "2,000 credits" in prose. 1 credit = ₦1, stated once per screen where credits are bought.
+- **Money:** in the brand's currency (`money(v, currency)`): Naira with the ₦ sign, or US dollars for brands billed in USD at ₦2,000 = $1; thousands separators, bold and tabular in tables; "/ year" as a muted suffix — plans are billed yearly; allowances inside them are monthly and say so ("2,000 usage credits a month"). Credits are "2,000 cr" in facts and "2,000 credits" in prose. 1 credit = ₦1, stated once per screen where credits are bought.
 - **Dates:** absolute, day month year — "24 Sep 2026" (`fmtDate()`). Countdowns are relative ("in 5 days", "5 days left"). Never show ISO strings or times unless the time matters.
 - **Long text:** single-line identity (brand name in a pill, card title) truncates with an ellipsis and exposes the full text in `title`; body copy wraps; domains and emails wrap anywhere (`overflow-wrap: anywhere`) rather than overflowing. Nothing is ever clipped without an ellipsis.
 - **Names:** the brand's display name everywhere; the slug only inside the domain. People get first-name-first as entered; "(you)" is appended to the signed-in user.
-- **Statuses:** worded chips from the fixed vocabulary — Live, Provisioning, Paused, Free trial, Active, Inactive, Paid, Failed, Invited, Waiting for DNS, Not started, Pending review, Verified, Rejected. A new status is added to this list and mapped to a tone before it ships.
+- **Statuses:** worded chips from the fixed vocabulary — Live, Setting up (provisioning), Paused, Suspended, Trial (with days left), Free trial, Active, Inactive, Paid, Failed, Invited, Waiting for DNS, Not started, Pending review, Verified, Rejected. A brand's *lifecycle* (setting up / live / paused / suspended) is separate from its *plan* (trial / active / none); the identity pill shows lifecycle first and falls back to the trial countdown when the site is live. A new status is added to this list and mapped to a tone before it ships.
 - **Images:** any image in a card sits at the top, 16:10, 14px radius, `object-fit: cover`, with a `--soft` placeholder and the same aspect ratio while loading or missing. Decorative images have empty alt; informative ones describe the content.
 - **Counts** in titles are muted: "People with access · 2".
 - **Copy voice:** second person, plain words, present tense. Say what something is for, not how it works ("Earned by your brand — spendable on your plan, credits or apps"). No apologies, no exclamation marks, no jargon (URL → web address). Errors say what went wrong and what to do next.
@@ -339,7 +367,8 @@ Follow this recipe and the screen will belong to the product.
 - **Domain detail (sub-flow):** back link to Settings, `PageHeader` with the hostname, fact cards (Status chip, Added, SSL), a card with the DNS records to copy (each row has a copy iconbtn and a toast), and a ghost "Remove domain" that opens a red modal.
 - **A gated capability (business verification / KYC):** the gate is explained where it bites — a card on Billing, peach when nothing has been submitted or the last submission was rejected, plain with a warn "Pending review" chip while under review, and absent once verified. Its button leads to a sub-flow page (back link to Billing, no nav item) whose header chip shows the same status; the form pre-fills a previous submission so a rejection is fixed, not retyped; sensitive numbers are masked to their last four digits once stored.
 - **Account-level pages (Account settings):** reached from the account menu, never from the brand nav; `page.narrow`, back link to My Brands. Profile card with an inline-form rename and a disabled sign-in email ("To change it, contact support"), a flush "Your brands" list with role chips and Open buttons, and a Session card whose Sign out uses the same confirmation modal as the menu.
-- **Features whose design is undecided** show their empty state, not placeholder content (owner decision, 5 Sep 2026). The Marketplace renders "Nothing for sale yet" with its primary "Sell a section" CTA until listing cards are designed; the populated grid, search and filters stay in the code, switched off in the mock.
+- **Features whose design is undecided** show their empty state, not placeholder content (owner decision, 5 Sep 2026). The Marketplace renders "Nothing for sale yet" with its primary "Sell a section" CTA until listing cards are designed; the populated grid, search, filters, Buy and Report stay in the code behind the Demo panel's "Show marketplace listings" switch.
+- **Brand details** (name, description, contact email) are edited on the brand's Settings page in a "Brand details" card with a single Save; Account settings stays personal. Description and contact email are collected at creation and editable here.
 - **Onboarding checklist on Overview:** a white card with a `rowlist` of steps, done steps with a good chip and a check, the next step with a `btn-primary btn-sm`; never a progress bar of a colour outside the tokens.
 
 If a pattern you need isn't here, derive it from the nearest one above, keep the tokens, and add it to this document.
@@ -353,5 +382,5 @@ This document is only a source of truth while it matches the product. So:
 - **Every change to design or logic updates this document in the same commit** — a new component, a changed rule, a removed pattern, a new status, a new state, a changed threshold or default. If the code and this document disagree, fix one of them before shipping; never leave the disagreement.
 - **Where to write it:** a new or changed *rule* goes into the section it belongs to (tokens → §2, a control → §5/§6, behaviour → §7/§8, copy or data → §9). A new *screen or feature* also gets an entry in `Dashboard-Audit.md` and, if it introduces a pattern, a worked example in §11.
 - **The web version is generated from this file** — never edit it by hand; regenerate and republish after the markdown changes.
-- **Demo data must exercise every state this document describes.** Across the mock brands, at least one brand must show each plan state (trial ≤ 7 days, trial > 7 days, active), each verification status that can be reached, an owner view and an admin view, an empty list and a paginated list, and each meter threshold — one bar under 80% (green), one between 80% and 95% (amber) and one at 95% or above (red). Acme (the default brand) carries the amber example on its Emails meter; Lagos Bites carries the red ones. When a state is added here, add a brand or record that shows it.
+- **Demo data must exercise every state this document describes.** Across the mock brands, at least one brand must show each plan state (trial ≤ 7 days, trial > 7 days, active), each verification status that can be reached, each lifecycle state (setting up via Create brand, live, paused; suspended is described but has no mock brand), a brand billed in USD, a domain in each DNS state, an owner view and an admin view, an empty list and a paginated list, and each meter threshold — one bar under 80% (green), one between 80% and 95% (amber) and one at 95% or above (red). Acme (the default brand) carries the amber example on its Emails meter; Lagos Bites carries the red ones. When a state is added here, add a brand or record that shows it.
 - **Owner decisions override this document and are recorded in it** the same day, with the date, so nobody re-opens a settled question.

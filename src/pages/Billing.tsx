@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react"
-import { Link, useLocation, useParams } from "react-router-dom"
-import { api, fmtDate, ngn, type UsageResource } from "../mock"
-import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, Pagination, SectionHead, Skeleton, useAsync, useToast } from "../ui"
-
-// Paid tiers from the platform rate card (pricing.md): 1 credit = ₦1.
-const PLANS = [
-  { id: "starter", name: "Starter", priceNgn: 2000, credits: 2000, features: ["2,000 usage credits a month", "Up to 10 apps", "Custom domain"] },
-  { id: "growth", name: "Growth", priceNgn: 5000, credits: 5000, features: ["5,000 usage credits a month", "Unlimited apps", "Custom domain", "Priority support"] },
-  { id: "scale", name: "Scale", priceNgn: 15000, credits: 15000, features: ["15,000 usage credits a month", "Unlimited apps", "Built for high-volume stores", "Priority support"] },
-]
-type PlanDef = (typeof PLANS)[number]
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { api, fmtDate, money, ngn, PLANS, type Currency, type PlanDef, type UsageResource } from "../mock"
+import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, Pagination, SectionHead, Segmented, Skeleton, useAsync, useToast } from "../ui"
 
 const fmt = (v: number, unit: UsageResource["unit"]) => (unit ? `${v.toLocaleString()} ${unit}` : v.toLocaleString())
 const PAGE = 5
+const CREDIT_PRESETS = [1000, 2000, 5000, 10000]
+const MIN_CREDITS = 500
+const creditsToMoney = (cr: number, currency: Currency) => money(currency === "USD" ? cr / 2000 : cr, currency)
 
 function Meter({ r }: { r: UsageResource }) {
   const pct = r.limit > 0 ? Math.min(100, (r.used / r.limit) * 100) : 0
@@ -33,43 +28,77 @@ function Meter({ r }: { r: UsageResource }) {
 export default function Billing() {
   const { slug = "" } = useParams()
   const toast = useToast()
+  const navigate = useNavigate()
+  const brand = useAsync(() => api.getBrand(slug), [slug])
   const plan = useAsync(() => api.getPlan(slug), [slug])
   const usage = useAsync(() => api.getUsage(slug), [slug])
   const payments = useAsync(() => api.listPayments(slug), [slug])
   const kyc = useAsync(() => api.getKyc(slug), [slug])
+  const credits = useAsync(() => api.getCredits(slug), [slug])
   const { hash } = useLocation()
 
+  const [showAllUsage, setShowAllUsage] = useState(false)
+  const [page, setPage] = useState(1)
+  const [choosing, setChoosing] = useState<PlanDef | null>(null)
+  const [buying, setBuying] = useState(false)
+  const [creditAmount, setCreditAmount] = useState<number>(2000)
+  const [customCredits, setCustomCredits] = useState("")
+  const [starting, setStarting] = useState(false)
+
   // Deep links (#plans, #usage, #payments) land on the section, not the top of the page.
-  // Re-run when the async blocks above settle, since they change the layout height.
   useEffect(() => {
     if (!hash) return
     const el = document.getElementById(hash.slice(1))
     if (el) el.scrollIntoView({ block: "start", behavior: "auto" })
-  }, [hash, plan.loading, kyc.loading, usage.loading])
-  const [showAllUsage, setShowAllUsage] = useState(false)
-  const [page, setPage] = useState(1)
-  const [choosing, setChoosing] = useState<PlanDef | null>(null)
+  }, [hash, plan.loading, kyc.loading, usage.loading, credits.loading])
 
+  const currency: Currency = brand.data?.currency ?? "NGN"
+  const isActive = plan.data?.status === "active"
+  const canBuyCredits = isActive
   const sortedResources = usage.data ? [...usage.data.resources].sort((a, b) => b.used / b.limit - a.used / a.limit) : []
   const visibleResources = showAllUsage ? sortedResources : sortedResources.slice(0, 3)
   const hiddenCount = sortedResources.length - 3
   const pagedPayments = payments.data ? payments.data.slice((page - 1) * PAGE, page * PAGE) : []
+  const chosenCredits = customCredits ? Number(customCredits) : creditAmount
+  const creditsValid = Number.isFinite(chosenCredits) && chosenCredits >= MIN_CREDITS
 
-  const isActive = plan.data?.status === "active"
+  const startPlanCheckout = async () => {
+    if (!choosing) return
+    setStarting(true)
+    try {
+      const { reference } = await api.startCheckout({ slug, kind: "plan", currency, planId: choosing.id })
+      navigate(`/checkout/callback?ref=${reference}&brand=${slug}`)
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Couldn't start the payment. Try again.", "error")
+      setStarting(false)
+    }
+  }
+
+  const startCreditsCheckout = async () => {
+    if (!creditsValid) return
+    setStarting(true)
+    try {
+      const { reference } = await api.startCheckout({ slug, kind: "credits", currency, credits: chosenCredits })
+      navigate(`/checkout/callback?ref=${reference}&brand=${slug}`)
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Couldn't start the payment. Try again.", "error")
+      setStarting(false)
+    }
+  }
 
   return (
     <main className="page">
-      <PageHeader slug={slug} title="Billing" sub="Your plan, payments, and buying apps for this brand." />
+      <PageHeader slug={slug} title="Billing" sub="Your plan, usage credits, payments and buying apps for this brand." />
 
       <div className="stack">
-        {/* Current subscription — facts as individual cards */}
-        {plan.loading && (
+        {/* Current subscription: facts as individual cards */}
+        {(plan.loading || credits.loading) && (
           <div className="facts" aria-label="Loading" role="status">
-            {[0, 1, 2].map((i) => (<div key={i} className="card"><Skeleton h={11} w="40%" /><Skeleton h={20} w="60%" /></div>))}
+            {[0, 1, 2, 3].map((i) => (<div key={i} className="card"><Skeleton h={11} w="40%" /><Skeleton h={20} w="60%" /></div>))}
           </div>
         )}
         {plan.error && <ErrorState message={plan.error} onRetry={plan.retry} />}
-        {plan.data && (
+        {plan.data && credits.data && (
           <section aria-label="Current subscription">
             <div className="facts">
               <div className="card">
@@ -96,13 +125,21 @@ export default function Billing() {
                   <span className="fact-v">{plan.data.renewsOn && fmtDate(plan.data.renewsOn)}</span>
                 </div>
               )}
-              {plan.data.status === "active" && plan.data.monthlyCredits != null && (
-                <div className="card">
-                  <span className="stat-title">Monthly credits</span>
-                  <span className="fact-v">{plan.data.monthlyCredits.toLocaleString()} cr</span>
-                  <button className="link-cta sm" onClick={() => toast("Top-ups aren't wired up in this prototype")}>Top up</button>
-                </div>
-              )}
+              {/* Usage credits (M4) */}
+              <div className="card" id="credits">
+                <span className="stat-title">Usage credits</span>
+                <span className="fact-v">{credits.data.balanceCr.toLocaleString()} cr</span>
+                {credits.data.expiringCr > 0 && credits.data.expiresOn ? (
+                  <span className="hint quiet">{credits.data.expiringCr.toLocaleString()} from your plan expire {fmtDate(credits.data.expiresOn)}</span>
+                ) : plan.data.monthlyCredits != null ? (
+                  <span className="hint quiet">{plan.data.monthlyCredits.toLocaleString()} a month from your plan</span>
+                ) : null}
+                {canBuyCredits ? (
+                  <button className="link-cta sm" onClick={() => setBuying(true)}>Buy credits</button>
+                ) : (
+                  <span className="hint quiet">Upgrade to a paid plan to buy usage credits.</span>
+                )}
+              </div>
             </div>
             {plan.data.status === "trial" && (
               <p className="member-note block" style={{ marginTop: 14 }}>
@@ -113,12 +150,9 @@ export default function Billing() {
           </section>
         )}
 
-        {/* Business verification — gates taking money from customers, not the plan itself. */}
+        {/* Business verification gates taking money from customers, not the plan itself. */}
         {kyc.data && kyc.data.status !== "verified" && (
-          <section
-            className={`card stat-card compact${kyc.data.status === "pending" ? "" : " tile-accent"}`}
-            aria-label="Business verification"
-          >
+          <section className={`card stat-card compact${kyc.data.status === "pending" ? "" : " tile-accent"}`} aria-label="Business verification">
             <div className="stat-headrow">
               <span className="stat-ico" aria-hidden="true"><Icon name="shield" size={16} /></span>
               <span className="stat-title">Business verification</span>
@@ -172,10 +206,11 @@ export default function Billing() {
 
         {/* Plans */}
         <section aria-label="Plans" id="plans" className="anchor">
-          <SectionHead title="Plans" hint="Billed yearly, prepaid in Naira · pay by card, transfer, USSD or from your wallet" />
+          <SectionHead title="Plans" hint={`Billed yearly and prepaid in ${currency === "USD" ? "US dollars" : "Naira"}. Pay by card, transfer, USSD or from your wallet.`} />
           <div className="grid-3">
             {PLANS.map((p) => {
               const isCurrent = isActive && plan.data?.name === p.name
+              const price = currency === "USD" ? p.priceUsd : p.priceNgn
               return (
                 <div key={p.id} className={`card plancard${isCurrent ? " current" : ""}`}>
                   <div className="card-row">
@@ -183,7 +218,7 @@ export default function Billing() {
                     {isCurrent && <span className="chip chip-dark">Current plan</span>}
                   </div>
                   <div className="price">
-                    <span className="n">{ngn(p.priceNgn)}</span>
+                    <span className="n">{money(price, currency)}</span>
                     <span className="per">/ year</span>
                   </div>
                   <ul>
@@ -191,14 +226,14 @@ export default function Billing() {
                       <li key={f}><span className="tick"><Icon name="check" size={11} /></span>{f}</li>
                     ))}
                   </ul>
-                  <button className={`btn ${isCurrent ? "btn-secondary" : "btn-primary"}`} disabled={isCurrent || plan.loading} onClick={() => setChoosing(p)}>
+                  <button className={`btn ${isCurrent ? "btn-secondary" : "btn-primary"}`} disabled={isCurrent || plan.loading || brand.loading} onClick={() => setChoosing(p)}>
                     {isCurrent ? "Current plan" : isActive ? "Switch plan" : "Choose plan"}
                   </button>
                 </div>
               )
             })}
           </div>
-          <p className="hint quiet" style={{ marginTop: 12 }}>One payment a year. No card is kept on file — each payment is a one-off.</p>
+          <p className="hint quiet" style={{ marginTop: 12 }}>One payment a year. We don't keep a card on file.</p>
         </section>
 
         {/* Payment history */}
@@ -233,32 +268,71 @@ export default function Billing() {
         )}
       </div>
 
-      {/* Confirm plan */}
+      {/* Confirm plan, then hand off to payment */}
       <Modal
         open={choosing != null}
-        onClose={() => setChoosing(null)}
+        onClose={() => !starting && setChoosing(null)}
         title={isActive ? `Switch to ${choosing?.name}` : `Choose ${choosing?.name}`}
         icon="card"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setChoosing(null)}>Cancel</button>
-            <button className="btn btn-primary" onClick={() => { setChoosing(null); toast("Checkout isn't wired up in this prototype") }}>
-              Continue to payment <Icon name="arrow-right" size={15} />
+            <button className="btn btn-secondary" onClick={() => setChoosing(null)} disabled={starting}>Cancel</button>
+            <button className="btn btn-primary" onClick={startPlanCheckout} disabled={starting}>
+              {starting ? "Starting…" : (<>Continue to payment <Icon name="arrow-right" size={15} /></>)}
             </button>
           </>
         }
       >
         {choosing && (
           <>
-            <p>{plan.data?.status === "trial" ? "You won't be charged until your trial ends." : isActive ? "Your new allowance starts right away; the unused part of your current year is credited." : "Your brand goes live on this plan as soon as payment clears."}</p>
+            <p>{plan.data?.status === "trial" ? "You won't be charged until your trial ends." : isActive ? "Your new allowance starts right away. The unused part of your current year is credited." : "Your brand goes live on this plan as soon as payment clears."}</p>
             <div className="summary">
               <div className="li"><span className="k">Plan</span><span className="v">{choosing.name}</span></div>
               <div className="li"><span className="k">Monthly credits</span><span className="v">{choosing.credits.toLocaleString()} cr</span></div>
-              <div className="li"><span className="k">Billing</span><span className="v">Yearly</span></div>
-              <div className="li"><span className="k">Due today</span><span className="v">{plan.data?.status === "trial" ? "₦0" : ngn(choosing.priceNgn)}</span></div>
+              <div className="li"><span className="k">Billing</span><span className="v">Yearly, in {currency === "USD" ? "US dollars" : "Naira"}</span></div>
+              <div className="li"><span className="k">Due today</span><span className="v">{plan.data?.status === "trial" ? money(0, currency) : money(currency === "USD" ? choosing.priceUsd : choosing.priceNgn, currency)}</span></div>
             </div>
           </>
         )}
+      </Modal>
+
+      {/* Buy usage credits (M4) */}
+      <Modal
+        open={buying}
+        onClose={() => !starting && setBuying(false)}
+        title="Buy usage credits"
+        icon="coins"
+        footer={
+          <>
+            <button className="btn btn-secondary" onClick={() => setBuying(false)} disabled={starting}>Cancel</button>
+            <button className="btn btn-primary" onClick={startCreditsCheckout} disabled={starting || !creditsValid}>
+              {starting ? "Starting…" : (<>Pay {creditsValid ? creditsToMoney(chosenCredits, currency) : ""} <Icon name="arrow-right" size={15} /></>)}
+            </button>
+          </>
+        }
+      >
+        <p>Covers usage past what your plan includes. Most brands never touch it. Nothing is charged automatically. 1 credit is ₦1.</p>
+        <div className="field" style={{ marginTop: 14 }}>
+          <span className="label">Amount</span>
+          <Segmented
+            label="Credit amount"
+            value={customCredits ? "custom" : String(creditAmount)}
+            onChange={(v) => { if (v !== "custom") { setCreditAmount(Number(v)); setCustomCredits("") } }}
+            options={[...CREDIT_PRESETS.map((c) => ({ value: String(c), label: c.toLocaleString() })), ...(customCredits ? [{ value: "custom", label: "Custom" }] : [])]}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="cr-custom">Or a custom amount<span className="optional">Min {MIN_CREDITS.toLocaleString()}</span></label>
+          <div className="input-group">
+            <input id="cr-custom" className="input" inputMode="numeric" placeholder={`e.g. ${(3500).toLocaleString()}`} value={customCredits} onChange={(e) => setCustomCredits(e.target.value.replace(/\D/g, ""))} />
+            <span className="addon">credits</span>
+          </div>
+          {customCredits && !creditsValid && <p className="error-text"><Icon name="warning" size={14} />Enter at least {MIN_CREDITS.toLocaleString()} credits.</p>}
+        </div>
+        <div className="summary">
+          <div className="li"><span className="k">Credits</span><span className="v">{creditsValid ? chosenCredits.toLocaleString() : "0"} cr</span></div>
+          <div className="li"><span className="k">Total</span><span className="v">{creditsValid ? creditsToMoney(chosenCredits, currency) : money(0, currency)}</span></div>
+        </div>
       </Modal>
     </main>
   )

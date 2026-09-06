@@ -598,6 +598,16 @@ select.input{
 .facts .fact-v{font-weight:600;font-size:1.15rem;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;line-height:1.2}
 .facts .fact-v.chip-row{display:flex}
 
+/* Provisioning steps (Overview while a new brand is being set up) */
+.steps{list-style:none;display:flex;flex-direction:column;gap:10px;margin:0}
+.steps li{display:flex;align-items:center;gap:12px;font-size:.92rem;color:var(--muted)}
+.steps li .st-ico{width:26px;height:26px;border-radius:50%;background:var(--soft);display:inline-flex;align-items:center;justify-content:center;color:var(--ink);flex-shrink:0}
+.steps li.done{color:var(--body)}
+.steps li.done .st-ico{background:var(--good-bg);color:var(--good)}
+.steps li.current{color:var(--ink);font-weight:600}
+.steps li.current .st-ico{background:var(--paper);border:1px solid var(--line-strong)}
+.stat-ico .spin{width:16px;height:16px}
+
 /* Notes */
 .member-note{
   display:flex;align-items:center;gap:10px;margin-top:16px;

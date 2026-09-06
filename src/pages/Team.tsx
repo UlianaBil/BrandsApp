@@ -100,7 +100,7 @@ export default function Team() {
       <PageHeader
         slug={slug}
         title="Team"
-        sub="Who can manage this brand's account — billing, domains and settings. Staff who work inside your apps are managed in the brand admin, not here."
+        sub="Who can manage this brand's account: billing, verification, domains and settings. Staff who work inside your apps are managed in the brand admin, not here."
       />
 
       <div className="split">

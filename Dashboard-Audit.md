@@ -239,6 +239,17 @@ The surface styling was retuned to a warmer, more editorial feel based on a desi
 - **Implemented:** ✅ Account menu in the sidebar foot and mobile drawer (opens upward; beside the avatar in the collapsed rail) — with a brand switcher by name but no "All brands" entry, which the owner dropped as a duplicate of the sidebar; Account settings page (profile rename, read-only sign-in email, brand list, sign out); Team row menu gains "Change role…" (modal with role select) and "Cancel invite", with admins unable to touch owners or assign Owner. Sign out is a prototype toast.
 - **Owner decisions:** roles are Owner or Admin everywhere — Lagos Bites is now an admin brand and the "Member (view only)" role was removed from the team list, invite form and role modal (later the same day). Admins can only invite admins, so their role field is fixed. Marketplace listing cards are kept as non-interactive layout examples until their design is decided (Preview & buy and its modal removed). Settings uses the standard toothed cog icon.
 
+### 22. Parity pass (2026-09-05, from the parity audit)
+Seven gaps between the original dashboard and the redesign were closed on the same system:
+- **M1 Brand details** — name, description and contact email are edited on Settings ("Brand details" card); Create brand stores all three and the billing region.
+- **M2 Brand lifecycle** — brands carry a status (setting up / live / paused / suspended) shown on My Brands cards and in the Overview identity pill; Overview shows one notice at a time (paused → choose a plan, suspended → contact support, domain waiting on DNS / failed → see the records) and hides the live-site button when the site isn't reachable. Kemi Bakes is the paused example.
+- **M3 Provisioning** — a new brand starts as "Setting up" with a step card on Overview (database, email, media, storage, deploy) that polls until live.
+- **M4 Usage credits and checkout** — a Usage credits fact card (balance, expiry, Buy credits on paid plans), a Buy credits modal with presets and a custom amount, prices in the brand's currency (Ada Interiors is billed in USD), and a `/checkout/callback` page that confirms and applies plan and credit purchases.
+- **M5 Domains** — DNS records with copy, Check DNS, Failed status and Remove, on a domain detail sub-page; the Settings table gained a row menu.
+- **M6 Owned apps** — Finances lists apps and bundles with how each was paid; `?buy=<appId>` opens the pay-with-credits-or-wallet dialog.
+- **M7 Marketplace** — Buy (install into page, currency), Report, and the Sell page with the 80/20 split and Nigerian-brands-only rule; listings stay off by default behind a Demo toggle.
+Also: "AI page generations" added to the usage resources; the Team subtitle mentions verification; copy written in this pass avoids dashes as joiners.
+
 ## Visual system (third pass, 2026-09-05) — the approved Overview redesign applied to every screen
 
 The whole dashboard now uses the design system established by the owner-approved Overview redesign (artifact 992ba6b6). The Overview is a direct port; every other page was rebuilt with the same language so all screens read as one product. Nothing functional was removed.

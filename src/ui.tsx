@@ -64,7 +64,7 @@ export type IconName =
   | "menu" | "close" | "back" | "check" | "layout" | "chevrons-left" | "chevron-down"
   | "chevron-left" | "chevron-right" | "lock" | "search" | "more" | "trash" | "mail"
   | "info" | "receipt" | "trend-up" | "trend-down" | "coins" | "user-plus" | "link" | "shield" | "bank"
-  | "logout" | "user" | "chevron-up-down" | "swap"
+  | "logout" | "user" | "chevron-up-down" | "swap" | "refresh" | "flag" | "box"
 
 const paths: Record<IconName, ReactNode> = {
   grid: (<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>),
@@ -107,6 +107,9 @@ const paths: Record<IconName, ReactNode> = {
   user: (<><circle cx="12" cy="8.5" r="3.6" /><path d="M4.5 20c.9-3.5 3.9-5.5 7.5-5.5s6.6 2 7.5 5.5" /></>),
   "chevron-up-down": (<><path d="m8 9.5 4-4 4 4" /><path d="m8 14.5 4 4 4-4" /></>),
   swap: (<><path d="M4 7h13l-3-3" /><path d="M20 17H7l3 3" /></>),
+  refresh: (<><path d="M20 12a8 8 0 0 1-14.6 4.5" /><path d="M4 12a8 8 0 0 1 14.6-4.5" /><path d="M18.5 3.5v4h-4" /><path d="M5.5 20.5v-4h4" /></>),
+  flag: (<><path d="M5 21V4" /><path d="M5 4.5c4-2.5 7 2 11-.5v9c-4 2.5-7-2-11 .5" /></>),
+  box: (<><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Z" /><path d="M4 7.5l8 4.5 8-4.5" /><path d="M12 12v9" /></>),
   link: (<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2" /></>),
 }
 
@@ -535,13 +538,15 @@ export function DemoPanel({ slug, onSwitchBrand }: { slug: string | null; onSwit
           <p>Prototype-only switches to preview how the dashboard handles a bad connection.</p>
           <Switch checked={demo.slow} onChange={(v) => { demo.slow = v; force((x) => x + 1) }} label="Slow network" />
           <Switch checked={demo.failing} onChange={(v) => { demo.failing = v; force((x) => x + 1) }} label="API failures" />
+          <Switch checked={demo.listings} onChange={(v) => { demo.listings = v; force((x) => x + 1) }} label="Show marketplace listings" />
           <label className="stack">
             Brand
             <select className="input sm" value={slug ?? ""} onChange={(e) => onSwitchBrand(e.target.value)}>
               <option value="">My Brands</option>
               <option value="acme-fashion-group">Acme Fashion Group · owner · trial</option>
               <option value="lagos-bites">Lagos Bites · admin · Starter plan</option>
-              <option value="ada-interiors-and-home-styling">Ada Interiors · long name · trial</option>
+              <option value="ada-interiors-and-home-styling">Ada Interiors · long name · trial · billed in USD</option>
+              <option value="kemi-bakes">Kemi Bakes · paused · no plan</option>
               <option value="missing-brand">Unknown brand · error state</option>
             </select>
           </label>
