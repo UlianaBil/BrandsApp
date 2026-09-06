@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { api, fmtDate, ngn, type UsageResource } from "../mock"
 import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, Pagination, SectionHead, Skeleton, useAsync, useToast } from "../ui"
 
@@ -36,6 +36,7 @@ export default function Billing() {
   const plan = useAsync(() => api.getPlan(slug), [slug])
   const usage = useAsync(() => api.getUsage(slug), [slug])
   const payments = useAsync(() => api.listPayments(slug), [slug])
+  const kyc = useAsync(() => api.getKyc(slug), [slug])
   const [showAllUsage, setShowAllUsage] = useState(false)
   const [page, setPage] = useState(1)
   const [choosing, setChoosing] = useState<PlanDef | null>(null)
@@ -100,6 +101,38 @@ export default function Billing() {
                 Your brand stays online through the trial. Pick a plan below and you won't be charged until the trial ends.
               </p>
             )}
+          </section>
+        )}
+
+        {/* Business verification — gates taking money from customers, not the plan itself. */}
+        {kyc.data && kyc.data.status !== "verified" && (
+          <section
+            className={`card stat-card compact${kyc.data.status === "pending" ? "" : " tile-accent"}`}
+            aria-label="Business verification"
+          >
+            <div className="stat-headrow">
+              <span className="stat-ico" aria-hidden="true"><Icon name="shield" size={16} /></span>
+              <span className="stat-title">Business verification</span>
+              {kyc.data.status === "pending" && <span className="chip chip-warn stat-corner"><span className="dot" />Pending review</span>}
+              {kyc.data.status === "rejected" && <span className="chip stat-corner">Rejected</span>}
+              {kyc.data.status === "not_started" && <span className="chip stat-corner">Not started</span>}
+            </div>
+            <h2 style={{ marginTop: 14, fontSize: "1.1rem" }}>
+              {kyc.data.status === "pending" ? "Your verification is under review" : "Verify your business to accept payments"}
+            </h2>
+            <p className="ov-sub" style={{ maxWidth: "60ch" }}>
+              {kyc.data.status === "pending"
+                ? "We're confirming your business and settlement account. Card and bank payments switch on as soon as it's approved."
+                : kyc.data.status === "rejected"
+                  ? `${kyc.data.reason ?? "Something didn't match on your last submission."} Check your details and submit again.`
+                  : "Complete KYC (business + bank verification) to take card and bank payments from your customers. Your own plan doesn't need it."}
+            </p>
+            <div className="stat-actions">
+              <Link to={`/dashboard/${slug}/kyc`} className={`btn btn-sm ${kyc.data.status === "pending" ? "btn-secondary" : "btn-primary"}`}>
+                {kyc.data.status === "pending" ? "View submission" : kyc.data.status === "rejected" ? "Fix and resubmit" : "Complete KYC"}
+                <Icon name="arrow-right" size={14} />
+              </Link>
+            </div>
           </section>
         )}
 

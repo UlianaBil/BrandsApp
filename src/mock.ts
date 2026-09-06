@@ -83,6 +83,26 @@ export interface Listing {
   category: string
 }
 
+export type KycStatus = "not_started" | "pending" | "verified" | "rejected"
+
+export interface Kyc {
+  status: KycStatus
+  businessName?: string
+  bankName?: string
+  bankCode?: string
+  accountNumber?: string
+  accountName?: string
+  bvn?: string
+  cacNumber?: string
+  submittedAt?: string
+  reason?: string
+}
+
+export interface Bank {
+  code: string
+  name: string
+}
+
 export interface DomainRecord {
   id: string
   hostname: string
@@ -398,6 +418,55 @@ const store = {
     "ada-interiors-and-home-styling": [] as DomainRecord[],
   } as Record<string, DomainRecord[]>,
 
+  // Business verification (KYC) — gates taking money from customers through
+  // the shared gateway; the brand's own plan never needs it.
+  kyc: {
+    "acme-fashion-group": { status: "not_started" } as Kyc,
+    "lagos-bites": {
+      status: "verified",
+      businessName: "Lagos Bites Ltd",
+      bankName: "Guaranty Trust Bank",
+      bankCode: "058",
+      accountNumber: "0123456789",
+      accountName: "LAGOS BITES LIMITED",
+      cacNumber: "RC1834412",
+      submittedAt: "2026-07-05",
+    } as Kyc,
+    "ada-interiors-and-home-styling": {
+      status: "pending",
+      businessName: "Ada Interiors & Home Styling Studio",
+      bankName: "Access Bank",
+      bankCode: "044",
+      accountNumber: "0456712398",
+      accountName: "ADA OKONKWO INTERIORS",
+      submittedAt: "2026-09-03",
+    } as Kyc,
+  } as Record<string, Kyc>,
+
+  banks: [
+    { code: "044", name: "Access Bank" },
+    { code: "023", name: "Citibank Nigeria" },
+    { code: "050", name: "Ecobank Nigeria" },
+    { code: "070", name: "Fidelity Bank" },
+    { code: "011", name: "First Bank of Nigeria" },
+    { code: "214", name: "First City Monument Bank" },
+    { code: "058", name: "Guaranty Trust Bank" },
+    { code: "301", name: "Jaiz Bank" },
+    { code: "082", name: "Keystone Bank" },
+    { code: "50211", name: "Kuda Bank" },
+    { code: "50515", name: "Moniepoint MFB" },
+    { code: "999992", name: "OPay Digital Services Limited (OPay)" },
+    { code: "999991", name: "PalmPay" },
+    { code: "076", name: "Polaris Bank" },
+    { code: "101", name: "Providus Bank" },
+    { code: "221", name: "Stanbic IBTC Bank" },
+    { code: "232", name: "Sterling Bank" },
+    { code: "032", name: "Union Bank of Nigeria" },
+    { code: "033", name: "United Bank For Africa" },
+    { code: "035", name: "Wema Bank" },
+    { code: "057", name: "Zenith Bank" },
+  ] as Bank[],
+
   takenSlugs: ["acme-fashion-group", "lagos-bites", "ada-interiors-and-home-styling", "ada-fashion"],
 }
 
@@ -420,6 +489,25 @@ export const api = {
   getWallet: (slug: string) => call(store.wallet[slug] ?? null),
   listListings: () => call(store.listings),
   listDomains: (slug: string) => call(store.domains[slug] ?? []),
+
+  getKyc: (slug: string) => call(store.kyc[slug] ?? ({ status: "not_started" } as Kyc)),
+  listBanks: () => call(store.banks),
+
+  /** Resolves the account name with the bank (mock: any 10 digits resolve; 0000000000 fails). */
+  resolveAccount: (bankCode: string, accountNumber: string) => {
+    if (accountNumber === "0000000000") {
+      return new Promise<{ accountName: string }>((_, reject) =>
+        setTimeout(() => reject(new Error("We couldn't find that account with this bank. Check the number and try again.")), 700),
+      )
+    }
+    const bank = store.banks.find((b) => b.code === bankCode)
+    return call({ accountName: `${(bank?.name ?? "ACCOUNT").split(" ")[0].toUpperCase()} CUSTOMER ${accountNumber.slice(-4)}` }, { failable: false })
+  },
+
+  submitKyc: (slug: string, input: Omit<Kyc, "status" | "submittedAt" | "reason">) => {
+    store.kyc[slug] = { ...input, status: "pending", submittedAt: new Date().toISOString().slice(0, 10) }
+    return call(store.kyc[slug])
+  },
 
   checkSlug: (slug: string) =>
     call({ available: !store.takenSlugs.includes(slug) && slug.length >= 3 }, { failable: false }),
@@ -485,6 +573,7 @@ export const api = {
     store.payments[slug] = []
     store.wallet[slug] = { balanceNgn: 0, earnedNgn: 0, spentNgn: 0, appCredits: 0 }
     store.domains[slug] = []
+    store.kyc[slug] = { status: "not_started" }
     store.takenSlugs.push(slug)
     return call(brand)
   },

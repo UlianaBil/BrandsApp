@@ -9,6 +9,7 @@ import Finances from "./pages/Finances"
 import Team from "./pages/Team"
 import Settings from "./pages/Settings"
 import Marketplace from "./pages/Marketplace"
+import Kyc from "./pages/Kyc"
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/dashboard/:slug/team" element={<Team />} />
             <Route path="/dashboard/:slug/settings" element={<Settings />} />
             <Route path="/dashboard/:slug/marketplace" element={<Marketplace />} />
+            <Route path="/dashboard/:slug/kyc" element={<Kyc />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Shell>

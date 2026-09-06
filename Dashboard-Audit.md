@@ -227,6 +227,10 @@ The surface styling was retuned to a warmer, more editorial feel based on a desi
 - The brand look: terracotta/cream/Inter, pill buttons, soft cards — matched to the landing page in this repository so dashboard and marketing feel like one product.
 - The visual tone of the production dashboard (light ground, bordered cards, generous spacing) — refined, not replaced.
 
+### 13a. Business verification (KYC) was invisible
+- **Issue:** Production's Billing page carries a "Verify your business to accept payments" card and a full verification page at `/dashboard/:slug/kyc` (business name, settlement bank, account number check, optional BVN and CAC/RC). Neither ever renders: the card sits inside the usage block, whose `kyc/get` call returns 500, so the page shows a spinner forever and a brand never learns it cannot take card payments.
+- **Implemented:** ✅ Billing shows a verification card whenever the brand isn't verified (peach "needs action" tile for Not started / Rejected, plain card with a "Pending review" chip while under review, hidden once verified) linking to a `Business verification` sub-page built on the same system: status chip in the header, bank select, account-number check with the resolved account name shown inline, optional BVN/CAC, submit → Pending. Verified brands see their settlement account with the number masked. Members see a lock note. Mock: Acme not started, Ada pending, Lagos Bites verified.
+
 ## Visual system (third pass, 2026-09-05) — the approved Overview redesign applied to every screen
 
 The whole dashboard now uses the design system established by the owner-approved Overview redesign (artifact 992ba6b6). The Overview is a direct port; every other page was rebuilt with the same language so all screens read as one product. Nothing functional was removed.

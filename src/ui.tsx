@@ -63,7 +63,7 @@ export type IconName =
   | "arrow-right" | "arrow-up-right" | "external" | "copy" | "warning" | "sparkle"
   | "menu" | "close" | "back" | "check" | "layout" | "chevrons-left" | "chevron-down"
   | "chevron-left" | "chevron-right" | "lock" | "search" | "more" | "trash" | "mail"
-  | "info" | "receipt" | "trend-up" | "trend-down" | "coins" | "user-plus" | "link"
+  | "info" | "receipt" | "trend-up" | "trend-down" | "coins" | "user-plus" | "link" | "shield" | "bank"
 
 const paths: Record<IconName, ReactNode> = {
   grid: (<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>),
@@ -100,6 +100,8 @@ const paths: Record<IconName, ReactNode> = {
   "trend-down": (<><path d="M3.5 7 9.5 13l4-4 7 7.5" /><path d="M15 16.5h5.5V11" /></>),
   coins: (<><ellipse cx="9" cy="7.5" rx="6" ry="3" /><path d="M3 7.5v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" /><path d="M3 12.5v4c0 1.7 2.7 3 6 3s6-1.3 6-3v-4" /><path d="M15 10.2c3.4-.2 6-1.6 6-3.2v9c0 1.4-1.8 2.6-4.5 3" /></>),
   "user-plus": (<><circle cx="10" cy="8.5" r="3.5" /><path d="M3.5 19.5c.9-3.2 3.5-5 6.5-5s5.6 1.8 6.5 5" /><path d="M19 8v6M16 11h6" /></>),
+  shield: (<><path d="M12 3.5 4.5 6.5v5c0 4.3 3.2 7.6 7.5 9 4.3-1.4 7.5-4.7 7.5-9v-5L12 3.5Z" /><path d="m9 12 2 2 4-4.5" /></>),
+  bank: (<><path d="M3.5 9.5 12 4.5l8.5 5" /><path d="M5 9.5v8M9.5 9.5v8M14.5 9.5v8M19 9.5v8" /><path d="M3.5 20h17" /></>),
   link: (<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2" /></>),
 }
 
