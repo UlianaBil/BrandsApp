@@ -1,14 +1,30 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { api } from "../mock"
-import { Icon, PageHeader, useToast } from "../ui"
+import { Icon } from "../ui"
+import { Button, Card, PageHeader } from "@/ui/primitives"
+import { Field, Input, InputGroup, Select, Textarea, toast } from "@/ui/controls"
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 
+/** A flow page shows its back link at every width (§3.2 "Flow pages (Create)"). */
+function BackLink() {
+  return (
+    <Link
+      to="/dashboard"
+      className="mb-3.5 inline-flex max-w-full items-center gap-2 text-[0.9rem] font-semibold text-[var(--ba-body)] hover:text-[var(--ba-ink)]"
+    >
+      <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[var(--ba-line)] bg-[var(--ba-paper)]">
+        <Icon name="back" size={16} />
+      </span>
+      <span className="truncate">My Brands</span>
+    </Link>
+  )
+}
+
 export default function CreateBrand() {
   const navigate = useNavigate()
-  const toast = useToast()
 
   const [name, setName] = useState("")
   const [slug, setSlug] = useState("")
@@ -65,72 +81,100 @@ export default function CreateBrand() {
   }
 
   return (
-    <main className="page narrow">
-      <PageHeader
-        title="Create a new brand"
-        sub="Set up a new store or website — we'll provision everything for you."
-        backTo="/dashboard"
-        backLabel="My Brands"
-      />
+    <main className="mx-auto max-w-[680px] px-4 pt-6 pb-[110px] min-[900px]:px-9 min-[900px]:pt-9">
+      <BackLink />
+      <PageHeader title="Create a new brand" subtitle="Set up a new store or website — we'll provision everything for you." />
 
-      <form className="card" onSubmit={submit} noValidate>
-        <div className="field">
-          <label htmlFor="cb-name">Brand name</label>
-          <input id="cb-name" className="input" placeholder="e.g. Adaeze Fashion" value={name} onChange={(e) => setName(e.target.value)} autoComplete="organization" required />
-          <p className="help">This is how your brand appears everywhere — you can change it later.</p>
-        </div>
-
-        <div className="field">
-          <label htmlFor="cb-slug">Web address</label>
-          <div className={`input-group${availability === "taken" ? " invalid" : ""}`}>
-            <input
-              id="cb-slug"
-              className="input"
-              placeholder="adaeze-fashion"
-              value={effectiveSlug}
-              onChange={(e) => {
-                setSlugTouched(true)
-                setSlug(slugify(e.target.value))
-              }}
-              aria-invalid={availability === "taken"}
-              aria-describedby="cb-slug-status"
+      <Card>
+        <form onSubmit={submit} noValidate className="flex flex-col gap-3.5">
+          <Field label="Brand name" htmlFor="cb-name" help="This is how your brand appears everywhere — you can change it later.">
+            <Input
+              id="cb-name"
+              placeholder="e.g. Adaeze Fashion"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="organization"
+              required
             />
-            <span className="addon">.brandsapp.io</span>
-          </div>
-          <p id="cb-slug-status" className={availability === "taken" ? "error-text" : `help${availability === "free" ? " ok" : ""}`} aria-live="polite">
-            {availability === "checking" && (<><span className="spin" style={{ width: 14, height: 14, marginTop: 2 }} />Checking availability…</>)}
-            {availability === "free" && (<><Icon name="check" size={14} />{effectiveSlug}.brandsapp.io is available</>)}
-            {availability === "taken" && (<><Icon name="warning" size={14} />{effectiveSlug}.brandsapp.io is already taken — try another address.</>)}
-            {availability === "idle" && "You can connect your own domain later."}
+          </Field>
+
+          <Field
+            label="Web address"
+            htmlFor="cb-slug"
+            /* Field already leads its error/success text with its own icon (§6.4), so these don't repeat one. */
+            error={availability === "taken" ? `${effectiveSlug}.brandsapp.io is already taken — try another address.` : undefined}
+            success={availability === "free" ? `${effectiveSlug}.brandsapp.io is available` : undefined}
+            help={
+              availability === "checking" ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="size-3.5 animate-spin rounded-full border-2 border-[rgba(28,28,28,0.18)] border-t-[currentColor]" />
+                  Checking availability…
+                </span>
+              ) : availability === "idle" ? (
+                "You can connect your own domain later."
+              ) : undefined
+            }
+          >
+            {/* InputGroup has no invalid variant of its own, so the taken-slug border
+               is applied from outside, targeting its wrapper div directly. */}
+            <div className={availability === "taken" ? "[&>div]:border-[var(--ba-bad)]" : undefined}>
+              <InputGroup suffix=".brandsapp.io">
+                <Input
+                  id="cb-slug"
+                  placeholder="adaeze-fashion"
+                  value={effectiveSlug}
+                  onChange={(e) => {
+                    setSlugTouched(true)
+                    setSlug(slugify(e.target.value))
+                  }}
+                  aria-invalid={availability === "taken"}
+                />
+              </InputGroup>
+            </div>
+          </Field>
+
+          <Field label="Description" optional htmlFor="cb-desc">
+            <Textarea id="cb-desc" rows={3} placeholder="What does this brand do?" value={description} onChange={(e) => setDescription(e.target.value)} />
+          </Field>
+
+          <Field
+            label="Contact email"
+            optional
+            htmlFor="cb-email"
+            error={emailInvalid ? "That doesn't look like an email address." : undefined}
+          >
+            <Input
+              id="cb-email"
+              type="email"
+              placeholder="hello@yourbrand.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={emailInvalid}
+            />
+          </Field>
+
+          <Field label="Where is this business based?" htmlFor="cb-region">
+            <Select id="cb-region" value={region} onChange={(e) => setRegion(e.target.value)}>
+              <option value="ng">Nigeria (billed in Naira)</option>
+              <option value="intl">International (billed in USD)</option>
+            </Select>
+          </Field>
+
+          <Button type="submit" size="lg" block disabled={!canSubmit} className="mt-1.5">
+            {submitting ? (
+              <>
+                <span className="size-[18px] animate-spin rounded-full border-2 border-[rgba(255,255,255,0.3)] border-t-white" />
+                Setting up your brand…
+              </>
+            ) : (
+              "Create brand"
+            )}
+          </Button>
+          <p className="mt-1 text-center text-[0.83rem] text-[var(--ba-muted)]">
+            You get a 7-day free trial. No card required to get started.
           </p>
-        </div>
-
-        <div className="field">
-          <label htmlFor="cb-desc">Description<span className="optional">Optional</span></label>
-          <textarea id="cb-desc" className="input" rows={3} placeholder="What does this brand do?" value={description} onChange={(e) => setDescription(e.target.value)} />
-        </div>
-
-        <div className="field">
-          <label htmlFor="cb-email">Contact email<span className="optional">Optional</span></label>
-          <input id="cb-email" className="input" type="email" placeholder="hello@yourbrand.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={emailInvalid} />
-          {emailInvalid && <p className="error-text"><Icon name="warning" size={14} />That doesn't look like an email address.</p>}
-        </div>
-
-        <div className="field">
-          <label htmlFor="cb-region">Where is this business based?</label>
-          <select id="cb-region" className="input" value={region} onChange={(e) => setRegion(e.target.value)}>
-            <option value="ng">Nigeria (billed in Naira)</option>
-            <option value="intl">International (billed in USD)</option>
-          </select>
-        </div>
-
-        <button className="btn btn-primary btn-lg btn-block" type="submit" disabled={!canSubmit} style={{ marginTop: 24 }}>
-          {submitting ? (<><span className="spin" style={{ borderColor: "rgba(255,255,255,.3)", borderTopColor: "#fff" }} />Setting up your brand…</>) : "Create brand"}
-        </button>
-        <p className="hint quiet" style={{ textAlign: "center", marginTop: 12 }}>
-          You get a 7-day free trial. No card required to get started.
-        </p>
-      </form>
+        </form>
+      </Card>
     </main>
   )
 }

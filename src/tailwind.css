@@ -1,0 +1,106 @@
+/*
+ * Cascade order, and it is the whole reason this file loads styles.css itself
+ * rather than main.tsx importing it separately.
+ *
+ * Tailwind v4 emits its utilities inside `@layer utilities`. An UNLAYERED
+ * stylesheet beats every layered one no matter its specificity or position —
+ * so styles.css's opening `*{margin:0;padding:0}` silently defeated every
+ * px-*, py-*, gap-* and mb-* on every converted screen. The build was correct
+ * and complete; it simply never won a single declaration.
+ *
+ * Importing the legacy sheet INTO a layer that is declared first puts it at
+ * the bottom of the cascade, where a set of defaults belongs. It still styles
+ * what has not been converted yet — Icon, DemoPanel, ToastProvider in ui.tsx —
+ * and stops fighting what has.
+ */
+@layer legacy, theme, base, components, utilities;
+
+@import "./styles.css" layer(legacy);
+@import "tailwindcss";
+
+@source "./**/*.{ts,tsx}";
+
+
+/**
+ * BrandsApp dashboard — design tokens.
+ *
+ * Ula's system from Dashboard-Design-Rules.md §2.1–2.3, copied EXACTLY. If a
+ * value here disagrees with that document, the document wins and this is the
+ * bug.
+ *
+ * Scoped to `.ba2` to match the platform's copy byte for byte
+ * (apps/web/src/styles/dashboard-v2.css). It is not needed for isolation in
+ * this repo — there is no competing system here — but the components are shared
+ * source, and a token they can only find under one selector in one repo is a
+ * component that renders unstyled in the other.
+ */
+.ba2 {
+  --ba-accent: #ea542d;
+  --ba-accent-lift: #f0693f;
+  --ba-accent-deep: #c8431f;
+  --ba-accent-soft: #fdeee8;
+  --ba-accent-ink: #b93a18;
+
+  --ba-ground: #f9f9f9;
+  --ba-paper: #ffffff;
+  --ba-dark: #1c1c1c;
+  --ba-dark-lift: #2e2e2e;
+  --ba-soft: #f1f1f1;
+  --ba-soft-lift: #e8e8e8;
+
+  --ba-line: rgba(28, 28, 28, 0.07);
+  --ba-line-strong: rgba(28, 28, 28, 0.14);
+
+  --ba-ink: #1c1c1c;
+  --ba-body: #5b5b5b;
+  --ba-muted: #767676;
+
+  --ba-good: #187a42;
+  --ba-good-bg: #e6f4eb;
+  --ba-warn: #855a0c;
+  --ba-warn-bg: #fbf1dc;
+  --ba-bad: #b3372f;
+  --ba-bad-bg: #fbe9e7;
+
+  /* The "needs action" peach tile. Dark ink on top, never white (§2.1). */
+  --ba-tile: #f8c8b0;
+
+  --ba-r-card: 20px;
+  --ba-r-field: 14px;
+
+  --ba-shadow-card: 0 1px 2px rgba(28, 28, 28, 0.03),
+    0 12px 32px -18px rgba(28, 28, 28, 0.14);
+  --ba-shadow-hover: 0 2px 4px rgba(28, 28, 28, 0.03),
+    0 20px 44px -18px rgba(28, 28, 28, 0.22);
+  --ba-shadow-pop: 0 10px 30px -8px rgba(28, 28, 28, 0.22);
+
+  --ba-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --ba-rail: 80px;
+  --ba-sidebar: 252px;
+  --ba-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* §2.2: body is 14.5px / 1.5 at -0.005em. */
+  font-family: var(--ba-sans);
+  font-size: 14.5px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--ba-ink);
+  background: var(--ba-ground);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers that line up are tabular (§2.2). */
+.ba2 .ba-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* §10: motion is opt-out. */
+@media (prefers-reduced-motion: reduce) {
+  .ba2 *,
+  .ba2 *::before,
+  .ba2 *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

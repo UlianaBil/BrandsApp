@@ -1,13 +1,26 @@
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { api, roleHelp, roleOption, type Role, type TeamMember } from "../mock"
-import { CardSkeleton, ErrorState, Icon, initials, Menu, Modal, PageHeader, RoleChip, Segmented, useAsync, useToast } from "../ui"
+import { Icon, useAsync } from "../ui"
+import { Avatar, Button, Card, Chip, PageHeader, RoleChip } from "@/ui/primitives"
+import {
+  Field,
+  Input,
+  Modal,
+  Note,
+  RowMenu,
+  Segmented,
+  Select,
+  Skeleton,
+  CardSkeleton,
+  ErrorState,
+  toast,
+} from "@/ui/controls"
 
 type Filter = "all" | "active" | "invited"
 
 export default function Team() {
   const { slug = "" } = useParams()
-  const toast = useToast()
   const brand = useAsync(() => api.getBrand(slug), [slug])
   const team = useAsync(() => api.listTeam(slug), [slug])
 
@@ -72,7 +85,14 @@ export default function Team() {
   }
 
   const saveRole = async () => {
-    if (!changing) return
+    // The primitive Modal disables Cancel and Save from one shared `pending`
+    // flag, so there's no way to keep Save alone disabled while unchanged
+    // (§5.2's "not yet valid" case). Treat "no change" as a quiet close
+    // instead of a no-op API call.
+    if (!changing || newRole === changing.role) {
+      setChanging(null)
+      return
+    }
     setBusy(true)
     try {
       await api.setRole(slug, changing.id, newRole)
@@ -96,24 +116,45 @@ export default function Team() {
   }
 
   return (
-    <main className="page">
+    <main className="mx-auto max-w-[1240px] px-4 pt-6 pb-[110px] min-[900px]:px-9 min-[900px]:pt-9">
+      {/* §3.2: a small identity chip back to Overview, desktop only — the phone
+          top bar already carries brand name + back chevron on every brand page. */}
+      {brand.data ? (
+        <Link
+          to={`/dashboard/${slug}`}
+          aria-label={`${brand.data.name} overview`}
+          className="mb-3 hidden max-w-full items-center gap-2 rounded-full border border-[var(--ba-line)] bg-[var(--ba-paper)] py-[3px] pr-3 pl-[3px] text-[0.82rem] font-semibold text-[var(--ba-body)] transition-colors hover:bg-[var(--ba-soft)] hover:text-[var(--ba-ink)] min-[900px]:inline-flex"
+        >
+          <Avatar name={brand.data.name} kind="brand" size={24} />
+          <span className="truncate">{brand.data.name}</span>
+        </Link>
+      ) : !brand.error ? (
+        <div className="mb-3 hidden items-center gap-2 min-[900px]:flex">
+          <Skeleton className="size-6 rounded-full" />
+          <Skeleton className="h-2.5 w-24" />
+        </div>
+      ) : null}
+
       <PageHeader
-        slug={slug}
         title="Team"
-        sub="Who can manage this brand's account: billing, verification, domains and settings. Staff who work inside your apps are managed in the brand admin, not here."
+        subtitle="Who can manage this brand's account: billing, verification, domains and settings. Staff who work inside your apps are managed in the brand admin, not here."
       />
 
-      <div className="split">
+      <div className="grid grid-cols-1 items-start gap-3.5 min-[1000px]:grid-cols-[minmax(0,1fr)_380px]">
         {/* Members first: the page's promise is "who has access". */}
         <div>
           {team.loading && <CardSkeleton lines={3} />}
-          {team.error && <ErrorState message={team.error} onRetry={team.retry} />}
+          {team.error && <ErrorState what="the team" onRetry={team.retry} />}
           {team.data && (
-            <section className="card flush" aria-label="People with access">
-              <div className="card-head">
+            <Card flush className="overflow-hidden" aria-label="People with access">
+              <div className="flex flex-wrap items-start justify-between gap-3 px-[22px] pt-5">
                 <div>
-                  <h2>People with access <span style={{ color: "var(--muted)", fontWeight: 500 }}>· {members.length}</span></h2>
-                  <p className="hint">Everyone here can manage the brand; only an owner can add or remove other owners.</p>
+                  <h2 className="text-[1rem] font-semibold tracking-[-0.01em]">
+                    People with access <span className="font-medium text-[var(--ba-muted)]">· {members.length}</span>
+                  </h2>
+                  <p className="mt-1 max-w-[60ch] text-[0.88rem] text-[var(--ba-body)]">
+                    Everyone here can manage the brand; only an owner can add or remove other owners.
+                  </p>
                 </div>
                 {invitedCount > 0 && (
                   <Segmented<Filter>
@@ -128,29 +169,29 @@ export default function Team() {
                   />
                 )}
               </div>
-              <div className="rowlist">
+              <div className="mt-3.5 flex flex-col divide-y divide-[var(--ba-line)]">
                 {visible.map((m) => (
-                  <div key={m.id} className="row-item">
-                    <div className={`avatar${m.status === "invited" ? " soft" : ""}`} aria-hidden="true">{initials(m.name)}</div>
-                    <div className="grow">
-                      <div className="title">
+                  <div key={m.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-[22px] py-3.5 sm:flex-nowrap">
+                    <Avatar name={m.name} kind="person" size={36} soft={m.status === "invited"} />
+                    <div className="min-w-0 flex-1 basis-[calc(100%-52px)] sm:basis-auto">
+                      <div className="text-[0.94rem] font-semibold [overflow-wrap:anywhere]">
                         {m.name}
-                        {m.you && <span style={{ color: "var(--muted)", fontWeight: 500 }}> (you)</span>}
+                        {m.you && <span className="font-medium text-[var(--ba-muted)]"> (you)</span>}
                       </div>
-                      <div className="meta">{m.email}</div>
+                      <div className="text-[0.83rem] text-[var(--ba-muted)] [overflow-wrap:anywhere]">{m.email}</div>
                     </div>
-                    <div className="r-actions">
-                      {m.status === "invited" && <span className="chip chip-warn"><span className="dot" />Invited</span>}
+                    <div className="ml-auto flex shrink-0 items-center gap-2">
+                      {m.status === "invited" && <Chip tone="warn">Invited</Chip>}
                       <RoleChip role={m.role} />
-                      <Menu
+                      <RowMenu
                         label={`Actions for ${m.name}`}
                         items={[
-                          { label: "Copy email", icon: "copy", onSelect: () => copyEmail(m) },
+                          { label: "Copy email", onSelect: () => copyEmail(m) },
                           ...(canTouch(m) && m.status === "active" && roleChoices.length > 1
-                            ? [{ label: "Change role…", icon: "swap" as const, onSelect: () => { setNewRole(m.role); setChanging(m) } }]
+                            ? [{ label: "Change role…", onSelect: () => { setNewRole(m.role); setChanging(m) } }]
                             : []),
                           ...(canTouch(m)
-                            ? [{ label: m.status === "invited" ? "Cancel invite" : "Remove from brand", icon: "trash" as const, danger: true, sep: true, onSelect: () => setRemoving(m) }]
+                            ? [{ label: m.status === "invited" ? "Cancel invite" : "Remove from brand", danger: true, sep: true, onSelect: () => setRemoving(m) }]
                             : []),
                         ]}
                       />
@@ -158,59 +199,68 @@ export default function Team() {
                   </div>
                 ))}
                 {visible.length === 0 && (
-                  <p className="hint" style={{ padding: "18px 22px" }}>Nobody matches this filter.</p>
+                  <p className="px-[22px] py-[18px] text-[0.88rem] text-[var(--ba-body)]">Nobody matches this filter.</p>
                 )}
               </div>
-            </section>
+            </Card>
           )}
         </div>
 
         {/* Invite */}
         {canManage ? (
-          <section className="card" aria-label="Invite someone">
-            <div className="stat-headrow" style={{ marginBottom: 14 }}>
-              <span className="stat-ico" aria-hidden="true"><Icon name="user-plus" size={16} /></span>
-              <h2 style={{ marginBottom: 0 }}>Invite someone</h2>
-            </div>
-            <form onSubmit={invite} noValidate>
-              <div className="field">
-                <label htmlFor="tm-email">Email address</label>
-                <input
-                  id="tm-email"
-                  className="input"
-                  type="email"
-                  placeholder="colleague@business.com"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setEmailError(null) }}
-                  aria-invalid={!!emailError}
-                  aria-describedby={emailError ? "tm-email-error" : undefined}
-                />
-                {emailError && <p id="tm-email-error" className="error-text"><Icon name="warning" size={14} />{emailError}</p>}
+          <section aria-label="Invite someone">
+            <Card>
+              <div className="mb-3.5 flex items-center gap-2.5">
+                <span className="grid size-[34px] shrink-0 place-items-center rounded-full bg-[var(--ba-soft)] text-[var(--ba-ink)]">
+                  <Icon name="user-plus" size={16} />
+                </span>
+                <h2 className="text-[1rem] font-semibold tracking-[-0.01em]">Invite someone</h2>
               </div>
-              <div className="field">
-                <label htmlFor="tm-role">Role</label>
-                {roleChoices.length > 1 ? (
-                  <select id="tm-role" className="input" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-                    {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
-                  </select>
-                ) : (
-                  <input id="tm-role" className="input" value={roleOption.admin} disabled readOnly />
-                )}
-                <p className="help">{roleHelp[role]}</p>
-              </div>
-              <button className="btn btn-primary btn-block" type="submit" disabled={inviting || !email.trim()} style={{ marginTop: 6 }}>
-                {inviting ? "Sending invite…" : (<>Send invite <Icon name="mail" size={15} /></>)}
-              </button>
-            </form>
+              <form onSubmit={invite} noValidate>
+                <div className="mb-[18px]">
+                  <Field label="Email address" htmlFor="tm-email" error={emailError}>
+                    <Input
+                      id="tm-email"
+                      type="email"
+                      placeholder="colleague@business.com"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setEmailError(null) }}
+                      aria-invalid={!!emailError}
+                      aria-describedby={emailError ? "tm-email-error" : undefined}
+                    />
+                  </Field>
+                </div>
+                <div className="mb-[18px]">
+                  <Field label="Role" htmlFor="tm-role" help={roleHelp[role]}>
+                    {roleChoices.length > 1 ? (
+                      <Select id="tm-role" value={role} onChange={(e) => setRole(e.target.value as Role)}>
+                        {roleChoices.map((r) => (
+                          <option key={r} value={r}>{roleOption[r]}</option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <Input id="tm-role" value={roleOption.admin} disabled readOnly />
+                    )}
+                  </Field>
+                </div>
+                <Button type="submit" variant="primary" block className="mt-1.5" disabled={inviting || !email.trim()}>
+                  {inviting ? "Sending invite…" : (<>Send invite <Icon name="mail" size={15} /></>)}
+                </Button>
+              </form>
+            </Card>
           </section>
         ) : brand.error ? (
-          <p className="member-note block" style={{ marginTop: 0 }}>
-            <span className="ico"><Icon name="warning" size={14} /></span>
-            <span>
-              We couldn't confirm your role on this brand, so managing the team is hidden.{" "}
-              <button className="text-link" style={{ background: "none", border: "none", padding: 0 }} onClick={brand.retry}>Try again</button>
-            </span>
-          </p>
+          <Note>
+            <div className="flex items-start gap-2.5">
+              <Icon name="warning" size={14} />
+              <span>
+                We couldn't confirm your role on this brand, so managing the team is hidden.{" "}
+                <button type="button" className="font-semibold underline underline-offset-2" onClick={brand.retry}>
+                  Try again
+                </button>
+              </span>
+            </div>
+          </Note>
         ) : null}
       </div>
 
@@ -218,20 +268,18 @@ export default function Team() {
         open={changing != null}
         onClose={() => !busy && setChanging(null)}
         title={`Change ${changing?.name}'s role`}
-        icon="swap"
-        footer={
-          <>
-            <button className="btn btn-secondary" onClick={() => setChanging(null)} disabled={busy}>Cancel</button>
-            <button className="btn btn-primary" onClick={saveRole} disabled={busy || newRole === changing?.role}>{busy ? "Saving…" : "Save role"}</button>
-          </>
-        }
+        confirmLabel={busy ? "Saving…" : "Save role"}
+        onConfirm={saveRole}
+        pending={busy}
       >
-        <div className="field">
-          <label htmlFor="tm-newrole">Role</label>
-          <select id="tm-newrole" className="input" value={newRole} onChange={(e) => setNewRole(e.target.value as Role)}>
-            {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
-          </select>
-          <p className="help">{roleHelp[newRole]}</p>
+        <div className="mt-3.5">
+          <Field label="Role" htmlFor="tm-newrole" help={roleHelp[newRole]}>
+            <Select id="tm-newrole" value={newRole} onChange={(e) => setNewRole(e.target.value as Role)}>
+              {roleChoices.map((r) => (
+                <option key={r} value={r}>{roleOption[r]}</option>
+              ))}
+            </Select>
+          </Field>
         </div>
       </Modal>
 
@@ -239,16 +287,11 @@ export default function Team() {
         open={removing != null}
         onClose={() => !busy && setRemoving(null)}
         title={removing?.status === "invited" ? `Cancel the invite for ${removing.name}?` : `Remove ${removing?.name}?`}
-        icon="trash"
         danger
-        footer={
-          <>
-            <button className="btn btn-secondary" onClick={() => setRemoving(null)} disabled={busy}>Keep</button>
-            <button className="btn btn-danger" onClick={confirmRemove} disabled={busy}>
-              {busy ? "Removing…" : removing?.status === "invited" ? "Cancel invite" : "Remove"}
-            </button>
-          </>
-        }
+        cancelLabel="Keep"
+        confirmLabel={busy ? "Removing…" : removing?.status === "invited" ? "Cancel invite" : "Remove"}
+        onConfirm={confirmRemove}
+        pending={busy}
       >
         <p>
           {removing?.status === "invited"

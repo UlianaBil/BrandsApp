@@ -1,12 +1,13 @@
 import { useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { api, fmtDate } from "../mock"
-import { CardSkeleton, ErrorState, Icon, Modal, PageHeader, useAsync, useToast } from "../ui"
+import { Icon, useAsync } from "../ui"
+import { Button, Card, Chip, PageHeader } from "@/ui/primitives"
+import { CardSkeleton, ErrorState, Modal, Note, toast } from "@/ui/controls"
 import { DomainStatusChip } from "./Settings"
 
 export default function Domain() {
   const { slug = "", id = "" } = useParams()
-  const toast = useToast()
   const navigate = useNavigate()
   const domain = useAsync(() => api.getDomain(slug, id), [slug, id])
   const [checking, setChecking] = useState(false)
@@ -50,62 +51,102 @@ export default function Domain() {
   const d = domain.data
 
   return (
-    <main className="page narrow">
+    <main className="mx-auto max-w-[680px] px-4 pt-6 pb-[110px] min-[900px]:px-9 min-[900px]:pt-9">
+      {/* Sub-flow of Settings: this back link, unlike a top-level brand page's,
+          shows at every width — the phone top bar only goes back to My Brands (§3.2). */}
+      <Link
+        to={`/dashboard/${slug}/settings`}
+        className="mb-3.5 inline-flex max-w-full items-center gap-2 text-[0.9rem] font-semibold text-[var(--ba-body)] transition-colors hover:text-[var(--ba-ink)]"
+      >
+        <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[var(--ba-line)] bg-[var(--ba-paper)]">
+          <Icon name="back" size={16} />
+        </span>
+        <span className="truncate">Settings</span>
+      </Link>
+
       <PageHeader
-        slug={slug}
         title={d?.hostname ?? "Domain"}
-        sub={d ? (d.status === "active" ? "Connected and serving your site." : d.status === "failed" ? "The last check couldn't find these records. Fix them at your DNS provider and check again." : "Add the records below at your DNS provider, then check.") : undefined}
-        backTo={`/dashboard/${slug}/settings`}
-        backLabel="Settings"
+        subtitle={
+          d
+            ? d.status === "active"
+              ? "Connected and serving your site."
+              : d.status === "failed"
+                ? "The last check couldn't find these records. Fix them at your DNS provider and check again."
+                : "Add the records below at your DNS provider, then check."
+            : undefined
+        }
         actions={d ? <DomainStatusChip status={d.status} /> : undefined}
       />
 
       {domain.loading && <CardSkeleton lines={3} />}
-      {domain.error && <ErrorState message={domain.error} onRetry={domain.retry} />}
+      {domain.error && <ErrorState what="this domain" onRetry={domain.retry} />}
 
       {d && (
-        <div className="stack">
-          <div className="facts">
-            <div className="card"><span className="stat-title">Added</span><span className="fact-v" style={{ fontSize: "1rem" }}>{fmtDate(d.addedAt)}</span></div>
-            <div className="card"><span className="stat-title">Last checked</span><span className="fact-v" style={{ fontSize: "1rem" }}>{d.lastCheckedAt ? fmtDate(d.lastCheckedAt) : "Not yet"}</span></div>
+        <div className="flex flex-col gap-3.5">
+          <div className="grid grid-cols-2 gap-2.5 min-[700px]:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] min-[700px]:gap-3.5">
+            <Card className="flex flex-col gap-1.5 p-3.5 min-[700px]:gap-2 min-[700px]:p-[18px_20px]">
+              <span className="text-[0.8rem] font-medium text-[var(--ba-body)]">Added</span>
+              <span className="ba-num text-[1.05rem] font-semibold tracking-[-0.02em] min-[700px]:text-[1.15rem]">{fmtDate(d.addedAt)}</span>
+            </Card>
+            <Card className="flex flex-col gap-1.5 p-3.5 min-[700px]:gap-2 min-[700px]:p-[18px_20px]">
+              <span className="text-[0.8rem] font-medium text-[var(--ba-body)]">Last checked</span>
+              <span className="ba-num text-[1.05rem] font-semibold tracking-[-0.02em] min-[700px]:text-[1.15rem]">
+                {d.lastCheckedAt ? fmtDate(d.lastCheckedAt) : "Not yet"}
+              </span>
+            </Card>
           </div>
 
-          <section className="card flush" aria-label="DNS records">
-            <div className="card-head">
-              <div>
-                <h2>Add these records at your DNS provider</h2>
-                <p className="hint">DNS changes can take a few minutes to a few hours. Press Check once you've added them.</p>
-              </div>
+          <Card flush className="overflow-hidden" aria-label="DNS records">
+            <div className="px-[22px] pt-5">
+              <h2 className="text-[1rem] font-semibold tracking-[-0.01em]">Add these records at your DNS provider</h2>
+              <p className="mt-0.5 text-[0.88rem] text-[var(--ba-body)]">
+                DNS changes can take a few minutes to a few hours. Press Check once you've added them.
+              </p>
             </div>
-            <div className="table" style={{ ["--cols" as string]: "90px minmax(0,1fr) minmax(0,1.4fr) 40px" }}>
-              <div className="tr th"><span>Type</span><span>Name</span><span>Value</span><span /></div>
+            <div className="mt-3.5 flex flex-col divide-y divide-[var(--ba-line)]">
               {d.records.map((r) => (
-                <div key={r.type + r.name} className="tr">
-                  <span className="td"><span className="lbl">Type</span><span className="chip chip-neutral">{r.type}</span></span>
-                  <span className="td strong" style={{ overflowWrap: "anywhere" }}><span className="lbl">Name</span>{r.name}</span>
-                  <span className="td muted span" style={{ overflowWrap: "anywhere", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: ".84rem" }}>{r.value}</span>
-                  <span className="td end">
-                    <button type="button" className="iconbtn sm" aria-label={`Copy ${r.type} value`} onClick={() => copy(r.value)}><Icon name="copy" size={15} /></button>
-                  </span>
+                <div key={r.type + r.name} className="flex flex-col gap-2 px-[22px] py-3.5 min-[700px]:flex-row min-[700px]:items-center min-[700px]:gap-4">
+                  <div className="flex items-center gap-2 min-[700px]:basis-[90px]">
+                    <Chip tone="neutral" dot={false}>{r.type}</Chip>
+                  </div>
+                  <div className="min-w-0 text-[0.9rem] font-semibold [overflow-wrap:anywhere] min-[700px]:basis-[22%]">
+                    <span className="mr-1.5 font-medium text-[var(--ba-muted)] min-[700px]:hidden">Name</span>
+                    {r.name}
+                  </div>
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <span className="min-w-0 flex-1 font-mono text-[0.84rem] text-[var(--ba-muted)] [overflow-wrap:anywhere]">{r.value}</span>
+                    <button
+                      type="button"
+                      aria-label={`Copy ${r.type} value`}
+                      onClick={() => copy(r.value)}
+                      className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ba-muted)] transition-colors hover:bg-[var(--ba-soft)]"
+                    >
+                      <Icon name="copy" size={15} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="card-foot" style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+            <div className="flex flex-wrap items-center gap-2.5 border-t border-[var(--ba-line)] px-[22px] py-3.5">
               {d.status !== "active" ? (
-                <button className="btn btn-primary" onClick={check} disabled={checking}>
+                <Button variant="primary" onClick={check} disabled={checking}>
                   {checking ? "Checking…" : (<><Icon name="refresh" size={15} />Check DNS</>)}
-                </button>
+                </Button>
               ) : (
-                <span className="hint">Records verified. Nothing more to do here.</span>
+                <span className="text-[0.88rem] text-[var(--ba-body)]">Records verified. Nothing more to do here.</span>
               )}
-              <button className="btn btn-danger-ghost" style={{ marginLeft: "auto" }} onClick={() => setRemoving(true)}>Remove domain</button>
+              <Button variant="dangerGhost" className="ml-auto" onClick={() => setRemoving(true)}>
+                Remove domain
+              </Button>
             </div>
-          </section>
+          </Card>
 
-          <p className="member-note block">
-            <span className="ico"><Icon name="info" size={14} /></span>
-            Your brand stays reachable at its brandsapp.io address whatever happens with this domain.
-          </p>
+          <Note>
+            <div className="flex items-center gap-2.5">
+              <Icon name="info" size={14} />
+              Your brand stays reachable at its brandsapp.io address whatever happens with this domain.
+            </div>
+          </Note>
         </div>
       )}
 
@@ -113,14 +154,11 @@ export default function Domain() {
         open={removing}
         onClose={() => !busy && setRemoving(false)}
         title={`Remove ${d?.hostname}?`}
-        icon="trash"
         danger
-        footer={
-          <>
-            <button className="btn btn-secondary" onClick={() => setRemoving(false)} disabled={busy}>Keep</button>
-            <button className="btn btn-danger" onClick={confirmRemove} disabled={busy}>{busy ? "Removing…" : "Remove domain"}</button>
-          </>
-        }
+        cancelLabel="Keep"
+        confirmLabel={busy ? "Removing…" : "Remove domain"}
+        onConfirm={confirmRemove}
+        pending={busy}
       >
         <p>Visitors to {d?.hostname} will no longer reach your site. Your brandsapp.io address keeps working. You can connect the domain again later.</p>
       </Modal>
