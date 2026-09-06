@@ -9,9 +9,9 @@
  * exercised by reviewers.
  */
 
-export type Role = "owner" | "admin" | "member"
-/** A brand membership on the platform is Owner or Admin (owner's decision, 2026-09-05); "member" only exists as a team role. */
-export type BrandRole = "owner" | "admin"
+/** Every role on the platform is Owner or Admin — there is no view-only role (owner decision, 2026-09-05). */
+export type Role = "owner" | "admin"
+export type BrandRole = Role
 
 export interface Account {
   name: string
@@ -319,7 +319,7 @@ const store = {
         id: "u5",
         name: "Femi Adewale",
         email: "femi@lagosbites.ng",
-        role: "member" as Role,
+        role: "admin" as Role,
         status: "active" as const,
       },
     ],
@@ -619,17 +619,14 @@ export const fmtDate = (iso: string) =>
 export const roleLabel: Record<Role, string> = {
   owner: "Owner",
   admin: "Admin",
-  member: "Member",
 }
 
 export const roleOption: Record<Role, string> = {
   owner: "Owner",
   admin: "Admin",
-  member: "Member (view only)",
 }
 
 export const roleHelp: Record<Role, string> = {
   owner: "Full control of this brand, including billing, domains and removing admins.",
   admin: "Can do everything an owner can, except remove or demote an owner.",
-  member: "Can view this dashboard but can't change billing, team or settings.",
 }

@@ -43,7 +43,6 @@ export default function Overview() {
     )
   }
 
-  const isOwnerOrAdmin = brand.data?.role === "owner" || brand.data?.role === "admin"
   const planTrial = plan.data?.status === "trial"
   // Colour is a signal, not decoration: the tile turns peach only when the plan needs action soon.
   const needsAction = plan.data?.status === "none" || (planTrial && (plan.data?.daysLeft ?? 0) <= 7)
@@ -177,12 +176,6 @@ export default function Overview() {
         </div>
       )}
 
-      {brand.data && !isOwnerOrAdmin && (
-        <p className="member-note">
-          <span className="ico"><Icon name="lock" size={14} /></span>
-          You're a member of this brand — billing, team and settings are read-only for you.
-        </p>
-      )}
     </main>
   )
 }

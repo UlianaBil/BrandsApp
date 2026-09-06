@@ -21,11 +21,12 @@ export default function Team() {
   const [newRole, setNewRole] = useState<Role>("admin")
   const [busy, setBusy] = useState(false)
 
-  const canManage = brand.data?.role === "owner" || brand.data?.role === "admin"
+  const canManage = !!brand.data
   const isOwner = brand.data?.role === "owner"
   // An admin can do everything an owner can, except touch an owner.
   const canTouch = (m: TeamMember) => canManage && !m.you && (m.role !== "owner" || isOwner)
-  const roleChoices: Role[] = isOwner ? ["admin", "owner", "member"] : ["admin", "member"]
+  // Roles are Owner or Admin only; an admin can only invite admins, so only owners get a choice.
+  const roleChoices: Role[] = isOwner ? ["admin", "owner"] : ["admin"]
   const members = team.data ?? []
   const invitedCount = members.filter((m) => m.status === "invited").length
   const visible = members.filter((m) => (filter === "all" ? true : m.status === filter))
@@ -112,7 +113,7 @@ export default function Team() {
               <div className="card-head">
                 <div>
                   <h2>People with access <span style={{ color: "var(--muted)", fontWeight: 500 }}>· {members.length}</span></h2>
-                  <p className="hint">Owners and admins can change anything here; members can only view.</p>
+                  <p className="hint">Everyone here can manage the brand; only an owner can add or remove other owners.</p>
                 </div>
                 {invitedCount > 0 && (
                   <Segmented<Filter>
@@ -145,7 +146,7 @@ export default function Team() {
                         label={`Actions for ${m.name}`}
                         items={[
                           { label: "Copy email", icon: "copy", onSelect: () => copyEmail(m) },
-                          ...(canTouch(m) && m.status === "active"
+                          ...(canTouch(m) && m.status === "active" && roleChoices.length > 1
                             ? [{ label: "Change role…", icon: "swap" as const, onSelect: () => { setNewRole(m.role); setChanging(m) } }]
                             : []),
                           ...(canTouch(m)
@@ -188,9 +189,13 @@ export default function Team() {
               </div>
               <div className="field">
                 <label htmlFor="tm-role">Role</label>
-                <select id="tm-role" className="input" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-                  {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
-                </select>
+                {roleChoices.length > 1 ? (
+                  <select id="tm-role" className="input" value={role} onChange={(e) => setRole(e.target.value as Role)}>
+                    {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
+                  </select>
+                ) : (
+                  <input id="tm-role" className="input" value={roleOption.admin} disabled readOnly />
+                )}
                 <p className="help">{roleHelp[role]}</p>
               </div>
               <button className="btn btn-primary btn-block" type="submit" disabled={inviting || !email.trim()} style={{ marginTop: 6 }}>
@@ -205,11 +210,6 @@ export default function Team() {
               We couldn't confirm your role on this brand, so managing the team is hidden.{" "}
               <button className="text-link" style={{ background: "none", border: "none", padding: 0 }} onClick={brand.retry}>Try again</button>
             </span>
-          </p>
-        ) : brand.data ? (
-          <p className="member-note block" style={{ marginTop: 0 }}>
-            <span className="ico"><Icon name="lock" size={14} /></span>
-            Only an owner or admin can invite or remove people.
           </p>
         ) : null}
       </div>

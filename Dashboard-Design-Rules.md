@@ -158,7 +158,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - **One primary per view.** If two actions feel primary, one is wrong. On Overview it is "Open brand admin"; on a form it is the submit; on a list it is usually nothing — opening an item is the action.
 - **Empty state → primary CTA. Populated → the same action becomes secondary.** An empty My Brands shows a filled "Create your first brand"; once brands exist, "New brand" is a white outlined pill in the header. Same for the marketplace ("Sell a section"), domains, team, payments and any future list. The header never duplicates the empty state's CTA.
 - **Urgency, not importance, earns the accent.** A plan that is about to lapse gets the peach tile and its link. An active plan gets a plain card and a `link-cta`.
-- **Read-only users see no dead buttons.** Hide actions a member can't take and explain once with a lock note ("Only an owner or admin can…"). Disabled buttons are for *not yet valid*, not *not allowed*.
+- **Users never see dead buttons.** Hide actions the current role can't take (an admin never sees actions on an owner's row) and, where a whole section is unavailable, explain once with a lock note. Disabled buttons are for *not yet valid*, not *not allowed*.
 - **Destructive actions are never one tap.** They live in a row menu or a ghost button, open a confirmation modal with a red confirm button, and name the thing being removed.
 - **Labels are verbs that say what happens:** "Send invite", "Add domain", "Remove", "Continue to payment". Never "OK", "Submit", "Yes".
 - **Pending state narrates:** the button disables and its label changes to the present progressive ("Saving…", "Sending invite…", "Setting up your brand…"). Spinners go inside the button, never replace it.
@@ -180,8 +180,8 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 
 - Chips are pills, .74rem/600, with a leading 6px dot for *state* chips (Live, Active, Paid, Failed, Invited, Waiting for DNS). Chips without a dot are *labels* (a category, a period, "Current plan").
 - Tone mapping is fixed: good = healthy/complete, warn = temporary/pending/expiring, bad = failed/blocked, neutral = informational or inactive, dark = current selection, accent = ownership.
-- Role chips are all soft tints with dark-ish ink, never solid fills: Owner (peach tint, `--accent-soft` / `--accent-ink`), Admin (8% ink tint on white, `--ink` text), Member (`--soft`, `--body` text). A role is a label, not an alert, so no role chip may be louder than the Owner chip. Roles are always chips, never plain text.
-- **Brand membership is Owner or Admin** (owner decision, 5 Sep 2026): a brand card on My Brands and the account menu only ever show those two. "Member (view only)" exists only as a *team* role assignable from the Team page; the read-only treatment (§7.5) applies to that role.
+- Role chips are soft tints with dark-ish ink, never solid fills: Owner (peach tint, `--accent-soft` / `--accent-ink`) and Admin (8% ink tint on white, `--ink` text). A role is a label, not an alert, so no role chip may be louder than the Owner chip. Roles are always chips, never plain text.
+- **There are exactly two roles, Owner and Admin** (owner decision, 5 Sep 2026) — on brand cards, in the account menu, in the team list and in the invite form. There is no view-only role: everyone with access can manage the brand; the only difference is that admins cannot add, remove, demote or change owners.
 - Status is always a worded chip. Never a bare coloured dot, never colour alone.
 
 ### 6.3 Avatars
@@ -216,7 +216,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - Lists show the newest first. Truncate the *list* with pagination, never the *content* of a cell.
 - **Pagination** at 5–10 rows per page, in the card footer: "Showing 1–5 of 8 payments" on the left, chevrons and page numbers on the right; the current page is a dark circle. Under two pages, render nothing.
 - Row actions live in a "more" (`Menu`) dropdown: neutral actions first, a divider, destructive actions last in red. Never more than one visible button per row.
-- **Team row menu contents:** everyone sees "Copy email". An owner or admin also sees "Change role…" (opens a modal with a role select and the role's plain-language help) and, after a divider, "Remove from brand" — or "Cancel invite" for a pending invitation. An admin never sees these on an owner's row and can't assign the Owner role; nobody sees them on their own row. The invite form offers Admin and Member (view only) to admins, plus Owner to owners.
+- **Team row menu contents:** everyone sees "Copy email". On another person's row an owner also sees "Change role…" (a modal with an Admin / Owner select and the role's plain-language help) and, after a divider, "Remove from brand" — or "Cancel invite" for a pending invitation. An admin sees "Remove from brand" only on other admins' rows and never a role change (the only role they can assign is Admin); nobody sees actions on their own row. The invite form offers Admin and Owner to owners; for admins the role is fixed to Admin and shown as a disabled field.
 
 ### 6.7 Meters
 
@@ -269,7 +269,7 @@ Content per the component rules. When a list has content, the create action move
 
 ### 7.5 Permission & read-only
 
-- Members see the same layout with actions removed and inputs disabled, plus one lock note per page explaining why. Hide whole sections that would only contain actions (a member never sees "Add a domain").
+- There is no read-only role, so pages don't need a view-only variant. The pattern still applies to *partial* permission: an admin sees the same layout as an owner with the owner-only actions removed (no actions on an owner's row, no Owner option), never disabled.
 - If the role itself can't be confirmed (brand fetch failed), fail closed: hide management, show a note with "Try again".
 
 ### 7.6 Needs-action
@@ -353,5 +353,5 @@ This document is only a source of truth while it matches the product. So:
 - **Every change to design or logic updates this document in the same commit** — a new component, a changed rule, a removed pattern, a new status, a new state, a changed threshold or default. If the code and this document disagree, fix one of them before shipping; never leave the disagreement.
 - **Where to write it:** a new or changed *rule* goes into the section it belongs to (tokens → §2, a control → §5/§6, behaviour → §7/§8, copy or data → §9). A new *screen or feature* also gets an entry in `Dashboard-Audit.md` and, if it introduces a pattern, a worked example in §11.
 - **The web version is generated from this file** — never edit it by hand; regenerate and republish after the markdown changes.
-- **Demo data must exercise every state this document describes.** Across the mock brands, at least one brand must show each plan state (trial ≤ 7 days, trial > 7 days, active), each verification status that can be reached, an owner and a member view, an empty list and a paginated list, and each meter threshold — one bar under 80% (green), one between 80% and 95% (amber) and one at 95% or above (red). Acme (the default brand) carries the amber example on its Emails meter; Lagos Bites carries the red ones. When a state is added here, add a brand or record that shows it.
+- **Demo data must exercise every state this document describes.** Across the mock brands, at least one brand must show each plan state (trial ≤ 7 days, trial > 7 days, active), each verification status that can be reached, an owner view and an admin view, an empty list and a paginated list, and each meter threshold — one bar under 80% (green), one between 80% and 95% (amber) and one at 95% or above (red). Acme (the default brand) carries the amber example on its Emails meter; Lagos Bites carries the red ones. When a state is added here, add a brand or record that shows it.
 - **Owner decisions override this document and are recorded in it** the same day, with the date, so nobody re-opens a settled question.

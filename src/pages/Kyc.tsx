@@ -41,7 +41,7 @@ export default function Kyc() {
     setAccountName(k.accountName ?? null)
   }, [kyc.data])
 
-  const canManage = brand.data?.role === "owner" || brand.data?.role === "admin"
+  const canManage = !!brand.data
   const bankName = useMemo(() => banks.data?.find((b) => b.code === bankCode)?.name ?? "", [banks.data, bankCode])
   const canResolve = !!bankCode && /^\d{10}$/.test(accountNumber) && !resolving
   const canSubmit = businessName.trim().length >= 2 && !!bankCode && /^\d{10}$/.test(accountNumber) && !!accountName && !submitting

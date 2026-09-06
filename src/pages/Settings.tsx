@@ -15,7 +15,7 @@ export default function Settings() {
   const [hostError, setHostError] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
 
-  const canManage = brand.data?.role === "owner" || brand.data?.role === "admin"
+  const canManage = !!brand.data
 
   const addDomain = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -433,7 +433,6 @@ body.collapsed .sidebar .acct-text{display:none}
 .chip-accent{background:var(--accent-soft);color:var(--accent-ink)}
 .chip-owner{background:var(--accent-soft);color:var(--accent-ink)}
 .chip-admin{background:rgba(28,28,28,.08);color:var(--ink)}
-.chip-member{background:var(--soft);color:var(--body)}
 
 /* ============================================================
    Forms
