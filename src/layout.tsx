@@ -55,14 +55,16 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 /**
- * Account menu: the avatar opens a menu with New brand, Account settings and Sign out
- * (confirmed in a modal). Production also lists brands here; ours doesn't — the
- * sidebar already shows them (owner decision, 2026-09-05).
+ * Account menu (production parity): the avatar opens a menu with a brand switcher
+ * (each brand by name), New brand, Account settings and Sign out (confirmed in a
+ * modal). No "All brands" entry — the sidebar's My Brands already is that
+ * (owner decision, 2026-09-05).
  */
 function Account({ onNavigate }: { onNavigate?: () => void }) {
   const navigate = useNavigate()
   const toast = useToast()
   const account = useAsync(() => api.getAccount(), [])
+  const brands = useAsync(() => api.listBrands(), [])
   const [signOut, setSignOut] = useState(false)
   const name = account.data?.name ?? "Your account"
   const email = account.data?.email ?? ""
@@ -71,11 +73,19 @@ function Account({ onNavigate }: { onNavigate?: () => void }) {
     navigate(to)
   }
 
+  const brandItems = (brands.data ?? []).map((b) => ({
+    label: b.name,
+    lead: <span className="mini-avatar" aria-hidden="true">{initials(b.name)}</span>,
+    meta: <span className={`chip chip-${b.role}`} style={{ fontSize: ".66rem", padding: "2px 8px" }}>{b.role === "owner" ? "Owner" : "Admin"}</span>,
+    onSelect: () => go(`/dashboard/${b.slug}`),
+  }))
+
   return (
     <>
       <Menu
         up
         label="Account menu"
+        header="Brands"
         trigger={
           <div className="sidebar-account as-trigger" title={`${name} · ${email}`}>
             <div className="avatar" aria-hidden="true">{account.data ? initials(name) : "··"}</div>
@@ -87,6 +97,7 @@ function Account({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         }
         items={[
+          ...brandItems,
           { label: "New brand", icon: "plus", onSelect: () => go("/dashboard/create") },
           { label: "Account settings", icon: "user", sep: true, onSelect: () => go("/settings") },
           { label: "Sign out", icon: "logout", onSelect: () => setSignOut(true) },
