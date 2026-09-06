@@ -79,7 +79,7 @@ Rules:
 
 ### 2.4 Icons
 
-Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav, 16px in stat headers and buttons, 14–15px inside chips and small buttons, 20px in manage-card circles. Icons are always paired with a label or an `aria-label`. Icons sit in a `--soft` circle when they lead a card or a row; they sit bare inside buttons and links. Add a new glyph to the `Icon` set rather than importing a library.
+Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav, 16px in stat headers and buttons, 14–15px inside chips and small buttons, 20px in manage-card circles. Icons are always paired with a label or an `aria-label`. Icons sit in a `--soft` circle when they lead a card or a row; they sit bare inside buttons and links. Add a new glyph to the `Icon` set rather than importing a library. Prefer the widely recognised form of a glyph over a stylised one — Settings is the toothed cog, not a sun-burst; the account row uses an up/down caret; sign out is the door-and-arrow.
 
 ---
 
@@ -88,6 +88,7 @@ Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav,
 ### 3.1 The shell
 
 - **Sidebar** (≥ 900px): 252px, white, full height, sticky. Top: logomark + "BrandsApp". Nav: "My Brands", then — only when inside a brand — a section label with the brand's name and the six brand pages (Overview, Billing, Finances, Team, Marketplace, Settings). Foot: Collapse control and the signed-in account.
+- **Account menu:** the account row in the foot (avatar, name, email, up/down caret) is a menu trigger. It opens upward with a "Brands" header listing up to four brands (initials avatar, name, role chip) as a switcher, then "All brands" and "New brand", a divider, "Account settings" (`/settings`) and "Sign out". Sign out confirms in a modal ("Sign out of BrandsApp?" · Stay signed in / Sign out). The same menu lives in the mobile drawer. In the collapsed rail the menu opens beside the avatar.
 - **Rail:** Collapse turns the sidebar into an 80px icon rail. Labels become tooltips; the brand section label becomes a hairline divider; the state persists in `localStorage("nav.collapsed")`.
 - **Mobile** (< 900px): a 60px sticky, blurred top bar (menu button + logomark) and a slide-in drawer with the same nav, closed by scrim, Escape, or navigating.
 - Every route change scrolls to the top and closes the drawer.
@@ -174,6 +175,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - Chips are pills, .74rem/600, with a leading 6px dot for *state* chips (Live, Active, Paid, Failed, Invited, Waiting for DNS). Chips without a dot are *labels* (a category, a period, "Current plan").
 - Tone mapping is fixed: good = healthy/complete, warn = temporary/pending/expiring, bad = failed/blocked, neutral = informational or inactive, dark = current selection, accent = ownership.
 - Role chips: Owner (peach), Admin (dark), Member (grey). Roles are always chips, never plain text.
+- **Brand membership is Owner or Admin** (owner decision, 5 Sep 2026): a brand card on My Brands and the account menu only ever show those two. "Member (view only)" exists only as a *team* role assignable from the Team page; the read-only treatment (§7.5) applies to that role.
 - Status is always a worded chip. Never a bare coloured dot, never colour alone.
 
 ### 6.3 Avatars
@@ -208,6 +210,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - Lists show the newest first. Truncate the *list* with pagination, never the *content* of a cell.
 - **Pagination** at 5–10 rows per page, in the card footer: "Showing 1–5 of 8 payments" on the left, chevrons and page numbers on the right; the current page is a dark circle. Under two pages, render nothing.
 - Row actions live in a "more" (`Menu`) dropdown: neutral actions first, a divider, destructive actions last in red. Never more than one visible button per row.
+- **Team row menu contents:** everyone sees "Copy email". An owner or admin also sees "Change role…" (opens a modal with a role select and the role's plain-language help) and, after a divider, "Remove from brand" — or "Cancel invite" for a pending invitation. An admin never sees these on an owner's row and can't assign the Owner role; nobody sees them on their own row. The invite form offers Admin and Member (view only) to admins, plus Owner to owners.
 
 ### 6.7 Meters
 
@@ -216,7 +219,7 @@ Six-pixel pill track in `--soft`. The fill follows the semantic scale: green (`-
 ### 6.8 Modals
 
 - Centred 460px dialog from 640px; a bottom sheet with 24px top corners below. Icon circle (red for destructive), title, one or two sentences of body, an optional summary box of label/value lines, then a footer with Cancel/Keep on the left and the action on the right (stacked, action on top, on phones).
-- Use a modal for: confirming destructive actions, confirming money (plan changes, purchases), and previews. Don't use a modal for forms that fit on the page, or for information that could be a card.
+- Use a modal for: confirming destructive actions, confirming money (plan changes, purchases), changing a role, signing out, and previews. Don't use a modal for forms that fit on the page, or for information that could be a card.
 - Escape and the scrim close it; focus moves into it on open; body scroll is locked; the confirm button is disabled while its request is pending.
 
 ### 6.9 Toasts
@@ -329,6 +332,8 @@ Follow this recipe and the screen will belong to the product.
 - **Notifications:** row list with a soft icon circle instead of an avatar, title + meta time ("Today, 14:20" is allowed here because the time matters), an "unread" dark dot chip; header action "Mark all as read" as a white pill; empty: "You're all caught up".
 - **Domain detail (sub-flow):** back link to Settings, `PageHeader` with the hostname, fact cards (Status chip, Added, SSL), a card with the DNS records to copy (each row has a copy iconbtn and a toast), and a ghost "Remove domain" that opens a red modal.
 - **A gated capability (business verification / KYC):** the gate is explained where it bites — a card on Billing, peach when nothing has been submitted or the last submission was rejected, plain with a warn "Pending review" chip while under review, and absent once verified. Its button leads to a sub-flow page (back link to Billing, no nav item) whose header chip shows the same status; the form pre-fills a previous submission so a rejection is fixed, not retyped; sensitive numbers are masked to their last four digits once stored.
+- **Account-level pages (Account settings):** reached from the account menu, never from the brand nav; `page.narrow`, back link to My Brands. Profile card with an inline-form rename and a disabled sign-in email ("To change it, contact support"), a flush "Your brands" list with role chips and Open buttons, and a Session card whose Sign out uses the same confirmation modal as the menu.
+- **Cards whose final design is undecided** stay in the layout as non-interactive examples (no button, no hover lift, no link) and the page subtitle says so — a placeholder must never look clickable. Marketplace listing cards are in this state.
 - **Onboarding checklist on Overview:** a white card with a `rowlist` of steps, done steps with a good chip and a check, the next step with a `btn-primary btn-sm`; never a progress bar of a colour outside the tokens.
 
 If a pattern you need isn't here, derive it from the nearest one above, keep the tokens, and add it to this document.
