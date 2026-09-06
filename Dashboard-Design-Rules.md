@@ -94,7 +94,7 @@ Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav,
   - **Inside a brand:** a fixed bottom tab bar with five tabs — Overview, Billing, Finances, Team, Settings. iOS conventions: full-width translucent white bar with a hairline top (solid paper where blur is unavailable or the user prefers reduced transparency), 22px icon over an always-visible 10.5px label, active tab in `--ink`, inactive in `--muted`, no pill behind the icon, safe-area padding, never hides on scroll. Press feedback only. Not a floating "glass" pill: edge-to-edge is what both platforms' native bars do, and heavy blur costs frames on the low-end Android phones this audience uses.
   - **The avatar is a fixed anchor, top-right on every phone screen** (owner decision, 5 Sep 2026 — the way Revolut, Monzo and Notion place the profile). It opens the account sheet (the `Modal`): the "Brands" switcher (initials, name, role chip), New brand, a divider, Account settings, Sign out. It never moves into the tab bar, so it is in the same place whether or not a tab bar is showing.
   - **Marketplace and other secondary brand pages** are reached from the Overview hub (the "Manage this brand" cards), not from a tab. Overview is the hub, like Revolut's or Wise's home. There is no "More" tab.
-  - **Top bar on brand pages:** back chevron to My Brands on the left, brand name centred, avatar right. Because the bar and the chevron carry navigation, the in-page mobile back link is hidden on brand pages (sub-flows such as Business verification keep theirs).
+  - **Top bar on brand pages:** back chevron to My Brands on the left, brand name immediately to its right (left-aligned, Material top-app-bar style — most of this audience is on Android, long names truncate cleanly, and it lines up with the left-aligned page title below), avatar right. Because the bar and the chevron carry navigation, the in-page mobile back link is hidden on brand pages (sub-flows such as Business verification keep theirs).
   - **Outside a brand** (My Brands, Create, Account settings): wordmark left, avatar right; no tab bar.
   - The page's bottom padding, the Demo button and toasts all clear the tab bar.
 - Every route change scrolls to the top and closes the drawer.
@@ -310,7 +310,7 @@ Never ask for confirmation of a non-destructive action, and never confirm succes
 
 ## 10. Interaction, motion & accessibility
 
-- Hover styles exist only under `@media (hover: hover) and (pointer: fine)`. Touch devices get press feedback (`:active`) instead — cards scale to .985, controls darken for the duration of the tap.
+- Hover styles exist only under `@media (hover: hover) and (pointer: fine)` — every `:hover` rule lives in that one block in `styles.css`, and a new hover rule goes there, never inline. Touch devices get press feedback (`:active`) instead — cards scale to .985, controls darken for the duration of the tap.
 - Transitions are 120–280ms on the `--ease` curve; everything respects `prefers-reduced-motion`.
 - Focus is a 2px orange outline with 2px offset on every interactive element; keyboard users can reach the rail tooltips, menus, modals (Escape closes) and pagination.
 - Icon-only controls carry `aria-label`; live status text uses `aria-live="polite"`; error cards are `role="alert"`; meters are `role="progressbar"` with values.

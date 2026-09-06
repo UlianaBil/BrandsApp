@@ -147,7 +147,9 @@ body.collapsed .sidebar .acct-text{display:none}
 @media (min-width:900px){.topbar{display:none}}
 .topbar-mark{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-0.02em}
 .topbar-mark img{width:30px;height:30px;border-radius:9px}
-.topbar .tb-title{flex:1;min-width:0;text-align:center;font-weight:600;font-size:.95rem;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Title sits left, next to the back chevron (Material top-app-bar convention): most of this
+   audience is on Android, long brand names truncate cleanly, and it lines up with the page title below. */
+.topbar .tb-title{flex:1;min-width:0;text-align:left;padding-left:2px;font-weight:600;font-size:1rem;letter-spacing:-0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .tb-you{margin-left:auto}
 .avatar.sm{width:28px;height:28px;font-size:.62rem}
 
