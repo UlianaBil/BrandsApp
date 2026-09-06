@@ -218,12 +218,13 @@ const store = {
     "acme-fashion-group": {
       requests: 1284,
       storageMb: 62,
-      emailsSent: 8,
+      emailsSent: 870,
       period: "August",
       limits: { requests: 50000, storageMb: 100, emails: 1000 },
       resources: [
         { key: "requests", label: "Requests", used: 1284, limit: 50000, unit: "" },
-        { key: "emails", label: "Emails", used: 8, limit: 1000, unit: "" },
+        // Deliberately close to the limit so the amber state shows on the default brand.
+        { key: "emails", label: "Emails", used: 870, limit: 1000, unit: "" },
         { key: "db", label: "Database storage", used: 62, limit: 100, unit: "MB" },
         { key: "reads", label: "Database reads", used: 84000, limit: 5000000, unit: "" },
         { key: "writes", label: "Database writes", used: 9000, limit: 50000, unit: "" },

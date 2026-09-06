@@ -331,3 +331,15 @@ Follow this recipe and the screen will belong to the product.
 - **Onboarding checklist on Overview:** a white card with a `rowlist` of steps, done steps with a good chip and a check, the next step with a `btn-primary btn-sm`; never a progress bar of a colour outside the tokens.
 
 If a pattern you need isn't here, derive it from the nearest one above, keep the tokens, and add it to this document.
+
+---
+
+## 12. Keeping this document current
+
+This document is only a source of truth while it matches the product. So:
+
+- **Every change to design or logic updates this document in the same commit** — a new component, a changed rule, a removed pattern, a new status, a new state, a changed threshold or default. If the code and this document disagree, fix one of them before shipping; never leave the disagreement.
+- **Where to write it:** a new or changed *rule* goes into the section it belongs to (tokens → §2, a control → §5/§6, behaviour → §7/§8, copy or data → §9). A new *screen or feature* also gets an entry in `Dashboard-Audit.md` and, if it introduces a pattern, a worked example in §11.
+- **The web version is generated from this file** — never edit it by hand; regenerate and republish after the markdown changes.
+- **Demo data must exercise every state this document describes.** Across the mock brands, at least one brand must show each plan state (trial ≤ 7 days, trial > 7 days, active), each verification status that can be reached, an owner and a member view, an empty list and a paginated list, and each meter threshold — one bar under 80% (green), one between 80% and 95% (amber) and one at 95% or above (red). Acme (the default brand) carries the amber example on its Emails meter; Lagos Bites carries the red ones. When a state is added here, add a brand or record that shows it.
+- **Owner decisions override this document and are recorded in it** the same day, with the date, so nobody re-opens a settled question.
