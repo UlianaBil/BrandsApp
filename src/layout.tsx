@@ -117,11 +117,11 @@ function Account() {
 }
 
 /**
- * Phone "You" sheet — the fifth tab. Brand Settings for the current brand, then the
- * brand switcher, New brand, Account settings and Sign out. Marketplace is reached
- * from the Overview hub cards, not from here (pattern: Slack "You", Airbnb Profile).
+ * Phone account sheet — opened from the avatar that sits top-right on every phone
+ * screen (a fixed anchor, like Revolut or Notion). Brand switcher, New brand,
+ * Account settings, Sign out. Brand pages have their own tabs.
  */
-function AccountSheet({ open, onClose, slug }: { open: boolean; onClose: () => void; slug: string | null }) {
+function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate()
   const account = useAsync(() => api.getAccount(), [])
   const brands = useAsync(() => api.listBrands(), [])
@@ -135,14 +135,6 @@ function AccountSheet({ open, onClose, slug }: { open: boolean; onClose: () => v
       <Modal open={open} onClose={onClose} title={account.data?.name ?? "You"} icon="user">
         {account.data && <p style={{ marginTop: -6, marginBottom: 10 }}>{account.data.email}</p>}
         <div className="sheet-list">
-          {slug && (
-            <>
-              <button type="button" onClick={() => go(`/dashboard/${slug}/settings`)}>
-                <span className="mi"><Icon name="gear" size={17} /></span>Brand settings
-              </button>
-              <div className="sep" role="separator" />
-            </>
-          )}
           <div className="sh-label">Brands</div>
           {(brands.data ?? []).map((b) => (
             <button key={b.slug} type="button" onClick={() => go(`/dashboard/${b.slug}`)}>
@@ -229,25 +221,22 @@ export function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="main">
-        {/* Phone top bar: inside a brand it's back + brand name; elsewhere the wordmark + account. */}
+        {/* Phone top bar: back + brand name inside a brand, wordmark elsewhere; the avatar is always top-right. */}
         <header className="topbar">
           {slug ? (
             <>
               <Link to="/dashboard" className="iconbtn" aria-label="Back to My Brands"><Icon name="chevron-left" size={22} /></Link>
               <span className="tb-title" aria-live="polite">{brand.data?.name ?? ""}</span>
-              <span className="tb-spacer" aria-hidden="true" />
             </>
           ) : (
-            <>
-              <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
-                <img src="/brandsapp-logo.svg" alt="" />
-                <span>BrandsApp</span>
-              </Link>
-              <button type="button" className="iconbtn tb-you" aria-label="Account" onClick={() => setSheet(true)}>
-                <span className="avatar sm" aria-hidden="true">{you}</span>
-              </button>
-            </>
+            <Link to="/dashboard" className="topbar-mark" aria-label="BrandsApp — My Brands">
+              <img src="/brandsapp-logo.svg" alt="" />
+              <span>BrandsApp</span>
+            </Link>
           )}
+          <button type="button" className="iconbtn tb-you" aria-label="Account" aria-haspopup="dialog" aria-expanded={sheet} onClick={() => setSheet(true)}>
+            <span className="avatar sm" aria-hidden="true">{you}</span>
+          </button>
         </header>
 
         {children}
@@ -266,14 +255,14 @@ export function Shell({ children }: { children: ReactNode }) {
             <NavLink to={`/dashboard/${slug}/team`} className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
               <span className="ti"><Icon name="team" size={22} /></span>Team
             </NavLink>
-            <button type="button" className={`tab${sheet ? " active" : ""}`} aria-haspopup="dialog" aria-expanded={sheet} onClick={() => setSheet(true)}>
-              <span className="ti"><span className="avatar sm" aria-hidden="true">{you}</span></span>You
-            </button>
+            <NavLink to={`/dashboard/${slug}/settings`} className={({ isActive }) => `tab${isActive ? " active" : ""}`}>
+              <span className="ti"><Icon name="gear" size={22} /></span>Settings
+            </NavLink>
           </nav>
         )}
       </div>
 
-      <AccountSheet open={sheet} onClose={() => setSheet(false)} slug={slug} />
+      <AccountSheet open={sheet} onClose={() => setSheet(false)} />
       <DemoPanel slug={slug} onSwitchBrand={(s) => navigate(s ? `/dashboard/${s}` : "/dashboard")} />
     </div>
   )

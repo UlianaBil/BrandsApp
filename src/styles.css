@@ -148,7 +148,6 @@ body.collapsed .sidebar .acct-text{display:none}
 .topbar-mark{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-0.02em}
 .topbar-mark img{width:30px;height:30px;border-radius:9px}
 .topbar .tb-title{flex:1;min-width:0;text-align:center;font-weight:600;font-size:.95rem;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar .tb-spacer{width:40px;flex-shrink:0}
 .topbar .tb-you{margin-left:auto}
 .avatar.sm{width:28px;height:28px;font-size:.62rem}
 
@@ -159,6 +158,9 @@ body.collapsed .sidebar .acct-text{display:none}
   border-top:1px solid var(--line);
   padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
 }
+/* Bars are translucent only where the browser can blur cheaply; otherwise solid paper. */
+@supports not (backdrop-filter:blur(1px)){.tabbar,.topbar{background:var(--paper)}}
+@media (prefers-reduced-transparency:reduce){.tabbar,.topbar{background:var(--paper);backdrop-filter:none;-webkit-backdrop-filter:none}}
 .tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   min-height:50px;padding:4px 0 2px;border:none;background:none;border-radius:12px;
@@ -167,8 +169,6 @@ body.collapsed .sidebar .acct-text{display:none}
 }
 .tab .ti{width:28px;height:28px;display:flex;align-items:center;justify-content:center}
 .tab.active{color:var(--ink)}
-.tab .avatar.sm{width:26px;height:26px;font-size:.58rem;background:var(--soft);color:var(--ink);transition:background .15s,color .15s}
-.tab.active .avatar.sm{background:var(--dark);color:#fff}
 @media (max-width:899px){
   body.has-tabbar .tabbar{display:flex}
   body.has-tabbar .page{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
