@@ -71,7 +71,7 @@ svg{display:block;flex:none}
   width:var(--sidebar);flex-shrink:0;
   background:var(--paper);border-right:1px solid var(--line);
   display:none;flex-direction:column;
-  position:sticky;top:0;height:100dvh;
+  position:sticky;top:0;height:100dvh;z-index:25; /* above page content so the rail's menus and tooltips paint over it */
   transition:width .28s var(--ease);overflow:hidden;
 }
 @media (min-width:900px){.sidebar{display:flex}}
