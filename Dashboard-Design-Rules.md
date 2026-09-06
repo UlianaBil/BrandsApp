@@ -105,7 +105,7 @@ Inline stroke icons, 24-unit grid, 1.7px stroke, round caps. Sizes: 19px in nav,
 2. **Context pill** — desktop only, on brand sub-pages: 24px initials avatar + brand name, linking to Overview. Overview itself replaces this with the full identity pill.
 3. **Page header** — h1, one-line subtitle (≤ 60ch), actions on the right. Actions wrap under the title and go full-width on phones.
 4. **Summary before detail** — stat/fact cards first, then lists and tables, then forms and settings, then footnotes. A reader who stops after the first row of cards should have the answer to "am I okay?".
-5. **Sections** — a `SectionHead` (title + optional hint on the right) between card groups. Never a card just to hold a title.
+5. **Sections** — a `SectionHead` (title + optional hint on the right; on phones the hint stacks under the title) between card groups. Never a card just to hold a title.
 
 The page container is `max-width: 1240px`, centred, with 110px bottom padding so the floating Demo button never covers content. Long-form or single-task pages (Create brand) use `.page.narrow` (680px).
 
