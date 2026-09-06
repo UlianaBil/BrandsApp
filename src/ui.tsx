@@ -254,7 +254,7 @@ export function PageHeader({
         <span className="ico"><Icon name="back" size={16} /></span>
         <span>{label}</span>
       </Link>
-      {slug && (
+      {slug && !backTo && (
         <Link className="context-pill" to={`/dashboard/${slug}`} aria-label={name ? `${name} overview` : "Brand overview"}>
           <span className="mini" aria-hidden="true">{name ? initials(name) : "··"}</span>
           {name ? <span className="t">{name}</span> : <Skeleton h={10} w={110} />}

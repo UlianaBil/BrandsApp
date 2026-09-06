@@ -185,6 +185,7 @@ body.collapsed .sidebar .acct-text{display:none}
 .back-link span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:899px){.back-link{display:inline-flex}}
 .back-link.always{display:inline-flex}
+.back-link.always + .page-head{margin-top:2px}
 
 /* Standard page header: optional brand context pill, title, subtitle, actions. */
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
