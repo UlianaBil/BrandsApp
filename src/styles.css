@@ -306,18 +306,18 @@ body.collapsed .sidebar .acct-text{display:none}
 .card.flush .card-foot{padding:14px 22px 18px;border-top:1px solid var(--line)}
 .stack > * + *{margin-top:14px}
 
-.grid-2{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 @media (min-width:700px){.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.grid-3{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 @media (min-width:700px){.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.grid-manage{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-manage{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 @media (min-width:520px){.grid-manage{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:900px){.grid-manage{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1240px){.grid-manage{grid-template-columns:repeat(5,minmax(0,1fr))}}
-.grid-brands{display:grid;grid-template-columns:1fr;gap:14px}
+.grid-brands{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 @media (min-width:640px){.grid-brands{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1100px){.grid-brands{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.split{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.split{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
 @media (min-width:1000px){.split{grid-template-columns:minmax(0,1fr) 380px}}
 
 /* Stat cards: icon circle + label (utility corner), hero number, support, action. */
