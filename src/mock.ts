@@ -10,12 +10,19 @@
  */
 
 export type Role = "owner" | "admin" | "member"
+/** A brand membership on the platform is Owner or Admin (owner's decision, 2026-09-05); "member" only exists as a team role. */
+export type BrandRole = "owner" | "admin"
+
+export interface Account {
+  name: string
+  email: string
+}
 
 export interface Brand {
   slug: string
   name: string
   domain: string
-  role: Role
+  role: BrandRole
   liveUrl: string
   adminUrl: string
   createdAt: string
@@ -164,12 +171,14 @@ function call<T>(data: T, opts?: { failable?: boolean }): Promise<T> {
 /* ------------------------------------------------------------------ */
 
 const store = {
+  account: { name: "Uliana Bilenkiy", email: "ulianabilenkiy@gmail.com" } as Account,
+
   brands: [
     {
       slug: "acme-fashion-group",
       name: "Acme Fashion Group",
       domain: "acme-fashion-group.brandsapp.io",
-      role: "owner" as Role,
+      role: "owner" as BrandRole,
       liveUrl: "https://acme-fashion-group.brandsapp.io",
       adminUrl: "https://acme-fashion-group.brandsapp.io/admin",
       createdAt: "2026-08-12",
@@ -178,7 +187,7 @@ const store = {
       slug: "lagos-bites",
       name: "Lagos Bites",
       domain: "lagos-bites.brandsapp.io",
-      role: "member" as Role,
+      role: "admin" as BrandRole,
       liveUrl: "https://lagos-bites.brandsapp.io",
       adminUrl: "https://lagos-bites.brandsapp.io/admin",
       createdAt: "2026-07-02",
@@ -187,7 +196,7 @@ const store = {
       slug: "ada-interiors-and-home-styling",
       name: "Ada Interiors & Home Styling Studio",
       domain: "ada-interiors-and-home-styling.brandsapp.io",
-      role: "owner" as Role,
+      role: "owner" as BrandRole,
       liveUrl: "https://ada-interiors-and-home-styling.brandsapp.io",
       adminUrl: "https://ada-interiors-and-home-styling.brandsapp.io/admin",
       createdAt: "2026-09-01",
@@ -302,8 +311,15 @@ const store = {
         id: "u1",
         name: "Uliana Bilenkiy",
         email: "ulianabilenkiy@gmail.com",
-        role: "member" as Role,
+        role: "admin" as Role,
         you: true,
+        status: "active" as const,
+      },
+      {
+        id: "u5",
+        name: "Femi Adewale",
+        email: "femi@lagosbites.ng",
+        role: "member" as Role,
         status: "active" as const,
       },
     ],
@@ -526,6 +542,18 @@ export const api = {
     return call(invited)
   },
 
+  setRole: (slug: string, id: string, role: Role) => {
+    const m = (store.team[slug] ?? []).find((x) => x.id === id)
+    if (m) m.role = role
+    return call(m!)
+  },
+
+  getAccount: () => call(store.account),
+  updateAccount: (name: string) => {
+    store.account.name = name
+    return call(store.account)
+  },
+
   removeMember: (slug: string, id: string) => {
     store.team[slug] = (store.team[slug] ?? []).filter((m) => m.id !== id)
     return call(true)
@@ -590,6 +618,12 @@ export const roleLabel: Record<Role, string> = {
   owner: "Owner",
   admin: "Admin",
   member: "Member",
+}
+
+export const roleOption: Record<Role, string> = {
+  owner: "Owner",
+  admin: "Admin",
+  member: "Member (view only)",
 }
 
 export const roleHelp: Record<Role, string> = {

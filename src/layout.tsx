@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { api } from "./mock"
-import { DemoPanel, Icon, useAsync, type IconName } from "./ui"
+import { DemoPanel, Icon, initials, Menu, Modal, useAsync, useToast, type IconName } from "./ui"
 
 function BrandMark() {
   return (
@@ -54,15 +54,68 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-function Account() {
+/**
+ * Account menu (production parity): the avatar opens a menu with a brand switcher,
+ * New brand, Account settings and Sign out — the last one confirmed in a modal.
+ */
+function Account({ onNavigate }: { onNavigate?: () => void }) {
+  const navigate = useNavigate()
+  const toast = useToast()
+  const account = useAsync(() => api.getAccount(), [])
+  const brands = useAsync(() => api.listBrands(), [])
+  const [signOut, setSignOut] = useState(false)
+  const name = account.data?.name ?? "Your account"
+  const email = account.data?.email ?? ""
+  const go = (to: string) => {
+    onNavigate?.()
+    navigate(to)
+  }
+  const brandItems = (brands.data ?? []).slice(0, 4).map((b) => ({
+    label: b.name,
+    lead: <span className="mini-avatar" aria-hidden="true">{initials(b.name)}</span>,
+    meta: <span className={`chip chip-${b.role}`} style={{ fontSize: ".66rem", padding: "2px 8px" }}>{b.role === "owner" ? "Owner" : "Admin"}</span>,
+    onSelect: () => go(`/dashboard/${b.slug}`),
+  }))
+
   return (
-    <div className="sidebar-account" title="Uliana Bilenkiy · ulianabilenkiy@gmail.com">
-      <div className="avatar" aria-hidden="true">UB</div>
-      <div className="acct-text">
-        <div className="n">Uliana Bilenkiy</div>
-        <div className="e">ulianabilenkiy@gmail.com</div>
-      </div>
-    </div>
+    <>
+      <Menu
+        up
+        label="Account menu"
+        header="Brands"
+        trigger={
+          <div className="sidebar-account as-trigger" title={`${name} · ${email}`}>
+            <div className="avatar" aria-hidden="true">{account.data ? initials(name) : "··"}</div>
+            <div className="acct-text">
+              <div className="n">{name}</div>
+              <div className="e">{email}</div>
+            </div>
+            <span className="caret" aria-hidden="true"><Icon name="chevron-up-down" size={16} /></span>
+          </div>
+        }
+        items={[
+          ...brandItems,
+          { label: brands.data && brands.data.length > 4 ? `View all ${brands.data.length} brands` : "All brands", icon: "grid", onSelect: () => go("/dashboard") },
+          { label: "New brand", icon: "plus", onSelect: () => go("/dashboard/create") },
+          { label: "Account settings", icon: "user", sep: true, onSelect: () => go("/settings") },
+          { label: "Sign out", icon: "logout", onSelect: () => setSignOut(true) },
+        ]}
+      />
+      <Modal
+        open={signOut}
+        onClose={() => setSignOut(false)}
+        title="Sign out of BrandsApp?"
+        icon="logout"
+        footer={
+          <>
+            <button className="btn btn-secondary" onClick={() => setSignOut(false)}>Stay signed in</button>
+            <button className="btn btn-primary" onClick={() => { setSignOut(false); toast("Sign-out isn't wired up in this prototype") }}>Sign out</button>
+          </>
+        }
+      >
+        <p>You'll need to sign in again to manage your brands.</p>
+      </Modal>
+    </>
   )
 }
 
@@ -147,7 +200,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 </button>
               </div>
               <NavContent onNavigate={() => setDrawerOpen(false)} />
-              <div className="sidebar-foot"><Account /></div>
+              <div className="sidebar-foot"><Account onNavigate={() => setDrawerOpen(false)} /></div>
             </div>
           </>
         )}

@@ -64,6 +64,7 @@ export type IconName =
   | "menu" | "close" | "back" | "check" | "layout" | "chevrons-left" | "chevron-down"
   | "chevron-left" | "chevron-right" | "lock" | "search" | "more" | "trash" | "mail"
   | "info" | "receipt" | "trend-up" | "trend-down" | "coins" | "user-plus" | "link" | "shield" | "bank"
+  | "logout" | "user" | "chevron-up-down" | "swap"
 
 const paths: Record<IconName, ReactNode> = {
   grid: (<><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>),
@@ -71,7 +72,7 @@ const paths: Record<IconName, ReactNode> = {
   wallet: (<><rect x="2.5" y="5.5" width="19" height="13" rx="2.5" /><path d="M16 12h3.5" /><path d="M2.5 8.5h14" /></>),
   team: (<><circle cx="9" cy="8.5" r="3.2" /><path d="M2.8 19.2c.8-3 3.2-4.7 6.2-4.7s5.4 1.7 6.2 4.7" /><circle cx="17" cy="9.5" r="2.4" /><path d="M16.2 14.6c2.5.2 4.3 1.7 5 4.1" /></>),
   store: (<><path d="M7 3.5 4.5 7v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7L17 3.5Z" /><path d="M4.5 7h15" /><path d="M15.5 10.5a3.5 3.5 0 0 1-7 0" /></>),
-  gear: (<><circle cx="12" cy="12" r="3.2" /><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7" /></>),
+  gear: (<><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></>),
   globe: (<><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9Z" /></>),
   plus: <path d="M12 5v14M5 12h14" />,
   "arrow-right": <path d="M4 12h16m0 0-6-6m6 6-6 6" />,
@@ -102,6 +103,10 @@ const paths: Record<IconName, ReactNode> = {
   "user-plus": (<><circle cx="10" cy="8.5" r="3.5" /><path d="M3.5 19.5c.9-3.2 3.5-5 6.5-5s5.6 1.8 6.5 5" /><path d="M19 8v6M16 11h6" /></>),
   shield: (<><path d="M12 3.5 4.5 6.5v5c0 4.3 3.2 7.6 7.5 9 4.3-1.4 7.5-4.7 7.5-9v-5L12 3.5Z" /><path d="m9 12 2 2 4-4.5" /></>),
   bank: (<><path d="M3.5 9.5 12 4.5l8.5 5" /><path d="M5 9.5v8M9.5 9.5v8M14.5 9.5v8M19 9.5v8" /><path d="M3.5 20h17" /></>),
+  logout: (<><path d="M10 4.5H6.5A2 2 0 0 0 4.5 6.5v11a2 2 0 0 0 2 2H10" /><path d="M15 8l4 4-4 4" /><path d="M19 12H9.5" /></>),
+  user: (<><circle cx="12" cy="8.5" r="3.6" /><path d="M4.5 20c.9-3.5 3.9-5.5 7.5-5.5s6.6 2 7.5 5.5" /></>),
+  "chevron-up-down": (<><path d="m8 9.5 4-4 4 4" /><path d="m8 14.5 4 4 4-4" /></>),
+  swap: (<><path d="M4 7h13l-3-3" /><path d="M20 17H7l3 3" /></>),
   link: (<><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.2 1.2" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.2-1.2" /></>),
 }
 
@@ -334,10 +339,30 @@ export interface MenuItem {
   label: string
   icon?: IconName
   danger?: boolean
+  /** Renders a divider above this item. */
+  sep?: boolean
+  /** Optional leading node (e.g. a small avatar) instead of an icon. */
+  lead?: ReactNode
+  meta?: ReactNode
   onSelect: () => void
 }
 
-export function Menu({ items, label = "More actions", up }: { items: MenuItem[]; label?: string; up?: boolean }) {
+export function Menu({
+  items,
+  label = "More actions",
+  up,
+  trigger,
+  header,
+  align = "end",
+}: {
+  items: MenuItem[]
+  label?: string
+  up?: boolean
+  /** Custom trigger content; defaults to a "more" icon button. */
+  trigger?: ReactNode
+  header?: ReactNode
+  align?: "start" | "end"
+}) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -359,16 +384,27 @@ export function Menu({ items, label = "More actions", up }: { items: MenuItem[];
 
   return (
     <div className="menu-wrap" ref={ref}>
-      <button type="button" className="iconbtn" aria-label={label} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <Icon name="more" size={18} />
-      </button>
+      {trigger ? (
+        <button type="button" className="menu-trigger" aria-label={label} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          {trigger}
+        </button>
+      ) : (
+        <button type="button" className="iconbtn" aria-label={label} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          <Icon name="more" size={18} />
+        </button>
+      )}
       {open && (
-        <div className={`menu${up ? " up" : ""}`} role="menu">
+        <div className={`menu${up ? " up" : ""}${align === "start" ? " start" : ""}`} role="menu">
+          {header && <div className="menu-head">{header}</div>}
           {items.map((it) => (
-            <button key={it.label} type="button" role="menuitem" className={it.danger ? "danger" : ""} onClick={() => { setOpen(false); it.onSelect() }}>
-              {it.icon && <span className="mi"><Icon name={it.icon} size={16} /></span>}
-              {it.label}
-            </button>
+            <div key={it.label} style={{ display: "contents" }}>
+              {it.sep && <div className="menu-sep" role="separator" />}
+              <button type="button" role="menuitem" className={it.danger ? "danger" : ""} onClick={() => { setOpen(false); it.onSelect() }}>
+                {it.lead ? <span className="mi lead">{it.lead}</span> : it.icon ? <span className="mi"><Icon name={it.icon} size={16} /></span> : null}
+                <span className="ml">{it.label}</span>
+                {it.meta && <span className="mm">{it.meta}</span>}
+              </button>
+            </div>
           ))}
         </div>
       )}
@@ -502,7 +538,7 @@ export function DemoPanel({ slug, onSwitchBrand }: { slug: string | null; onSwit
             <select className="input sm" value={slug ?? ""} onChange={(e) => onSwitchBrand(e.target.value)}>
               <option value="">My Brands</option>
               <option value="acme-fashion-group">Acme Fashion Group · owner · trial</option>
-              <option value="lagos-bites">Lagos Bites · member · Starter plan</option>
+              <option value="lagos-bites">Lagos Bites · admin · Starter plan</option>
               <option value="ada-interiors-and-home-styling">Ada Interiors · long name · trial</option>
               <option value="missing-brand">Unknown brand · error state</option>
             </select>

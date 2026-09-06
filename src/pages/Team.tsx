@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
-import { api, roleHelp, roleLabel, type Role, type TeamMember } from "../mock"
+import { api, roleHelp, roleOption, type Role, type TeamMember } from "../mock"
 import { CardSkeleton, ErrorState, Icon, initials, Menu, Modal, PageHeader, RoleChip, Segmented, useAsync, useToast } from "../ui"
 
 type Filter = "all" | "active" | "invited"
@@ -17,9 +17,15 @@ export default function Team() {
   const [inviting, setInviting] = useState(false)
   const [filter, setFilter] = useState<Filter>("all")
   const [removing, setRemoving] = useState<TeamMember | null>(null)
+  const [changing, setChanging] = useState<TeamMember | null>(null)
+  const [newRole, setNewRole] = useState<Role>("admin")
   const [busy, setBusy] = useState(false)
 
   const canManage = brand.data?.role === "owner" || brand.data?.role === "admin"
+  const isOwner = brand.data?.role === "owner"
+  // An admin can do everything an owner can, except touch an owner.
+  const canTouch = (m: TeamMember) => canManage && !m.you && (m.role !== "owner" || isOwner)
+  const roleChoices: Role[] = isOwner ? ["admin", "owner", "member"] : ["admin", "member"]
   const members = team.data ?? []
   const invitedCount = members.filter((m) => m.status === "invited").length
   const visible = members.filter((m) => (filter === "all" ? true : m.status === filter))
@@ -59,6 +65,21 @@ export default function Team() {
       team.retry()
     } catch {
       toast("Couldn't remove that person — try again.", "error")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const saveRole = async () => {
+    if (!changing) return
+    setBusy(true)
+    try {
+      await api.setRole(slug, changing.id, newRole)
+      toast("Role updated", "success")
+      setChanging(null)
+      team.retry()
+    } catch {
+      toast("Couldn't change that role — try again.", "error")
     } finally {
       setBusy(false)
     }
@@ -124,8 +145,11 @@ export default function Team() {
                         label={`Actions for ${m.name}`}
                         items={[
                           { label: "Copy email", icon: "copy", onSelect: () => copyEmail(m) },
-                          ...(canManage && m.role !== "owner" && !m.you
-                            ? [{ label: m.status === "invited" ? "Cancel invite" : "Remove from brand", icon: "trash" as const, danger: true, onSelect: () => setRemoving(m) }]
+                          ...(canTouch(m) && m.status === "active"
+                            ? [{ label: "Change role…", icon: "swap" as const, onSelect: () => { setNewRole(m.role); setChanging(m) } }]
+                            : []),
+                          ...(canTouch(m)
+                            ? [{ label: m.status === "invited" ? "Cancel invite" : "Remove from brand", icon: "trash" as const, danger: true, sep: true, onSelect: () => setRemoving(m) }]
                             : []),
                         ]}
                       />
@@ -165,7 +189,7 @@ export default function Team() {
               <div className="field">
                 <label htmlFor="tm-role">Role</label>
                 <select id="tm-role" className="input" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-                  {(["admin", "member"] as Role[]).map((r) => (<option key={r} value={r}>{roleLabel[r]}</option>))}
+                  {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
                 </select>
                 <p className="help">{roleHelp[role]}</p>
               </div>
@@ -189,6 +213,27 @@ export default function Team() {
           </p>
         ) : null}
       </div>
+
+      <Modal
+        open={changing != null}
+        onClose={() => !busy && setChanging(null)}
+        title={`Change ${changing?.name}'s role`}
+        icon="swap"
+        footer={
+          <>
+            <button className="btn btn-secondary" onClick={() => setChanging(null)} disabled={busy}>Cancel</button>
+            <button className="btn btn-primary" onClick={saveRole} disabled={busy || newRole === changing?.role}>{busy ? "Saving…" : "Save role"}</button>
+          </>
+        }
+      >
+        <div className="field">
+          <label htmlFor="tm-newrole">Role</label>
+          <select id="tm-newrole" className="input" value={newRole} onChange={(e) => setNewRole(e.target.value as Role)}>
+            {roleChoices.map((r) => (<option key={r} value={r}>{roleOption[r]}</option>))}
+          </select>
+          <p className="help">{roleHelp[newRole]}</p>
+        </div>
+      </Modal>
 
       <Modal
         open={removing != null}

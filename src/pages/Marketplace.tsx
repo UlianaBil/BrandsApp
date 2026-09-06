@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { api, ngn, type Listing } from "../mock"
-import { CardSkeleton, EmptyState, ErrorState, Icon, Modal, PageHeader, SearchField, Segmented, useAsync, useToast } from "../ui"
+import { api, ngn } from "../mock"
+import { CardSkeleton, EmptyState, ErrorState, Icon, PageHeader, SearchField, Segmented, useAsync, useToast } from "../ui"
 
 export default function Marketplace() {
   const { slug = "" } = useParams()
@@ -9,7 +9,6 @@ export default function Marketplace() {
   const listings = useAsync(() => api.listListings(), [])
   const [q, setQ] = useState("")
   const [cat, setCat] = useState("all")
-  const [preview, setPreview] = useState<Listing | null>(null)
 
   const categories = useMemo(() => Array.from(new Set((listings.data ?? []).map((l) => l.category))), [listings.data])
   const filtered = useMemo(() => {
@@ -24,7 +23,7 @@ export default function Marketplace() {
       <PageHeader
         slug={slug}
         title="Marketplace"
-        sub="Page sections built by other creators. They install straight into your site."
+        sub="Page sections built by other creators. They install straight into your site. Listing cards below are layout examples — the final card design is still to be decided."
         actions={
           <button className="btn btn-secondary" onClick={() => toast("Selling isn't wired up in this prototype")}>
             <Icon name="sparkle" size={15} /> Sell a section
@@ -75,40 +74,11 @@ export default function Marketplace() {
               </div>
               <h2 style={{ marginTop: 16 }}>{l.title}</h2>
               <p className="hint">by {l.author}</p>
-              <div className="stat-actions">
-                <button className="btn btn-secondary btn-sm" onClick={() => setPreview(l)}>Preview &amp; buy</button>
-              </div>
             </div>
           ))}
         </div>
       )}
 
-      <Modal
-        open={preview != null}
-        onClose={() => setPreview(null)}
-        title={preview?.title ?? ""}
-        icon="store"
-        footer={
-          <>
-            <button className="btn btn-secondary" onClick={() => setPreview(null)}>Close</button>
-            <button className="btn btn-primary" onClick={() => { setPreview(null); toast("Purchases aren't wired up in this prototype") }}>
-              Buy for {preview ? ngn(preview.priceNgn) : ""}
-            </button>
-          </>
-        }
-      >
-        {preview && (
-          <>
-            <p>A ready-made section by {preview.author}. It installs into your site's page builder and picks up your brand colours and fonts automatically.</p>
-            <div className="summary">
-              <div className="li"><span className="k">Category</span><span className="v">{preview.category}</span></div>
-              <div className="li"><span className="k">Creator</span><span className="v">{preview.author}</span></div>
-              <div className="li"><span className="k">Price</span><span className="v">{ngn(preview.priceNgn)} · one-off</span></div>
-              <div className="li"><span className="k">Pay with</span><span className="v">Wallet, card, transfer or USSD</span></div>
-            </div>
-          </>
-        )}
-      </Modal>
     </main>
   )
 }

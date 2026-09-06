@@ -10,6 +10,7 @@ import Team from "./pages/Team"
 import Settings from "./pages/Settings"
 import Marketplace from "./pages/Marketplace"
 import Kyc from "./pages/Kyc"
+import AccountSettings from "./pages/AccountSettings"
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<MyBrands />} />
             <Route path="/dashboard/create" element={<CreateBrand />} />
+            <Route path="/settings" element={<AccountSettings />} />
             <Route path="/dashboard/:slug" element={<Overview />} />
             <Route path="/dashboard/:slug/billing" element={<Billing />} />
             <Route path="/dashboard/:slug/finances" element={<Finances />} />

@@ -642,6 +642,17 @@ details.explainer p{font-size:.87rem;color:var(--body);margin:0 0 6px 36px}
   box-shadow:var(--shadow-pop);padding:6px;animation:pop-in .16s var(--ease);
 }
 .menu.up{top:auto;bottom:calc(100% + 6px)}
+.menu.start{right:auto;left:0}
+.menu-trigger{border:none;background:none;padding:0;border-radius:14px;display:flex;width:100%;text-align:left}
+.menu-head{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
+.menu button .ml{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu button .mm{margin-left:auto;flex-shrink:0}
+.menu button .mi.lead{width:auto}
+.menu .mini-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:.6rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.sidebar-account.as-trigger{border-radius:14px;padding:8px 6px;margin-top:6px;transition:background .15s;cursor:pointer;width:100%}
+.sidebar-account .caret{margin-left:auto;color:var(--muted);flex-shrink:0}
+body.collapsed .sidebar .sidebar-account .caret{display:none}
+body.collapsed .sidebar .menu{left:calc(100% + 10px);right:auto;bottom:0}
 .menu button{
   display:flex;align-items:center;gap:10px;width:100%;
   border:none;background:none;border-radius:10px;
@@ -712,13 +723,14 @@ details.explainer p{font-size:.87rem;color:var(--body);margin:0 0 6px 36px}
   .table .tr:not(.th):hover{background:rgba(28,28,28,.015)}
   .pagination .pg-num:hover{background:var(--soft);color:var(--ink)}
   .menu button:hover{background:var(--soft)}
+  .sidebar-account.as-trigger:hover{background:var(--soft)}
   .menu button.danger:hover{background:var(--bad-bg)}
   .demo-fab:hover{background:var(--dark-lift)}
 }
 
 @media (hover:none){
   .managecard:active,.brandcard:active{transform:scale(.985);box-shadow:var(--shadow-card)}
-  .navlink:not(.active):active,.iconbtn:active,.copy-btn:active,.menu button:active,.pg-num:active,.seg button:not([aria-selected="true"]):active{background:var(--soft)}
+  .sidebar-account.as-trigger:active,.navlink:not(.active):active,.iconbtn:active,.copy-btn:active,.menu button:active,.pg-num:active,.seg button:not([aria-selected="true"]):active{background:var(--soft)}
   .btn-secondary:active{background:var(--soft-lift)}
   .btn-white:active{background:var(--soft)}
   .btn-primary:active{background:var(--dark-lift)}
