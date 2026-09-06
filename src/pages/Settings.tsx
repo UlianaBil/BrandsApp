@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { api, fmtDate } from "../mock"
 import { CardSkeleton, EmptyState, ErrorState, Icon, PageHeader, SectionHead, useAsync, useToast } from "../ui"
@@ -11,33 +11,11 @@ export default function Settings() {
   const brand = useAsync(() => api.getBrand(slug), [slug])
   const domains = useAsync(() => api.listDomains(slug), [slug])
 
-  const [name, setName] = useState("")
-  const [savingName, setSavingName] = useState(false)
-  useEffect(() => {
-    if (brand.data) setName(brand.data.name)
-  }, [brand.data])
-
   const [hostname, setHostname] = useState("")
   const [hostError, setHostError] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
 
   const canManage = brand.data?.role === "owner" || brand.data?.role === "admin"
-  const dirty = !!brand.data && name.trim() !== brand.data.name && name.trim().length > 0
-
-  const saveName = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!dirty) return
-    setSavingName(true)
-    try {
-      await api.renameBrand(slug, name.trim())
-      toast("Brand name saved", "success")
-      brand.retry()
-    } catch {
-      toast("Couldn't save the name — try again.", "error")
-    } finally {
-      setSavingName(false)
-    }
-  }
 
   const addDomain = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,37 +40,11 @@ export default function Settings() {
 
   return (
     <main className="page">
-      <PageHeader slug={slug} title="Settings" sub="Brand name, domains and brand-level configuration." />
+      <PageHeader slug={slug} title="Settings" sub="Domains and brand-level configuration." />
 
       <div className="stack">
-        {/* Brand profile */}
         {brand.loading && <CardSkeleton lines={2} />}
         {brand.error && <ErrorState message={brand.error} onRetry={brand.retry} />}
-        {brand.data && (
-          <section className="card" aria-label="Brand profile">
-            <div className="card-head">
-              <div>
-                <h2>Brand name</h2>
-                <p className="hint">
-                  Shown across your dashboard and to your customers. Your web address stays{" "}
-                  <span style={{ overflowWrap: "anywhere", fontWeight: 600, color: "var(--ink)" }}>{brand.data.domain}</span>.
-                </p>
-              </div>
-            </div>
-            <form onSubmit={saveName} className="inline-form">
-              <input className="input" value={name} onChange={(e) => setName(e.target.value)} aria-label="Brand name" disabled={!canManage} />
-              <button className="btn btn-primary" type="submit" disabled={!canManage || savingName || !dirty}>
-                {savingName ? "Saving…" : "Save"}
-              </button>
-            </form>
-            {!canManage && (
-              <p className="help" style={{ marginTop: 10, fontSize: ".82rem", color: "var(--muted)", display: "flex", gap: 6, alignItems: "center" }}>
-                <Icon name="lock" size={13} /> Only an owner or admin can rename this brand.
-              </p>
-            )}
-          </section>
-        )}
-
         {/* Domains */}
         {brand.data && (
           <section aria-label="Domains">

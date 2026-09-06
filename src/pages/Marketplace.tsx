@@ -23,11 +23,13 @@ export default function Marketplace() {
       <PageHeader
         slug={slug}
         title="Marketplace"
-        sub="Page sections built by other creators. They install straight into your site. Listing cards below are layout examples — the final card design is still to be decided."
+        sub="Page sections built by other creators. They install straight into your site."
         actions={
-          <button className="btn btn-secondary" onClick={() => toast("Selling isn't wired up in this prototype")}>
-            <Icon name="sparkle" size={15} /> Sell a section
-          </button>
+          listings.data && listings.data.length > 0 ? (
+            <button className="btn btn-white" onClick={() => toast("Selling isn't wired up in this prototype")}>
+              <Icon name="sparkle" size={15} /> Sell a section
+            </button>
+          ) : undefined
         }
       />
 

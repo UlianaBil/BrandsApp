@@ -150,7 +150,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 ### 5.2 Hierarchy rules
 
 - **One primary per view.** If two actions feel primary, one is wrong. On Overview it is "Open brand admin"; on a form it is the submit; on a list it is usually nothing — opening an item is the action.
-- **Empty state → primary CTA. Populated → the same action becomes secondary.** An empty My Brands shows a filled "Create your first brand"; once brands exist, "New brand" is a white outlined pill in the header. Same for domains, team, payments and any future list.
+- **Empty state → primary CTA. Populated → the same action becomes secondary.** An empty My Brands shows a filled "Create your first brand"; once brands exist, "New brand" is a white outlined pill in the header. Same for the marketplace ("Sell a section"), domains, team, payments and any future list. The header never duplicates the empty state's CTA.
 - **Urgency, not importance, earns the accent.** A plan that is about to lapse gets the peach tile and its link. An active plan gets a plain card and a `link-cta`.
 - **Read-only users see no dead buttons.** Hide actions a member can't take and explain once with a lock note ("Only an owner or admin can…"). Disabled buttons are for *not yet valid*, not *not allowed*.
 - **Destructive actions are never one tap.** They live in a row menu or a ghost button, open a confirmation modal with a red confirm button, and name the thing being removed.
@@ -191,7 +191,7 @@ Sizes: default 42px tall; `btn-sm` 36px (inside cards and rows); `btn-lg` 48px (
 - Fixed prefixes/suffixes (`.brandsapp.io`, a leading icon) live inside the pill via `input-group`.
 - Help text (.82rem, muted) sits under the field. Validation replaces it in place: red text with a warning icon, set `aria-invalid`, and clear the error as soon as the user edits. Success confirmation (e.g. address available) is green with a check icon in the same slot.
 - Validate on submit or after a pause, never on every keystroke of a fresh field. Disable submit until the form is valid; explain why in the help text, not in a tooltip.
-- Inline forms (`inline-form`) put one input and one button on a line for single-field edits (rename, add domain); the button wraps to full width under 560px.
+- Inline forms (`inline-form`) put one input and one button on a line for single-field edits (add a domain, your account name); the button wraps to full width under 560px.
 - After a successful submit: toast, clear the fields that created something, keep the fields that edited something, refresh the affected list on the same screen.
 
 ### 6.5 Search, filters, tabs
@@ -333,7 +333,7 @@ Follow this recipe and the screen will belong to the product.
 - **Domain detail (sub-flow):** back link to Settings, `PageHeader` with the hostname, fact cards (Status chip, Added, SSL), a card with the DNS records to copy (each row has a copy iconbtn and a toast), and a ghost "Remove domain" that opens a red modal.
 - **A gated capability (business verification / KYC):** the gate is explained where it bites — a card on Billing, peach when nothing has been submitted or the last submission was rejected, plain with a warn "Pending review" chip while under review, and absent once verified. Its button leads to a sub-flow page (back link to Billing, no nav item) whose header chip shows the same status; the form pre-fills a previous submission so a rejection is fixed, not retyped; sensitive numbers are masked to their last four digits once stored.
 - **Account-level pages (Account settings):** reached from the account menu, never from the brand nav; `page.narrow`, back link to My Brands. Profile card with an inline-form rename and a disabled sign-in email ("To change it, contact support"), a flush "Your brands" list with role chips and Open buttons, and a Session card whose Sign out uses the same confirmation modal as the menu.
-- **Cards whose final design is undecided** stay in the layout as non-interactive examples (no button, no hover lift, no link) and the page subtitle says so — a placeholder must never look clickable. Marketplace listing cards are in this state.
+- **Features whose design is undecided** show their empty state, not placeholder content (owner decision, 5 Sep 2026). The Marketplace renders "Nothing for sale yet" with its primary "Sell a section" CTA until listing cards are designed; the populated grid, search and filters stay in the code, switched off in the mock.
 - **Onboarding checklist on Overview:** a white card with a `rowlist` of steps, done steps with a good chip and a check, the next step with a `btn-primary btn-sm`; never a progress bar of a colour outside the tokens.
 
 If a pattern you need isn't here, derive it from the nearest one above, keep the tokens, and add it to this document.

@@ -147,6 +147,7 @@
 ### 17. Brand name wasn't editable anywhere
 - **Issue:** The display name exists in the backend (Billing showed it) but no dashboard surface let the owner set or fix it — while the UI fell back to the slug (issue 3).
 - **Implemented:** ✅ "Brand name" card at the top of Settings with save feedback; read-only for members.
+- **Owner decision (2026-09-05):** the brand-name input was removed from Settings; the page now holds domains only. The display-name rule (issue 3) still stands — the name comes from the brand record, it just isn't edited here.
 - **Priority:** Medium
 
 ### 18. Domains: perpetual loading, no state design
@@ -161,6 +162,7 @@
 ### 19. "No listings yet." as the entire page
 - **Issue:** In production the empty state was one line (and could mask an API failure — issue 2); "Sell a section" was the only styled element.
 - **Implemented:** ✅ Listing cards (category chip, author, Naira price, Preview & buy) with loading/error/empty states; the empty state sells the two-sided market ("You could be first: sell one of yours").
+- **Owner decision (2026-09-05):** until listing cards are designed the Marketplace shows only its empty state; the mock returns no listings and the header action hides so the empty state's "Sell a section" is the single CTA.
 - **Priority:** Low
 
 ---

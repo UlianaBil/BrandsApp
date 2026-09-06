@@ -504,7 +504,9 @@ export const api = {
   listTeam: (slug: string) => call(store.team[slug] ?? []),
   listPayments: (slug: string) => call(store.payments[slug] ?? []),
   getWallet: (slug: string) => call(store.wallet[slug] ?? null),
-  listListings: () => call(store.listings),
+  // Owner decision (2026-09-05): the marketplace shows its empty state until listing cards are designed.
+  // `store.listings` is kept so the populated layout can be switched back on later.
+  listListings: () => call([] as Listing[]),
   listDomains: (slug: string) => call(store.domains[slug] ?? []),
 
   getKyc: (slug: string) => call(store.kyc[slug] ?? ({ status: "not_started" } as Kyc)),

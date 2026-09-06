@@ -173,7 +173,7 @@ export default function Overview() {
           <ManageCard to={`/dashboard/${slug}/finances`} icon="wallet" title="Finances" body="Money made, money spent, and your wallet." />
           <ManageCard to={`/dashboard/${slug}/team`} icon="team" title="Team" body="Who has access to this brand, and what they can do." />
           <ManageCard to={`/dashboard/${slug}/marketplace`} icon="store" title="Marketplace" body="Page sections built by other creators." />
-          <ManageCard to={`/dashboard/${slug}/settings`} icon="gear" title="Settings" body="Brand name, domains and brand-level configuration." />
+          <ManageCard to={`/dashboard/${slug}/settings`} icon="gear" title="Settings" body="Domains and brand-level configuration." />
         </div>
       )}
 
